@@ -15,7 +15,9 @@ homolog.faculdadepaulista.com.br {
     respond "User-agent: *\nDisallow: /" 200
   }
 
-  import static_landing
+  handle {
+    import static_landing
+  }
 }
 
 # Opcional: enquanto não for go-live, redireciona domínio principal para homolog

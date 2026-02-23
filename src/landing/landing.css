@@ -190,7 +190,7 @@ section[id] {
 
 .lp-hero__content h1 {
   color: #332f2f;
-  font-size: clamp(30px, 3.2vw, 56px);
+  font-size: clamp(30px, 3.2vw, 49px);
   letter-spacing: -0.04em;
   line-height: 1.06;
   margin: 0;
@@ -203,7 +203,7 @@ section[id] {
 
 .lp-hero__description {
   color: #8d97a7;
-  font-size: clamp(15px, 1.45vw, 26px);
+  font-size: clamp(15px, 1.45vw, 21px);
   line-height: 1.45;
   margin: clamp(18px, 2.2vw, 34px) 0 0;
   max-width: 740px;
@@ -246,7 +246,7 @@ section[id] {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   min-height: 0;
   overflow: hidden;
-  padding: 33px 33px 49px;
+  padding: 25px 25px 49px;
   position: relative;
 }
 
@@ -263,7 +263,7 @@ section[id] {
 
 .lp-hero-form h2 {
   color: #f4f4f4;
-  font-size: clamp(21px, 1.35vw, 24px);
+  font-size: clamp(21px, 1.35vw, 21px);
   letter-spacing: 0;
   line-height: 1.27;
   margin: 0 0 8px;
@@ -735,7 +735,7 @@ section[id] {
 
 .lp-why__head h2 {
   color: #f0f0f0;
-  font-size: clamp(30px, 3.4vw, 56px);
+  font-size: clamp(30px, 3.4vw, 42px);
   letter-spacing: -0.02em;
   margin: 0;
   text-transform: uppercase;
@@ -743,7 +743,7 @@ section[id] {
 
 .lp-why__head p {
   color: #8e8d8d;
-  font-size: clamp(14px, 1.4vw, 25px);
+  font-size: clamp(14px, 1.4vw, 20px);
   margin: 10px 0 0;
 }
 
@@ -806,27 +806,28 @@ section[id] {
 
 .lp-why-card__meta strong {
   color: #696969;
-  font-size: clamp(30px, 2.3vw, 42px);
+  font-size: clamp(30px, 2.3vw, 36px);
   line-height: 1;
 }
 
 .lp-why-card h3 {
   color: #1f1f1f;
-  font-size: clamp(26px, 2.1vw, 40px);
+  font-size: clamp(26px, 2.1vw, 26px);
   letter-spacing: -0.02em;
   margin: 0 0 12px;
 }
 
 .lp-why-card p {
   color: #757575;
-  font-size: clamp(15px, 1.2vw, 22px);
+  font-size: clamp(15px, 1.2vw, 17px);
   line-height: 1.6;
   margin: 0;
 }
 
 .lp-why-card--dark {
-  background: #0f0b0b;
-  border: 1px solid #2b1918;
+  background: #15110e;
+  border-left: 4px solid #f00;
+  border-radius: 16px;
   box-shadow: 0 14px 32px -18px rgba(0, 0, 0, 0.7);
 }
 
@@ -876,7 +877,7 @@ section[id] {
 }
 
 .lp-why-highlight__score strong {
-  font-size: clamp(44px, 3.6vw, 66px);
+  font-size: clamp(44px, 3.6vw, 55px);
   letter-spacing: -0.02em;
   margin-top: 6px;
 }
@@ -911,7 +912,7 @@ section[id] {
 
 .lp-why-highlight__content h3 {
   color: #1f1f1f;
-  font-size: clamp(30px, 2.5vw, 46px);
+  font-size: clamp(30px, 2.5vw, 31px);
   letter-spacing: -0.02em;
   line-height: 1.02;
   margin: 0 0 12px;
@@ -919,7 +920,7 @@ section[id] {
 
 .lp-why-highlight__content > p {
   color: #747474;
-  font-size: clamp(15px, 1.2vw, 22px);
+  font-size: clamp(15px, 1.2vw, 17px);
   line-height: 1.62;
   margin: 0;
 }

@@ -1231,7 +1231,7 @@ section[id] {
 
 .lp-stories__head h2 {
   color: #fff;
-  font-size: clamp(32px, 3.6vw, 63px);
+  font-size: clamp(32px, 3.6vw, 52px);
   letter-spacing: -0.03em;
   line-height: 1.04;
   margin: 14px 0 12px;
@@ -1245,7 +1245,7 @@ section[id] {
 .lp-stories__head small {
   color: #9aa5b8;
   display: block;
-  font-size: clamp(15px, 1.55vw, 28px);
+  font-size: clamp(15px, 1.55vw, 21px);
   line-height: 1.4;
   margin: 0 auto;
   max-width: 780px;
@@ -1493,7 +1493,7 @@ section[id] {
   color: #758398;
   font-size: clamp(14px, 1.2vw, 20px);
   margin: 10px auto 0;
-  max-width: 680px;
+  max-width: 720px;
 }
 
 .lp-faq__list {

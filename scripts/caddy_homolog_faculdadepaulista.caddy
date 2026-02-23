@@ -11,7 +11,7 @@ homolog.faculdadepaulista.com.br {
 
   route {
     @robots path /robots.txt /robots.txt/*
-    respond @robots "User-agent: *\nDisallow: /" 200
+    rewrite @robots /robots-homolog.txt
     import static_landing
   }
 }

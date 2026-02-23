@@ -33,7 +33,7 @@ export function WhyChooseSection() {
               </div>
             </div>
 
-            <h3>01. MENSALIDADES FIXAS</h3>
+            <h3 className="lp-why-card__title--small">01. MENSALIDADES FIXAS</h3>
             <p>
               Posicionamento logístico otimizado no Hub Belém. Acesso multimodal que
               reduz o tempo de deslocamento em até 40% para a zona leste.
@@ -45,7 +45,11 @@ export function WhyChooseSection() {
             <span className="lp-why-card__phone">
               <Smartphone size={52} strokeWidth={1.4} />
             </span>
-            <h3>02. ACESSE ONDE E QUANDO QUISER</h3>
+            <h3>
+              02. ACESSE ONDE
+              <br />
+              E QUANDO QUISER
+            </h3>
             <p>
               Infraestrutura de alta densidade equipada com estações de processamento
               avançado e ambientes de simulação realística para aprendizado de alto impacto.

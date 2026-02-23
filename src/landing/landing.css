@@ -56,7 +56,7 @@ section[id] {
 }
 
 .lp-main-button--compact {
-  font-size: clamp(15px, 1.15vw, 26px);
+  font-size: clamp(15px, 1.15vw, 21px);
   min-height: clamp(44px, 3.1vw, 56px);
   padding: 0 clamp(22px, 2.2vw, 38px);
 }
@@ -522,7 +522,7 @@ section[id] {
 
 .lp-journey h2 {
   color: var(--lp-title);
-  font-size: clamp(32px, 3vw, 56px);
+  font-size: clamp(32px, 3vw, 42px);
   letter-spacing: -0.03em;
   margin: 0;
   text-transform: uppercase;
@@ -530,7 +530,7 @@ section[id] {
 
 .lp-journey__inner > p {
   color: #5f7592;
-  font-size: clamp(16px, 1.5vw, 26px);
+  font-size: clamp(16px, 1.5vw, 20px);
   margin: 10px 0 0;
 }
 
@@ -563,7 +563,7 @@ section[id] {
   border-radius: 999px;
   color: #97a0ae;
   display: inline-flex;
-  font-size: clamp(18px, 1.6vw, 28px);
+  font-size: clamp(18px, 1.6vw, 21px);
   font-weight: 700;
   height: clamp(38px, 2.7vw, 42px);
   justify-content: center;
@@ -579,13 +579,13 @@ section[id] {
 
 .lp-journey__steps h3 {
   color: #182439;
-  font-size: clamp(20px, 1.8vw, 35px);
+  font-size: clamp(20px, 1.8vw, 21px);
   margin: 0 0 4px;
 }
 
 .lp-journey__steps small {
   color: #91a0b7;
-  font-size: clamp(14px, 1.2vw, 23px);
+  font-size: clamp(14px, 1.2vw, 17px);
 }
 
 .lp-journey .lp-main-button {
@@ -617,7 +617,7 @@ section[id] {
 
 .lp-app h2 {
   color: #fff;
-  font-size: clamp(30px, 3.7vw, 66px);
+  font-size: clamp(30px, 3.7vw, 54px);
   letter-spacing: -0.03em;
   line-height: 1.04;
   margin: 0 0 14px;
@@ -625,10 +625,10 @@ section[id] {
 
 .lp-app p {
   color: #a29c9a;
-  font-size: clamp(15px, 1.55vw, 28px);
+  font-size: clamp(15px, 1.55vw, 20px);
   line-height: 1.52;
   margin: 0;
-  max-width: 720px;
+  max-width: 620px;
 }
 
 .lp-app__stores {
@@ -638,8 +638,8 @@ section[id] {
 }
 
 .lp-app__stores img {
-  display: block;
-  height: clamp(30px, 2.2vw, 38px);
+  display: flex;
+  height: clamp(30px, 3vw, 58px);
 }
 
 .lp-phone {

@@ -9,13 +9,9 @@ homolog.faculdadepaulista.com.br {
     X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
   }
 
-  @robots path /robots.txt
-  handle @robots {
-    header Content-Type "text/plain; charset=utf-8"
-    respond "User-agent: *\nDisallow: /" 200
-  }
-
-  handle {
+  route {
+    @robots path /robots.txt /robots.txt/*
+    respond @robots "User-agent: *\nDisallow: /" 200
     import static_landing
   }
 }

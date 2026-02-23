@@ -951,7 +951,7 @@ section[id] {
 
 .lp-future__head h2 {
   color: var(--lp-title);
-  font-size: clamp(31px, 3.8vw, 62px);
+  font-size: clamp(31px, 3.8vw, 52px);
   letter-spacing: -0.03em;
   line-height: 1.06;
   margin: 0;
@@ -964,7 +964,7 @@ section[id] {
 
 .lp-future__head p {
   color: #667386;
-  font-size: clamp(16px, 1.55vw, 28px);
+  font-size: clamp(16px, 1.55vw, 21px);
   margin: 12px auto 0;
   max-width: 760px;
 }
@@ -1003,22 +1003,25 @@ section[id] {
 
 .lp-future__tag {
   align-items: center;
-  background: var(--lp-brand);
-  border-radius: 8px;
   display: inline-flex;
-  height: 24px;
   justify-content: center;
-  width: 24px;
+  line-height: 0;
+}
+
+.lp-future__tag svg {
+  display: block;
+  height: 65px;
+  width: 72px;
 }
 
 .lp-future__location h3 {
-  font-size: clamp(24px, 2.1vw, 36px);
+  font-size: clamp(24px, 2.1vw, 32px);
   margin: 10px 0 6px;
 }
 
 .lp-future__location p {
   color: #dbdbdf;
-  font-size: clamp(13px, 1.05vw, 18px);
+  font-size: clamp(13px, 1.05vw, 17px);
   line-height: 1.5;
   margin: 0;
 }
@@ -1048,24 +1051,26 @@ section[id] {
 }
 
 .lp-future__reclame h3 {
-  font-size: clamp(24px, 1.95vw, 36px);
+  font-size: clamp(24px, 1.95vw, 32px);
   letter-spacing: -0.02em;
   margin: 0 0 6px;
 }
 
 .lp-future__reclame p {
   color: #c9c7ca;
-  font-size: clamp(14px, 1.05vw, 18px);
+  font-size: clamp(14px, 1.05vw, 17px);
   line-height: 1.5;
   margin: 0;
   max-width: 520px;
 }
 
 .lp-future__reclame img {
+  background: #fff;
   border-radius: 12px;
   height: 94px;
   margin-left: 16px;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 8px;
   width: 158px;
 }
 
@@ -1073,25 +1078,50 @@ section[id] {
   background: #fff;
   border-radius: 18px;
   min-height: 182px;
+  overflow: hidden;
   padding: 20px;
+  position: relative;
+}
+
+.lp-future__prof-card > *:not(.lp-future__prof-bg-icon) {
+  position: relative;
+  z-index: 1;
+}
+
+.lp-future__prof-bg-icon {
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 0;
+}
+
+.lp-future__prof-bg-icon svg {
+  display: block;
+  height: 126px;
+  width: 144px;
 }
 
 .lp-future__prof-icon {
   align-items: center;
-  background: #e8f0ff;
-  border-radius: 999px;
-  color: #2351c4;
   display: inline-flex;
-  height: 34px;
+  height: 56px;
   justify-content: center;
-  width: 34px;
+  line-height: 0;
+  width: 56px;
+}
+
+.lp-future__prof-icon svg {
+  display: block;
+  height: 56px;
+  width: 56px;
 }
 
 .lp-future__prof-card h3 {
   color: #1c2941;
-  font-size: clamp(21px, 1.8vw, 32px);
+  font-size: clamp(21px, 1.8vw, 21px);
   letter-spacing: -0.02em;
-  margin: 12px 0 6px;
+  margin: 30px 0 6px;
 }
 
 .lp-future__prof-card p {
@@ -1151,7 +1181,7 @@ section[id] {
 }
 
 .lp-future__red-card strong {
-  font-size: clamp(24px, 2.2vw, 44px);
+  font-size: clamp(24px, 2.2vw, 32px);
   letter-spacing: -0.02em;
   margin-top: 8px;
 }

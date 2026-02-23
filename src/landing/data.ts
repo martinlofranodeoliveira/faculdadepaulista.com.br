@@ -44,6 +44,7 @@ export const assets = {
   appStore: '/landing/appStore.png',
   googlePlay: '/landing/googlePlay.png',
   map: '/landing/map.png',
+  reclameAquiOtimo: '/landing/reclame-aqui-otimo.webp',
   profSarah: '/landing/profSarah.jpg',
   profJames: '/landing/profJames.jpg',
   profMichael: '/landing/profMichael.jpg',

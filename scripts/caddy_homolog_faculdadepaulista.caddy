@@ -1,0 +1,24 @@
+# Bloco para homologação de faculdadepaulista.com.br
+# Requer que o snippet (static_landing) já exista no Caddyfile principal.
+
+homolog.faculdadepaulista.com.br {
+  root * /www/wwwroot/faculdadepaulista.com.br/dist
+
+  # Bloqueio de indexação durante homologação
+  header {
+    X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
+  }
+
+  @robots path /robots.txt
+  handle @robots {
+    header Content-Type "text/plain; charset=utf-8"
+    respond "User-agent: *\nDisallow: /" 200
+  }
+
+  import static_landing
+}
+
+# Opcional: enquanto não for go-live, redireciona domínio principal para homolog
+# faculdadepaulista.com.br {
+#   redir https://homolog.faculdadepaulista.com.br{uri} 302
+# }

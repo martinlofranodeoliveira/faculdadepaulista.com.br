@@ -230,8 +230,8 @@ section[id] {
 
 .lp-hero__feature-icon {
   align-items: center;
-  background: #7a7a80;
-  border: 1px solid #626269;
+  background: #ffffff;
+  border: 1px solid #ff1111;
   border-radius: 9px;
   color: #fff;
   display: inline-flex;

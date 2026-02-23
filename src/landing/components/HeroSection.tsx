@@ -3,9 +3,7 @@ import {
   ArrowRight,
   GraduationCap,
   Mail,
-  Medal,
   Phone,
-  TrainFront,
   User,
 } from 'lucide-react'
 
@@ -42,6 +40,195 @@ const EMPTY_TOUCHED: Touched = {
   email: false,
   phone: false,
   course: false,
+}
+
+function MetroTrainIcon() {
+  return (
+    <svg
+      viewBox="475 111 170 170"
+      width="20"
+      height="20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="heroMetroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FF4B4B" />
+          <stop offset="100%" stopColor="#CC1D1D" />
+        </linearGradient>
+      </defs>
+
+      <g id="metro-icon">
+        <path
+          d="M 510 240 L 510 150 Q 510 120 560 120 Q 610 120 610 150 L 610 240 Z"
+          fill="url(#heroMetroGrad)"
+        />
+        <path d="M 510 240 L 610 240 L 605 255 L 515 255 Z" fill="#2C3E50" />
+        <path
+          d="M 520 185 L 520 145 Q 520 130 560 130 Q 600 130 600 145 L 600 185 Z"
+          fill="#1A252F"
+        />
+        <path
+          d="M 520 145 Q 520 130 560 130 L 545 185 L 520 185 Z"
+          fill="#FFFFFF"
+          opacity="0.15"
+        />
+
+        <rect x="522" y="215" width="25" height="10" rx="5" fill="#FFFFFF" />
+        <rect x="573" y="215" width="25" height="10" rx="5" fill="#FFFFFF" />
+        <rect x="524" y="217" width="21" height="6" rx="3" fill="#FFF2CC" />
+        <rect x="575" y="217" width="21" height="6" rx="3" fill="#FFF2CC" />
+
+        <circle cx="560" cy="202" r="12" fill="none" stroke="#FFFFFF" strokeWidth="2" opacity="0.8" />
+        <text
+          x="560"
+          y="207"
+          fontFamily="system-ui, sans-serif"
+          fontWeight="900"
+          fontSize="14"
+          fill="#FFFFFF"
+          textAnchor="middle"
+          opacity="0.9"
+        >
+          M
+        </text>
+
+        <path
+          d="M 500 260 L 620 260"
+          stroke="#94A3B8"
+          strokeWidth="5"
+          strokeLinecap="round"
+        />
+        <path
+          d="M 525 260 L 515 272 M 550 260 L 540 272 M 575 260 L 565 272 M 600 260 L 590 272"
+          stroke="#94A3B8"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+      </g>
+    </svg>
+  )
+}
+
+function HeroMecIcon() {
+  return (
+    <svg
+      viewBox="0 0 170 170"
+      width="20"
+      height="20"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="heroMecGoldOuter" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FDE047" />
+          <stop offset="100%" stopColor="#B45309" />
+        </linearGradient>
+
+        <linearGradient id="heroMecGoldInner" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#FEF08A" />
+          <stop offset="100%" stopColor="#D97706" />
+        </linearGradient>
+
+        <linearGradient id="heroMecGoldCore" x1="20%" y1="0%" x2="80%" y2="100%">
+          <stop offset="0%" stopColor="#FFFBEB" />
+          <stop offset="40%" stopColor="#FDE047" />
+          <stop offset="50%" stopColor="#FEF08A" />
+          <stop offset="100%" stopColor="#EAB308" />
+        </linearGradient>
+
+        <linearGradient id="heroMecRibbonGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#16A34A" />
+          <stop offset="100%" stopColor="#14532D" />
+        </linearGradient>
+
+        <filter id="heroMecShadow" x="-20%" y="-20%" width="140%" height="140%">
+          <feDropShadow
+            dx="0"
+            dy="5"
+            stdDeviation="4"
+            floodColor="#000000"
+            floodOpacity="0.15"
+          />
+        </filter>
+
+        <path
+          id="heroMecStar"
+          d="M0 -5 L 1.5 -1.5 L 5.5 -1.5 L 2.3 1.1 L 3.5 5 L 0 2.8 L -3.5 5 L -2.3 1.1 L -5.5 -1.5 L -1.5 -1.5 Z"
+        />
+      </defs>
+
+      <g filter="url(#heroMecShadow)">
+        <path d="M 65 90 L 25 160 L 50 148 L 75 165 L 85 90 Z" fill="url(#heroMecRibbonGrad)" />
+        <path d="M 65 90 L 50 148 L 75 165 L 85 90 Z" fill="#064E3B" opacity="0.3" />
+
+        <path d="M 105 90 L 145 160 L 120 148 L 95 165 L 85 90 Z" fill="url(#heroMecRibbonGrad)" />
+        <path d="M 105 90 L 120 148 L 95 165 L 85 90 Z" fill="#064E3B" opacity="0.3" />
+
+        <circle cx="85" cy="75" r="55" fill="url(#heroMecGoldOuter)" />
+        <circle cx="85" cy="75" r="49" fill="url(#heroMecGoldInner)" />
+        <circle cx="85" cy="75" r="43" fill="url(#heroMecGoldCore)" />
+        <circle
+          cx="85"
+          cy="75"
+          r="46"
+          fill="none"
+          stroke="#16A34A"
+          strokeWidth="1.5"
+          strokeDasharray="3 3"
+          opacity="0.8"
+        />
+
+        <text
+          x="85"
+          y="52"
+          fontFamily="system-ui, sans-serif"
+          fontWeight="900"
+          fontSize="16"
+          fill="#1E3A8A"
+          textAnchor="middle"
+          letterSpacing="1"
+        >
+          MEC
+        </text>
+        <text
+          x="85"
+          y="94"
+          fontFamily="system-ui, sans-serif"
+          fontWeight="900"
+          fontSize="52"
+          fill="#1E3A8A"
+          textAnchor="middle"
+        >
+          5
+        </text>
+
+        <g fill="#1E3A8A">
+          <g transform="translate(56, 103) rotate(-20)">
+            <use href="#heroMecStar" />
+          </g>
+          <g transform="translate(70, 108) rotate(-10)">
+            <use href="#heroMecStar" />
+          </g>
+          <g transform="translate(85, 110)">
+            <use href="#heroMecStar" />
+          </g>
+          <g transform="translate(100, 108) rotate(10)">
+            <use href="#heroMecStar" />
+          </g>
+          <g transform="translate(114, 103) rotate(20)">
+            <use href="#heroMecStar" />
+          </g>
+        </g>
+
+        <path
+          d="M 42 75 A 43 43 0 0 1 128 75 A 50 50 0 0 0 42 75 Z"
+          fill="#FFFFFF"
+          opacity="0.25"
+        />
+      </g>
+    </svg>
+  )
 }
 
 function normalizePhone(value: string): string {
@@ -331,7 +518,7 @@ export function HeroSection() {
             {heroFeatures.map((item, index) => (
               <div key={item.title} className="lp-hero__feature">
                 <span className="lp-hero__feature-icon">
-                  {index === 0 ? <TrainFront size={15} /> : <Medal size={15} />}
+                  {index === 0 ? <MetroTrainIcon /> : <HeroMecIcon />}
                 </span>
                 <span>{item.title}</span>
               </div>

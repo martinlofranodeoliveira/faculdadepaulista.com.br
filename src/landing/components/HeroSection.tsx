@@ -576,7 +576,7 @@ export function HeroSection() {
         </article>
 
         <article className="lp-hero-form" id="inscricao">
-          <div className="lp-hero-form__line" />
+          
           <h2>PREENCHA O FORMULÁRIO E SELECIONE O CURSO QUE VOCÊ DESEJA</h2>
           <p>
             Preencha seus dados abaixo e aguarde uma de nossas Consultoras Especialistas

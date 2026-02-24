@@ -266,7 +266,7 @@ section[id] {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   min-height: 0;
   overflow: hidden;
-  padding: 32px;
+  padding: 25px;
   position: relative;
 }
 

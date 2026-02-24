@@ -4,15 +4,14 @@ import {
   GraduationCap,
   Mail,
   Phone,
+  Search,
   User,
 } from 'lucide-react'
 
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
@@ -31,16 +30,24 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i
 const NAME_REGEX = /^[\p{L}\s.'-]+$/u
 
 type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error'
-type FieldName = 'fullName' | 'email' | 'phone' | 'course'
+type CourseType = 'graduacao' | 'pos'
+type CourseOption = { value: string; label: string }
+type FieldName = 'courseType' | 'course' | 'fullName' | 'email' | 'phone'
 type FieldErrors = Partial<Record<FieldName, string>>
 type Touched = Record<FieldName, boolean>
 
 const EMPTY_TOUCHED: Touched = {
+  courseType: false,
+  course: false,
   fullName: false,
   email: false,
   phone: false,
-  course: false,
 }
+
+const COURSE_TYPE_OPTIONS: Array<{ value: CourseType; label: string }> = [
+  { value: 'graduacao', label: 'Graduação' },
+  { value: 'pos', label: 'Pós-graduação' },
+]
 
 function MetroTrainIcon() {
   return (
@@ -275,12 +282,18 @@ function validatePhone(value: string): string | undefined {
   return undefined
 }
 
+function validateCourseType(value: string): string | undefined {
+  if (!value) return 'Selecione Graduação ou Pós-graduação.'
+  return undefined
+}
+
 function validateCourse(value: string): string | undefined {
   if (!value) return 'Selecione um curso.'
   return undefined
 }
 
 function validateField(field: FieldName, value: string): string | undefined {
+  if (field === 'courseType') return validateCourseType(value)
   if (field === 'fullName') return validateFullName(value)
   if (field === 'email') return validateEmail(value)
   if (field === 'phone') return validatePhone(value)
@@ -322,10 +335,13 @@ function normalizeBearerToken(token?: string): string | null {
 }
 
 export function HeroSection() {
+  const [courseType, setCourseType] = useState<CourseType | ''>('')
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [course, setCourse] = useState('')
+  const [courseSearch, setCourseSearch] = useState('')
+  const [isCourseSearchOpen, setIsCourseSearchOpen] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [touched, setTouched] = useState<Touched>(EMPTY_TOUCHED)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
@@ -335,15 +351,42 @@ export function HeroSection() {
     syncUtmParamsFromUrl(window.location.search)
   }, [])
 
+  const allCourseOptions = useMemo<CourseOption[]>(() => {
+    return formCourseGroups.flatMap((group) => group.options)
+  }, [])
+
   const courseLookup = useMemo(() => {
     const map = new Map<string, string>()
-    formCourseGroups.forEach((group) => {
-      group.options.forEach((item) => {
-        map.set(item.value, item.label)
-      })
+    allCourseOptions.forEach((item) => {
+      map.set(item.value, item.label)
     })
     return map
-  }, [])
+  }, [allCourseOptions])
+
+  const courseOptionsByType = useMemo<Record<CourseType, CourseOption[]>>(() => {
+    return {
+      graduacao: allCourseOptions.filter((item) => {
+        return item.value.startsWith('graduacao-') || item.value.startsWith('tec-')
+      }),
+      pos: allCourseOptions.filter((item) => item.value.startsWith('pos-')),
+    }
+  }, [allCourseOptions])
+
+  const availableCourses = useMemo(() => {
+    if (!courseType) return []
+    return courseOptionsByType[courseType]
+  }, [courseType, courseOptionsByType])
+
+  const filteredCourses = useMemo(() => {
+    const normalized = courseSearch.trim().toLowerCase()
+    if (!normalized) {
+      return availableCourses.slice(0, 20)
+    }
+
+    return availableCourses.filter((item) => {
+      return item.label.toLowerCase().includes(normalized)
+    })
+  }, [availableCourses, courseSearch])
 
   const applyFieldValidation = (field: FieldName, value: string) => {
     const error = validateField(field, value)
@@ -356,10 +399,11 @@ export function HeroSection() {
 
   const validateAllFields = (): FieldErrors => {
     return {
+      courseType: validateCourseType(courseType),
+      course: validateCourse(course),
       fullName: validateFullName(fullName),
       email: validateEmail(email),
       phone: validatePhone(phone),
-      course: validateCourse(course),
     }
   }
 
@@ -369,10 +413,11 @@ export function HeroSection() {
     const errors = validateAllFields()
     setFieldErrors(errors)
     setTouched({
+      courseType: true,
+      course: true,
       fullName: true,
       email: true,
       phone: true,
-      course: true,
     })
 
     const hasErrors = Object.values(errors).some(Boolean)
@@ -391,7 +436,7 @@ export function HeroSection() {
       const trackingParams = { ...storedTrackingParams, ...trackedFromUrl }
       const phoneDigits = normalizePhone(phone)
       const courseLabel = courseLookup.get(course) ?? course
-      const isPostGraduation = isPostGraduationCourse(course)
+      const isPostGraduation = courseType === 'pos' || isPostGraduationCourse(course)
 
       const payload = {
         aluno: '',
@@ -477,7 +522,10 @@ export function HeroSection() {
       setFullName('')
       setEmail('')
       setPhone('')
+      setCourseType('')
       setCourse('')
+      setCourseSearch('')
+      setIsCourseSearchOpen(false)
       setFieldErrors({})
       setTouched(EMPTY_TOUCHED)
     } catch (error) {
@@ -487,6 +535,7 @@ export function HeroSection() {
     }
   }
 
+  const courseTypeInvalid = Boolean(touched.courseType && fieldErrors.courseType)
   const fullNameInvalid = Boolean(touched.fullName && fieldErrors.fullName)
   const emailInvalid = Boolean(touched.email && fieldErrors.email)
   const phoneInvalid = Boolean(touched.phone && fieldErrors.phone)
@@ -535,6 +584,173 @@ export function HeroSection() {
           </p>
 
           <form className="lp-hero-form__fields" onSubmit={handleSubmit} noValidate>
+            <div className="lp-hero-form__row lp-hero-form__row--course">
+              <div className="lp-field-wrap">
+                <div className={`lp-field lp-field--select ${courseTypeInvalid ? 'is-invalid' : ''}`}>
+                  <span className="lp-field__icon" aria-hidden="true">
+                    <GraduationCap size={14} />
+                  </span>
+                  <div className="lp-select-wrapper">
+                    <Select
+                      value={courseType}
+                      onValueChange={(value) => {
+                        const nextType = value as CourseType
+                        setCourseType(nextType)
+                        setCourse('')
+                        setCourseSearch('')
+                        setIsCourseSearchOpen(false)
+
+                        if (touched.courseType) {
+                          applyFieldValidation('courseType', nextType)
+                        }
+
+                        if (touched.course) {
+                          applyFieldValidation('course', '')
+                        }
+                      }}
+                    >
+                      <SelectTrigger
+                        className="lp-select-trigger"
+                        aria-label="Selecione o tipo de curso"
+                        aria-invalid={courseTypeInvalid}
+                        aria-describedby={courseTypeInvalid ? 'hero-course-type-error' : undefined}
+                        onBlur={() => {
+                          markTouched('courseType')
+                          applyFieldValidation('courseType', courseType)
+                        }}
+                      >
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent className="lp-select-content" position="popper" sideOffset={6}>
+                        {COURSE_TYPE_OPTIONS.map((item) => (
+                          <SelectItem key={item.value} value={item.value}>
+                            {item.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                {courseTypeInvalid ? (
+                  <span className="lp-field__error" id="hero-course-type-error">
+                    {fieldErrors.courseType}
+                  </span>
+                ) : null}
+              </div>
+
+              <div className="lp-field-wrap lp-course-search-wrap">
+                <label
+                  className={`lp-field ${courseInvalid ? 'is-invalid' : ''} ${
+                    !courseType ? 'is-disabled' : ''
+                  }`}
+                >
+                  <span className="lp-field__icon" aria-hidden="true">
+                    <Search size={14} />
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Selecione seu curso"
+                    value={courseSearch}
+                    disabled={!courseType}
+                    autoComplete="off"
+                    aria-invalid={courseInvalid}
+                    aria-describedby={courseInvalid ? 'hero-course-error' : undefined}
+                    onFocus={() => {
+                      if (courseType) {
+                        setIsCourseSearchOpen(true)
+                      }
+                    }}
+                    onBlur={() => {
+                      markTouched('course')
+                      window.setTimeout(() => {
+                        setIsCourseSearchOpen(false)
+
+                        const normalizedSearch = courseSearch.trim().toLowerCase()
+                        if (!course && normalizedSearch) {
+                          const exactMatch = availableCourses.find(
+                            (item) => item.label.toLowerCase() === normalizedSearch,
+                          )
+                          if (exactMatch) {
+                            setCourse(exactMatch.value)
+                            setCourseSearch(exactMatch.label)
+                            applyFieldValidation('course', exactMatch.value)
+                            return
+                          }
+                        }
+
+                        applyFieldValidation('course', course)
+                      }, 110)
+                    }}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      setCourseSearch(value)
+                      setIsCourseSearchOpen(Boolean(courseType))
+
+                      const normalizedValue = value.trim().toLowerCase()
+                      const selectedCourseLabel = course ? (courseLookup.get(course) ?? '') : ''
+
+                      if (!normalizedValue) {
+                        if (course) {
+                          setCourse('')
+                        }
+                        if (touched.course) {
+                          applyFieldValidation('course', '')
+                        }
+                        return
+                      }
+
+                      if (
+                        course &&
+                        selectedCourseLabel &&
+                        selectedCourseLabel.toLowerCase() !== normalizedValue
+                      ) {
+                        setCourse('')
+                        if (touched.course) {
+                          applyFieldValidation('course', '')
+                        }
+                      }
+                    }}
+                  />
+                </label>
+
+                {isCourseSearchOpen && courseType ? (
+                  <div className="lp-course-search__menu" role="listbox" aria-label="Cursos disponíveis">
+                    {filteredCourses.length > 0 ? (
+                      filteredCourses.map((item) => (
+                        <button
+                          key={item.value}
+                          type="button"
+                          className={`lp-course-search__item ${
+                            course === item.value ? 'is-active' : ''
+                          }`}
+                          onMouseDown={(event) => {
+                            event.preventDefault()
+                          }}
+                          onClick={() => {
+                            setCourse(item.value)
+                            setCourseSearch(item.label)
+                            setIsCourseSearchOpen(false)
+                            markTouched('course')
+                            applyFieldValidation('course', item.value)
+                          }}
+                        >
+                          {item.label}
+                        </button>
+                      ))
+                    ) : (
+                      <span className="lp-course-search__empty">Nenhum curso encontrado.</span>
+                    )}
+                  </div>
+                ) : null}
+
+                {courseInvalid ? (
+                  <span className="lp-field__error" id="hero-course-error">
+                    {fieldErrors.course}
+                  </span>
+                ) : null}
+              </div>
+            </div>
+
             <div className="lp-field-wrap">
               <label className={`lp-field ${fullNameInvalid ? 'is-invalid' : ''}`}>
                 <span className="lp-field__icon" aria-hidden="true">
@@ -568,120 +784,73 @@ export function HeroSection() {
               ) : null}
             </div>
 
-            <div className="lp-field-wrap">
-              <label className={`lp-field ${emailInvalid ? 'is-invalid' : ''}`}>
-                <span className="lp-field__icon" aria-hidden="true">
-                  <Mail size={14} />
-                </span>
-                <input
-                  type="email"
-                  placeholder="Seu melhor e-mail"
-                  value={email}
-                  autoComplete="email"
-                  maxLength={120}
-                  aria-invalid={emailInvalid}
-                  aria-describedby={emailInvalid ? 'hero-email-error' : undefined}
-                  onBlur={() => {
-                    markTouched('email')
-                    applyFieldValidation('email', email)
-                  }}
-                  onChange={(event) => {
-                    const value = event.target.value
-                    setEmail(value)
-                    if (touched.email) {
-                      applyFieldValidation('email', value)
-                    }
-                  }}
-                />
-              </label>
-              {emailInvalid ? (
-                <span className="lp-field__error" id="hero-email-error">
-                  {fieldErrors.email}
-                </span>
-              ) : null}
-            </div>
-
-            <div className="lp-field-wrap">
-              <label className={`lp-field ${phoneInvalid ? 'is-invalid' : ''}`}>
-                <span className="lp-field__icon" aria-hidden="true">
-                  <Phone size={14} />
-                </span>
-                <input
-                  type="tel"
-                  inputMode="numeric"
-                  placeholder="(11) 99999-9999"
-                  value={phone}
-                  autoComplete="tel-national"
-                  maxLength={15}
-                  aria-invalid={phoneInvalid}
-                  aria-describedby={phoneInvalid ? 'hero-phone-error' : undefined}
-                  onBlur={() => {
-                    markTouched('phone')
-                    applyFieldValidation('phone', phone)
-                  }}
-                  onChange={(event) => {
-                    const masked = formatPhoneMask(event.target.value)
-                    setPhone(masked)
-                    if (touched.phone) {
-                      applyFieldValidation('phone', masked)
-                    }
-                  }}
-                />
-              </label>
-              {phoneInvalid ? (
-                <span className="lp-field__error" id="hero-phone-error">
-                  {fieldErrors.phone}
-                </span>
-              ) : null}
-            </div>
-
-            <div className="lp-field-wrap">
-              <div className={`lp-field lp-field--select ${courseInvalid ? 'is-invalid' : ''}`}>
-                <span className="lp-field__icon" aria-hidden="true">
-                  <GraduationCap size={14} />
-                </span>
-                <div className="lp-select-wrapper">
-                  <Select
-                    value={course}
-                    onValueChange={(value) => {
-                      setCourse(value)
-                      if (touched.course) {
-                        applyFieldValidation('course', value)
+            <div className="lp-hero-form__row lp-hero-form__row--contact">
+              <div className="lp-field-wrap">
+                <label className={`lp-field ${emailInvalid ? 'is-invalid' : ''}`}>
+                  <span className="lp-field__icon" aria-hidden="true">
+                    <Mail size={14} />
+                  </span>
+                  <input
+                    type="email"
+                    placeholder="Seu melhor e-mail"
+                    value={email}
+                    autoComplete="email"
+                    maxLength={120}
+                    aria-invalid={emailInvalid}
+                    aria-describedby={emailInvalid ? 'hero-email-error' : undefined}
+                    onBlur={() => {
+                      markTouched('email')
+                      applyFieldValidation('email', email)
+                    }}
+                    onChange={(event) => {
+                      const value = event.target.value
+                      setEmail(value)
+                      if (touched.email) {
+                        applyFieldValidation('email', value)
                       }
                     }}
-                  >
-                    <SelectTrigger
-                      className="lp-select-trigger"
-                      aria-label="Selecione seu curso"
-                      aria-invalid={courseInvalid}
-                      aria-describedby={courseInvalid ? 'hero-course-error' : undefined}
-                      onBlur={() => {
-                        markTouched('course')
-                        applyFieldValidation('course', course)
-                      }}
-                    >
-                      <SelectValue placeholder="Selecione seu curso" />
-                    </SelectTrigger>
-                    <SelectContent className="lp-select-content" position="popper" sideOffset={6}>
-                      {formCourseGroups.map((group) => (
-                        <SelectGroup key={group.label}>
-                          <SelectLabel>{group.label}</SelectLabel>
-                          {group.options.map((item) => (
-                            <SelectItem key={item.value} value={item.value}>
-                              {item.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                  />
+                </label>
+                {emailInvalid ? (
+                  <span className="lp-field__error" id="hero-email-error">
+                    {fieldErrors.email}
+                  </span>
+                ) : null}
               </div>
-              {courseInvalid ? (
-                <span className="lp-field__error" id="hero-course-error">
-                  {fieldErrors.course}
-                </span>
-              ) : null}
+
+              <div className="lp-field-wrap">
+                <label className={`lp-field ${phoneInvalid ? 'is-invalid' : ''}`}>
+                  <span className="lp-field__icon" aria-hidden="true">
+                    <Phone size={14} />
+                  </span>
+                  <input
+                    type="tel"
+                    inputMode="numeric"
+                    placeholder="(11) 99999-9999"
+                    value={phone}
+                    autoComplete="tel-national"
+                    maxLength={15}
+                    aria-invalid={phoneInvalid}
+                    aria-describedby={phoneInvalid ? 'hero-phone-error' : undefined}
+                    onBlur={() => {
+                      markTouched('phone')
+                      applyFieldValidation('phone', phone)
+                    }}
+                    onChange={(event) => {
+                      const masked = formatPhoneMask(event.target.value)
+                      setPhone(masked)
+                      if (touched.phone) {
+                        applyFieldValidation('phone', masked)
+                      }
+                    }}
+                  />
+                </label>
+                {phoneInvalid ? (
+                  <span className="lp-field__error" id="hero-phone-error">
+                    {fieldErrors.phone}
+                  </span>
+                ) : null}
+              </div>
             </div>
 
             <button
@@ -708,4 +877,3 @@ export function HeroSection() {
     </section>
   )
 }
-

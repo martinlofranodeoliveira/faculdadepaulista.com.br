@@ -6,7 +6,7 @@
   --lp-muted: #7f8ea4;
   --lp-dark: #211b19;
   --lp-dark-2: #0f0a0a;
-  --lp-brand: #ff1111;
+  --lp-brand: #C50002;
   --lp-brand-2: #ff3b1d;
   --lp-border: #e0d7d7;
 }
@@ -142,13 +142,13 @@ section[id] {
 
 .lp-header__cta {
   align-items: center;
-  background: #fe0000;
+  background: #C50002;
   border-radius: 8px;
   box-shadow: 0 0 15px rgba(254, 0, 0, 0.3);
   color: #fff;
   display: inline-flex;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 500;
   justify-content: center;
   line-height: 20px;
   margin-left: auto;
@@ -266,7 +266,7 @@ section[id] {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   min-height: 0;
   overflow: hidden;
-  padding: 25px 25px 49px;
+  padding: 32px;
   position: relative;
 }
 
@@ -306,6 +306,24 @@ section[id] {
   margin-top: 16px;
 }
 
+.lp-hero-form__row {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+}
+
+.lp-hero-form__row > .lp-field-wrap {
+  min-width: 0;
+}
+
+.lp-hero-form__row--course {
+  grid-template-columns: 130px minmax(0, 1fr);
+}
+
+.lp-hero-form__row--contact {
+  grid-template-columns: minmax(0, 1fr) 163px;
+}
+
 .lp-field-wrap {
   display: flex;
   flex-direction: column;
@@ -334,6 +352,10 @@ section[id] {
   color: #ff5c5c;
 }
 
+.lp-field.is-disabled {
+  background: #f3f3f3;
+}
+
 .lp-field input {
   appearance: none;
   background: transparent;
@@ -345,6 +367,11 @@ section[id] {
   height: 100%;
   line-height: 20px;
   outline: none;
+}
+
+.lp-field input:disabled {
+  color: #9b9b9b;
+  cursor: not-allowed;
 }
 
 .lp-field input::placeholder {
@@ -369,6 +396,51 @@ section[id] {
 
 .lp-select-wrapper {
   flex: 1;
+}
+
+.lp-course-search-wrap {
+  position: relative;
+}
+
+.lp-course-search__menu {
+  background: #fff;
+  border: 1px solid #d8d8d8;
+  border-radius: 8px;
+  box-shadow: 0 12px 24px -16px rgba(0, 0, 0, 0.35);
+  display: grid;
+  left: 0;
+  margin-top: 4px;
+  max-height: 230px;
+  overflow-y: auto;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 140;
+}
+
+.lp-course-search__item {
+  background: transparent;
+  border: 0;
+  color: #2f2a2a;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  min-height: 36px;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.lp-course-search__item:hover,
+.lp-course-search__item.is-active {
+  background: #f3f4f6;
+}
+
+.lp-course-search__empty {
+  color: #6b6c6f;
+  display: block;
+  font-size: 13px;
+  padding: 10px 12px;
 }
 
 .lp-field .ui-select-trigger {
@@ -1765,13 +1837,13 @@ section[id] {
 
   .lp-header__cta-mobile {
     align-items: center;
-    background: #fe0000;
+    background: #C50002;
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(254, 0, 0, 0.3);
     color: #fff;
     display: inline-flex;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 500;
     justify-content: center;
     line-height: 20px;
     padding: 10px 20px;
@@ -2019,6 +2091,14 @@ section[id] {
 
   .lp-hero-form {
     padding: 20px 16px 16px;
+  }
+
+  .lp-hero-form__row--course {
+    grid-template-columns: 118px minmax(0, 1fr);
+  }
+
+  .lp-hero-form__row--contact {
+    grid-template-columns: minmax(0, 1fr) 145px;
   }
 
   .lp-field {

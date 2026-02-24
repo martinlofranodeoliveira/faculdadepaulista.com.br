@@ -1,10 +1,10 @@
-# Bloco para homologação de faculdadepaulista.com.br
-# Requer que o snippet (static_landing) já exista no Caddyfile principal.
+# Homolog block for faculdadepaulista.com.br.
+# Requires the (static_landing) snippet in the main Caddyfile.
 
 homolog.faculdadepaulista.com.br {
   root * /www/wwwroot/faculdadepaulista.com.br/dist
 
-  # Bloqueio de indexação durante homologação
+  # Keep homolog out of indexing.
   header {
     X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
   }
@@ -12,11 +12,23 @@ homolog.faculdadepaulista.com.br {
   route {
     @robots path /robots.txt /robots.txt/*
     rewrite @robots /robots-homolog.txt
+
+    # Same-origin proxy for CRM (prevents browser CORS failures).
+    handle_path /crm-api/* {
+      rewrite * /api{path}
+      reverse_proxy https://crmfasul.com.br
+    }
+
+    # Same-origin proxy for post-graduation courses API.
+    handle_path /fasul-courses-api/* {
+      reverse_proxy https://www.fasuleducacional.edu.br
+    }
+
     import static_landing
   }
 }
 
-# Opcional: enquanto não for go-live, redireciona domínio principal para homolog
+# Optional: before go-live, redirect root domain to homolog.
 # faculdadepaulista.com.br {
 #   redir https://homolog.faculdadepaulista.com.br{uri} 302
 # }

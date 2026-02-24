@@ -21,14 +21,10 @@ import { formCourseGroups, heroFeatures } from '../data'
 
 const CRM_LEAD_ENDPOINT =
   import.meta.env.VITE_CRM_LEAD_ENDPOINT ??
-  (import.meta.env.DEV
-    ? '/crm-api/administrativo/leads/adicionar'
-    : 'https://crmfasul.com.br/api/administrativo/leads/adicionar')
+  '/crm-api/administrativo/leads/adicionar'
 const POS_COURSES_ENDPOINT =
   import.meta.env.VITE_POS_COURSES_ENDPOINT ??
-  (import.meta.env.DEV
-    ? '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025.php'
-    : 'https://www.fasuleducacional.edu.br/rotinas/cursos-ia-format-texto-2025.php')
+  '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025.php'
 const CRM_NOT_IDENTIFIED = 'Não identificado'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i

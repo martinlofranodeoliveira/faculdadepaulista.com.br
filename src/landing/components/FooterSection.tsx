@@ -1,4 +1,4 @@
-import { Box, Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react'
+import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react'
 
 import { assets } from '../data'
 
@@ -8,10 +8,11 @@ export function FooterSection() {
       <div className="lp-shell lp-footer__grid">
         <article>
           <div className="lp-brand lp-brand--small">
-            <span className="lp-brand__icon lp-brand__icon--small">
-              <Box size={11} strokeWidth={2} />
-            </span>
-            <span>Faculdade Paulista</span>
+            <img
+              className="lp-brand__logo lp-brand__logo--footer"
+              src="/landing/logo-faculdade-paulista.webp"
+              alt="Faculdade Paulista"
+            />
           </div>
           <p>
             Excelência no ensino superior com foco em inovação, empregabilidade e
@@ -66,7 +67,7 @@ export function FooterSection() {
       </div>
 
       <div className="lp-shell lp-footer__bottom">
-        <span>C 2026 Faculdade Paulista. Todos os direitos reservados.</span>
+        <span>© 2026 Faculdade Paulista. Todos os direitos reservados.</span>
         <div>
           <a href="#inicio">Política de Privacidade</a>
           <a href="#inicio">Termos de Uso</a>

@@ -498,19 +498,19 @@ export function HeroSection() {
         <article className="lp-hero__content">
           <p className="lp-pill">
             <span className="lp-pill__dot" />
-            MATRICULAS ABERTAS 2026
+            12 VAGAS RESTANTES | TURMA 2026
           </p>
 
           <h1>
-            FACA SUA MATRICULA E
-            <span> GANHE +3 POS-GRADUACOES</span>
+            Faça sua matrícula e  <br />
+            <span> Ganhe 3 Pós-Graduações</span>
             <br />
-            INCLUIDAS NA SUA JORNADA
+            Incluídas na sua jornada!!!
           </h1>
 
           <p className="lp-hero__description">
-            Os melhores cursos de Graduacao e Pos-graduacao com Nota Maxima no MEC (5)
-            pra voce estudar onde e quando quiser com Suporte e Tutores Especialistas
+            Os melhores cursos de Graduação e Pós-graduação com Nota Máxima no MEC (5)
+            para você estudar onde e quando quiser com suporte e tutores especialistas
             para guiar seu aprendizado.
           </p>
 
@@ -528,7 +528,7 @@ export function HeroSection() {
 
         <article className="lp-hero-form" id="inscricao">
           <div className="lp-hero-form__line" />
-          <h2>FACA SEU CADASTRO PARA GARANTIR A CONDICAO ESPECIAL</h2>
+          <h2>PREENCHA O FORMULÁRIO E SELECIONE O CURSO QUE VOCÊ DESEJA</h2>
           <p>
             Preencha seus dados abaixo e aguarde uma de nossas Consultoras Especialistas
             entrar em contato.
@@ -702,7 +702,7 @@ export function HeroSection() {
             </small>
           ) : null}
 
-          <small>Ao se inscrever, voce concorda com nossa Politica de Privacidade.</small>
+          <small>Ao se inscrever, você concorda com nossa Política de Privacidade.</small>
         </article>
       </div>
     </section>

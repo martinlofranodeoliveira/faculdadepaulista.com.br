@@ -134,7 +134,7 @@ export function FutureSection() {
                 todas as fases da sua jornada.
               </p>
             </div>
-            <img src={assets.reclameAquiOtimo} alt="Selo Reclame Aqui Otimo" />
+            <img src={assets.reclameAquiOtimo} alt="Selo Reclame Aqui Ótimo" />
           </article>
 
           <article className="lp-future__prof-card">

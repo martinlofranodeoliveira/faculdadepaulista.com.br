@@ -77,31 +77,33 @@ export const formCourseGroups: FormCourseGroup[] = [
   {
     label: 'Graduação',
     options: [
-      { value: 'graduacao-psicologia', label: 'Psicologia' },
-      { value: 'graduacao-administracao', label: 'Administração' },
-      { value: 'graduacao-enfermagem', label: 'Enfermagem' },
-      { value: 'graduacao-direito', label: 'Direito' },
-      { value: 'graduacao-pedagogia', label: 'Pedagogia' },
-      { value: 'graduacao-fisioterapia', label: 'Fisioterapia' },
-    ],
-  },
-  {
-    label: 'Pós-graduação EAD',
-    options: [
-      { value: 'pos-psicologia-clinica', label: 'Psicologia Clínica' },
-      { value: 'pos-gestao-hospitalar', label: 'Gestão Hospitalar' },
-      { value: 'pos-neuropsicopedagogia', label: 'Neuropsicopedagogia' },
-      { value: 'pos-gestao-rh', label: 'Gestão de RH' },
-      { value: 'pos-direito-trabalho', label: 'Direito do Trabalho' },
-    ],
-  },
-  {
-    label: 'Tecnólogos',
-    options: [
-      { value: 'tec-gestao-comercial', label: 'Gestão Comercial' },
-      { value: 'tec-logistica', label: 'Logística' },
-      { value: 'tec-rh', label: 'Gestão de RH' },
-      { value: 'tec-processos-gerenciais', label: 'Processos Gerenciais' },
+      {
+        value: 'graduacao-analise-desenvolvimento-sistemas',
+        label: 'Análise e Desenvolvimento de Sistemas EAD',
+      },
+      {
+        value: 'graduacao-gestao-tecnologia-informacao',
+        label: 'Gestão da Tecnologia da Informação EAD',
+      },
+      { value: 'graduacao-marketing-digital', label: 'Marketing Digital EAD' },
+      { value: 'graduacao-administracao', label: 'Administração EAD' },
+      { value: 'graduacao-enfermagem', label: 'Enfermagem Presencial' },
+      { value: 'graduacao-psicologia', label: 'Psicologia Presencial' },
+      { value: 'graduacao-ciencias-contabeis', label: 'Ciências Contábeis EAD' },
+      { value: 'graduacao-processos-gerenciais', label: 'Processos Gerenciais EAD' },
+      {
+        value: 'graduacao-gestao-recursos-humanos',
+        label: 'Gestão de Recursos Humanos EAD',
+      },
+      { value: 'graduacao-logistica', label: 'Logística EAD' },
+      { value: 'graduacao-marketing', label: 'Marketing EAD' },
+      { value: 'graduacao-gestao-comercial', label: 'Gestão Comercial EAD' },
+      { value: 'graduacao-gestao-financeira', label: 'Gestão Financeira EAD' },
+      { value: 'graduacao-negocios-imobiliarios', label: 'Negócios Imobiliários EAD' },
+      { value: 'graduacao-pedagogia', label: 'Pedagogia (SEMIPRESENCIAL)' },
+      { value: 'graduacao-servico-social', label: 'Serviço Social (SEMIPRESENCIAL)' },
+      { value: 'graduacao-gestao-publica', label: 'Gestão Pública EAD' },
+      { value: 'graduacao-seguranca-publica', label: 'Segurança Pública EAD' },
     ],
   },
 ]

@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+﻿import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   ArrowRight,
   GraduationCap,
@@ -24,6 +24,11 @@ const CRM_LEAD_ENDPOINT =
   (import.meta.env.DEV
     ? '/crm-api/administrativo/leads/adicionar'
     : 'https://crmfasul.com.br/api/administrativo/leads/adicionar')
+const POS_COURSES_ENDPOINT =
+  import.meta.env.VITE_POS_COURSES_ENDPOINT ??
+  (import.meta.env.DEV
+    ? '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025.php'
+    : 'https://www.fasuleducacional.edu.br/rotinas/cursos-ia-format-texto-2025.php')
 const CRM_NOT_IDENTIFIED = 'Não identificado'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i
@@ -31,7 +36,7 @@ const NAME_REGEX = /^[\p{L}\s.'-]+$/u
 
 type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error'
 type CourseType = 'graduacao' | 'pos'
-type CourseOption = { value: string; label: string }
+type CourseOption = { value: string; label: string; url?: string }
 type FieldName = 'courseType' | 'course' | 'fullName' | 'email' | 'phone'
 type FieldErrors = Partial<Record<FieldName, string>>
 type Touched = Record<FieldName, boolean>
@@ -46,8 +51,69 @@ const EMPTY_TOUCHED: Touched = {
 
 const COURSE_TYPE_OPTIONS: Array<{ value: CourseType; label: string }> = [
   { value: 'graduacao', label: 'Graduação' },
-  { value: 'pos', label: 'Pós-graduação' },
+  { value: 'pos', label: 'Pós-graduação EAD' },
 ]
+
+function normalizeComparableText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+}
+
+function toSlug(value: string): string {
+  return normalizeComparableText(value)
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function parsePostGraduationCourses(raw: string): CourseOption[] {
+  const blocks = raw.split(/\r?\n---\r?\n/g)
+  const unique = new Map<string, CourseOption>()
+
+  blocks.forEach((block) => {
+    const disponibilidade = block.match(/Disponibilidade:\s*(.+)/i)?.[1]?.trim()
+    const nivel = block.match(/N[ií]vel:\s*(.+)/i)?.[1]?.trim()
+    const nome = block.match(/Nome do Curso:\s*(.+)/i)?.[1]?.trim()
+    const url = block.match(/Url Curso:\s*(.+)/i)?.[1]?.trim()
+
+    if (!disponibilidade || !nivel || !nome || !url) return
+
+    const disponibilidadeNormalizada = normalizeComparableText(disponibilidade)
+    const nivelNormalizado = normalizeComparableText(nivel)
+
+    if (!disponibilidadeNormalizada.includes('disponivel')) return
+    if (!nivelNormalizado.includes('pos-graduacao') && !nivelNormalizado.includes('pos graduacao')) {
+      return
+    }
+
+    const nomeLimpo = nome.replace(/\s+/g, ' ').trim()
+
+    let slug = ''
+    try {
+      const parsedUrl = new URL(url)
+      const segments = parsedUrl.pathname.split('/').filter(Boolean)
+      slug = segments[segments.length - 1] ?? ''
+    } catch {
+      slug = ''
+    }
+
+    if (!slug) slug = toSlug(nomeLimpo)
+    if (!slug) return
+
+    const value = `pos-${slug}`
+    if (!unique.has(value)) {
+      unique.set(value, {
+        value,
+        label: nomeLimpo,
+        url,
+      })
+    }
+  })
+
+  return [...unique.values()].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'))
+}
 
 function MetroTrainIcon() {
   return (
@@ -342,6 +408,11 @@ export function HeroSection() {
   const [course, setCourse] = useState('')
   const [courseSearch, setCourseSearch] = useState('')
   const [isCourseSearchOpen, setIsCourseSearchOpen] = useState(false)
+  const [postCourseOptions, setPostCourseOptions] = useState<CourseOption[]>([])
+  const [postCourseStatus, setPostCourseStatus] = useState<'idle' | 'loading' | 'success' | 'error'>(
+    'idle',
+  )
+  const [postCourseErrorMessage, setPostCourseErrorMessage] = useState('')
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [touched, setTouched] = useState<Touched>(EMPTY_TOUCHED)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
@@ -350,6 +421,42 @@ export function HeroSection() {
   useEffect(() => {
     syncUtmParamsFromUrl(window.location.search)
   }, [])
+
+  const loadPostCourses = useCallback(async () => {
+    setPostCourseStatus('loading')
+    setPostCourseErrorMessage('')
+
+    try {
+      const response = await fetch(POS_COURSES_ENDPOINT, {
+        method: 'GET',
+      })
+
+      if (!response.ok) {
+        throw new Error(`Post courses request failed with status ${response.status}`)
+      }
+
+      const rawText = await response.text()
+      const parsedCourses = parsePostGraduationCourses(rawText)
+
+      if (!parsedCourses.length) {
+        throw new Error('No post-graduation courses were parsed from the API response')
+      }
+
+      setPostCourseOptions(parsedCourses)
+      setPostCourseStatus('success')
+    } catch (error) {
+      console.error('Erro ao carregar cursos de pós-graduação da API:', error)
+      setPostCourseOptions([])
+      setPostCourseStatus('error')
+      setPostCourseErrorMessage(
+        'Não foi possível carregar os cursos de Pós-graduação no momento.',
+      )
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadPostCourses()
+  }, [loadPostCourses])
 
   const allCourseOptions = useMemo<CourseOption[]>(() => {
     return formCourseGroups.flatMap((group) => group.options)
@@ -360,17 +467,18 @@ export function HeroSection() {
     allCourseOptions.forEach((item) => {
       map.set(item.value, item.label)
     })
+    postCourseOptions.forEach((item) => {
+      map.set(item.value, item.label)
+    })
     return map
-  }, [allCourseOptions])
+  }, [allCourseOptions, postCourseOptions])
 
   const courseOptionsByType = useMemo<Record<CourseType, CourseOption[]>>(() => {
     return {
-      graduacao: allCourseOptions.filter((item) => {
-        return item.value.startsWith('graduacao-') || item.value.startsWith('tec-')
-      }),
-      pos: allCourseOptions.filter((item) => item.value.startsWith('pos-')),
+      graduacao: allCourseOptions,
+      pos: postCourseOptions,
     }
-  }, [allCourseOptions])
+  }, [allCourseOptions, postCourseOptions])
 
   const availableCourses = useMemo(() => {
     if (!courseType) return []
@@ -378,15 +486,37 @@ export function HeroSection() {
   }, [courseType, courseOptionsByType])
 
   const filteredCourses = useMemo(() => {
-    const normalized = courseSearch.trim().toLowerCase()
-    if (!normalized) {
-      return availableCourses.slice(0, 20)
-    }
-
+    const normalized = normalizeComparableText(courseSearch)
     return availableCourses.filter((item) => {
-      return item.label.toLowerCase().includes(normalized)
+      return normalizeComparableText(item.label).includes(normalized)
     })
   }, [availableCourses, courseSearch])
+
+  const COURSE_SCROLL_PAGE_SIZE = 24
+  const [visibleCourseCount, setVisibleCourseCount] = useState(COURSE_SCROLL_PAGE_SIZE)
+
+  useEffect(() => {
+    setVisibleCourseCount(COURSE_SCROLL_PAGE_SIZE)
+  }, [courseType, courseSearch])
+
+  const visibleCourses = useMemo(() => {
+    return filteredCourses.slice(0, visibleCourseCount)
+  }, [filteredCourses, visibleCourseCount])
+
+  const canLoadMoreVisibleCourses = visibleCourses.length < filteredCourses.length
+
+  const handleCourseSearchMenuScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
+    if (courseType !== 'pos') return
+    if (!canLoadMoreVisibleCourses) return
+
+    const target = event.currentTarget
+    const remaining = target.scrollHeight - (target.scrollTop + target.clientHeight)
+    if (remaining > 24) return
+
+    setVisibleCourseCount((current) =>
+      Math.min(current + COURSE_SCROLL_PAGE_SIZE, filteredCourses.length),
+    )
+  }
 
   const applyFieldValidation = (field: FieldName, value: string) => {
     const error = validateField(field, value)
@@ -445,7 +575,7 @@ export function HeroSection() {
         telefone: phoneDigits,
         empresa: import.meta.env.VITE_CRM_EMPRESA ?? 'Faculdade Paulista',
         matricula: '',
-        idCurso: course,
+        idCurso: 0,
         curso: courseLabel,
         etapa: isPostGraduation
           ? import.meta.env.VITE_CRM_ETAPA_POS ?? 'INSCRITO_POS'
@@ -540,6 +670,8 @@ export function HeroSection() {
   const emailInvalid = Boolean(touched.email && fieldErrors.email)
   const phoneInvalid = Boolean(touched.phone && fieldErrors.phone)
   const courseInvalid = Boolean(touched.course && fieldErrors.course)
+  const isPostCoursesLoading = courseType === 'pos' && postCourseStatus === 'loading'
+  const isCourseSearchDisabled = !courseType || isPostCoursesLoading
 
   return (
     <section className="lp-hero" id="inicio">
@@ -619,7 +751,7 @@ export function HeroSection() {
                           applyFieldValidation('courseType', courseType)
                         }}
                       >
-                        <SelectValue placeholder="Selecione" />
+                        <SelectValue className="lp-select-value" placeholder="Selecione" />
                       </SelectTrigger>
                       <SelectContent className="lp-select-content" position="popper" sideOffset={6}>
                         {COURSE_TYPE_OPTIONS.map((item) => (
@@ -641,7 +773,7 @@ export function HeroSection() {
               <div className="lp-field-wrap lp-course-search-wrap">
                 <label
                   className={`lp-field ${courseInvalid ? 'is-invalid' : ''} ${
-                    !courseType ? 'is-disabled' : ''
+                    isCourseSearchDisabled ? 'is-disabled' : ''
                   }`}
                 >
                   <span className="lp-field__icon" aria-hidden="true">
@@ -651,7 +783,7 @@ export function HeroSection() {
                     type="text"
                     placeholder="Selecione seu curso"
                     value={courseSearch}
-                    disabled={!courseType}
+                    disabled={isCourseSearchDisabled}
                     autoComplete="off"
                     aria-invalid={courseInvalid}
                     aria-describedby={courseInvalid ? 'hero-course-error' : undefined}
@@ -665,10 +797,10 @@ export function HeroSection() {
                       window.setTimeout(() => {
                         setIsCourseSearchOpen(false)
 
-                        const normalizedSearch = courseSearch.trim().toLowerCase()
+                        const normalizedSearch = normalizeComparableText(courseSearch)
                         if (!course && normalizedSearch) {
                           const exactMatch = availableCourses.find(
-                            (item) => item.label.toLowerCase() === normalizedSearch,
+                            (item) => normalizeComparableText(item.label) === normalizedSearch,
                           )
                           if (exactMatch) {
                             setCourse(exactMatch.value)
@@ -686,7 +818,7 @@ export function HeroSection() {
                       setCourseSearch(value)
                       setIsCourseSearchOpen(Boolean(courseType))
 
-                      const normalizedValue = value.trim().toLowerCase()
+                      const normalizedValue = normalizeComparableText(value)
                       const selectedCourseLabel = course ? (courseLookup.get(course) ?? '') : ''
 
                       if (!normalizedValue) {
@@ -702,7 +834,7 @@ export function HeroSection() {
                       if (
                         course &&
                         selectedCourseLabel &&
-                        selectedCourseLabel.toLowerCase() !== normalizedValue
+                        normalizeComparableText(selectedCourseLabel) !== normalizedValue
                       ) {
                         setCourse('')
                         if (touched.course) {
@@ -714,9 +846,34 @@ export function HeroSection() {
                 </label>
 
                 {isCourseSearchOpen && courseType ? (
-                  <div className="lp-course-search__menu" role="listbox" aria-label="Cursos disponíveis">
-                    {filteredCourses.length > 0 ? (
-                      filteredCourses.map((item) => (
+                  <div
+                    className="lp-course-search__menu"
+                    role="listbox"
+                    aria-label="Cursos disponíveis"
+                    onScroll={handleCourseSearchMenuScroll}
+                  >
+                    {courseType === 'pos' && postCourseStatus === 'loading' ? (
+                      <span className="lp-course-search__empty">
+                        Carregando cursos de Pós-graduação...
+                      </span>
+                    ) : courseType === 'pos' && postCourseStatus === 'error' ? (
+                      <div className="lp-course-search__error">
+                        <span className="lp-course-search__empty">{postCourseErrorMessage}</span>
+                        <button
+                          type="button"
+                          className="lp-course-search__retry"
+                          onMouseDown={(event) => {
+                            event.preventDefault()
+                          }}
+                          onClick={() => {
+                            void loadPostCourses()
+                          }}
+                        >
+                          Tentar novamente
+                        </button>
+                      </div>
+                    ) : visibleCourses.length > 0 ? (
+                      visibleCourses.map((item) => (
                         <button
                           key={item.value}
                           type="button"
@@ -740,6 +897,12 @@ export function HeroSection() {
                     ) : (
                       <span className="lp-course-search__empty">Nenhum curso encontrado.</span>
                     )}
+
+                    {courseType === 'pos' && canLoadMoreVisibleCourses ? (
+                      <span className="lp-course-search__empty lp-course-search__more">
+                        Role para carregar mais cursos...
+                      </span>
+                    ) : null}
                   </div>
                 ) : null}
 

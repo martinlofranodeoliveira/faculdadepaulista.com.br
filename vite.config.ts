@@ -41,6 +41,12 @@ export default defineConfig({
           })
         },
       },
+      "/fasul-courses-api": {
+        target: "https://www.fasuleducacional.edu.br",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/fasul-courses-api/, ""),
+      },
     },
   },
 })

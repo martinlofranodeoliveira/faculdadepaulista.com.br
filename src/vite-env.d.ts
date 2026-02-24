@@ -14,6 +14,7 @@ interface ImportMetaEnv {
   readonly VITE_CRM_FONTE_TEXTO?: string
   readonly VITE_CRM_ORIGEM?: string
   readonly VITE_CRM_POLO?: string
+  readonly VITE_POS_COURSES_ENDPOINT?: string
 }
 
 interface ImportMeta {

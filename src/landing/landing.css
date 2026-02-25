@@ -1692,6 +1692,22 @@ section[id] {
   width: min(100%, 327px);
 }
 
+.lp-pos-banner {
+  background: #ffffff;
+  padding: 0 0 clamp(22px, 2.6vw, 30px);
+}
+
+.lp-pos-banner picture {
+  display: block;
+}
+
+.lp-pos-banner img {
+  border-radius: 45px;
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
 .lp-grad-carousel {
   background: #f3f4f6;
   padding: clamp(34px, 4vw, 52px) 0;
@@ -2668,6 +2684,10 @@ section[id] {
     flex-basis: min(76vw, 306px);
   }
 
+  .lp-pos-banner img {
+    border-radius: 30px;
+  }
+
   .lp-presential__grid {
     grid-template-columns: 1fr;
     max-width: 620px;
@@ -2867,6 +2887,14 @@ section[id] {
 
   .lp-all-grad {
     padding: 30px 0;
+  }
+
+  .lp-pos-banner {
+    padding-bottom: 20px;
+  }
+
+  .lp-pos-banner img {
+    border-radius: 20px;
   }
 
   .lp-all-grad__head h2 {

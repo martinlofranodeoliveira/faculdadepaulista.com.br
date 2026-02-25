@@ -170,7 +170,7 @@ export function AllGraduationsCarouselSection() {
                 </div>
 
                 <a href="#inscricao" className="lp-all-grad-card__cta">
-                  SABER MAIS &gt;
+                  INSCREVA-SE
                 </a>
               </article>
             ))}

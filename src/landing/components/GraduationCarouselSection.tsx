@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ArrowRight, ArrowUpDown } from 'lucide-react'
+import { ArrowUpDown } from 'lucide-react'
 
 const POS_COURSES_ENDPOINT =
   import.meta.env.VITE_POS_COURSES_ENDPOINT ??

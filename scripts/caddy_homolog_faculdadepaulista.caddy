@@ -16,12 +16,18 @@ homolog.faculdadepaulista.com.br {
     # Same-origin proxy for CRM (prevents browser CORS failures).
     handle_path /crm-api/* {
       rewrite * /api{path}
-      reverse_proxy https://crmfasul.com.br
+      reverse_proxy https://crmfasul.com.br {
+        header_up Host crmfasul.com.br
+        # Set token server-side.
+        header_up Authorization "Bearer {$CRMFASUL_BEARER_TOKEN}"
+      }
     }
 
     # Same-origin proxy for post-graduation courses API.
     handle_path /fasul-courses-api/* {
-      reverse_proxy https://www.fasuleducacional.edu.br
+      reverse_proxy https://www.fasuleducacional.edu.br {
+        header_up Host www.fasuleducacional.edu.br
+      }
     }
 
     import static_landing

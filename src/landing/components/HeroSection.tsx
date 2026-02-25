@@ -396,6 +396,12 @@ function normalizeBearerToken(token?: string): string | null {
   return normalized.startsWith('Bearer ') ? normalized : `Bearer ${normalized}`
 }
 
+function parseEnvInteger(value: string | undefined, fallback: number): number {
+  if (!value) return fallback
+  const parsed = Number.parseInt(value, 10)
+  return Number.isFinite(parsed) ? parsed : fallback
+}
+
 export function HeroSection() {
   const [courseType, setCourseType] = useState<CourseType | ''>('')
   const [fullName, setFullName] = useState('')
@@ -563,26 +569,30 @@ export function HeroSection() {
       const phoneDigits = normalizePhone(phone)
       const courseLabel = courseLookup.get(course) ?? course
       const isPostGraduation = courseType === 'pos' || isPostGraduationCourse(course)
+      const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 40)
+      const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 66)
+      const etapaPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_POS, 67)
+      const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 8)
+      const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 8)
+      const statusLead = parseEnvInteger(import.meta.env.VITE_CRM_STATUS_LEAD, 1)
 
       const payload = {
-        aluno: '',
+        aluno: 0,
         nome: fullName.trim(),
         email: email.trim(),
         telefone: phoneDigits,
-        empresa: import.meta.env.VITE_CRM_EMPRESA ?? 'Faculdade Paulista',
+        empresa: empresaId,
         matricula: '',
         idCurso: 0,
         curso: courseLabel,
-        etapa: isPostGraduation
-          ? import.meta.env.VITE_CRM_ETAPA_POS ?? 'INSCRITO_POS'
-          : import.meta.env.VITE_CRM_ETAPA_GRAD ?? 'INSCRITO_GRAD',
+        etapa: isPostGraduation ? etapaPos : etapaGrad,
         cpf: '',
         valor: '',
-        funil: isPostGraduation
-          ? import.meta.env.VITE_CRM_FUNIL_POS ?? 'POSGRADUACAO'
-          : import.meta.env.VITE_CRM_FUNIL_GRAD ?? 'GRADUACAO',
-        status: import.meta.env.VITE_CRM_STATUS_LEAD ?? 'LEAD',
-        observacao: isPostGraduation ? 'inscrição Pós-Graduação' : 'Inscrição Vestibular',
+        funil: isPostGraduation ? funilPos : funilGrad,
+        status: statusLead,
+        observacao: isPostGraduation
+          ? 'PÓS-GRADUAÇÃO: Inscrito'
+          : 'GRADUAÇÃO: Inscrição Vestibular',
         campanha: pickTrackingValue(trackingParams, ['campanha', 'utm_campaign']),
         midia: pickTrackingValue(trackingParams, ['midia', 'utm_medium']),
         fonte: pickTrackingValue(

@@ -18,17 +18,17 @@ export function LandingPage() {
     <main className="lp-page">
       <Header />
       <HeroSection />
-      <WhyChooseSection />
-      <JourneySection />
-      <AppShowcaseSection />
-      <FutureSection />
-      <TestimonialsSection />
       <CourseSection
         id="graduacao"
         title="Graduação"
         description="Explore nossos cursos e encontre o caminho ideal para sua carreira."
         items={graduationCourses}
       />
+      <WhyChooseSection />
+      <JourneySection />
+      <AppShowcaseSection />
+      <FutureSection />
+      <TestimonialsSection />
       <CourseSection
         id="pos-graduacao"
         title="Pós-graduação EAD"

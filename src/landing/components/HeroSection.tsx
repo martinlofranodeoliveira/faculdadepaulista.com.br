@@ -570,22 +570,7 @@ export function HeroSection() {
   return (
     <section className="lp-hero" id="inicio">
       <div className="lp-hero__visual">
-        <div className="lp-shell lp-hero__visual-inner">
-          <article className="lp-hero__content">
-            <p className="lp-pill">TURMAS ABERTAS | 2026</p>
-
-            <h1>
-              <span className="lp-hero__headline-top">FAÇA SUA MATRÍCULA</span>
-              <strong>GANHE</strong>
-            </h1>
-
-            <p className="lp-hero__description">
-              Os melhores cursos de Graduação e Pós-graduação com Nota Máxima no MEC (5)
-              para você estudar onde e quando quiser com suporte e tutores especialistas
-              para guiar seu aprendizado.
-            </p>
-          </article>
-        </div>
+        <div className="lp-shell lp-hero__visual-inner" />
       </div>
 
       <div className="lp-shell lp-hero__form-shell">

@@ -5,7 +5,7 @@ export function Header() {
         <a className="lp-brand lp-brand--header" href="#inicio" aria-label="Faculdade Paulista">
           <img
             className="lp-brand__logo"
-            src="/landing/logo-faculdade-paulista.webp"
+            src="/landing/logo-faculdade-paulista-v2.webp"
             alt="Faculdade Paulista"
           />
         </a>

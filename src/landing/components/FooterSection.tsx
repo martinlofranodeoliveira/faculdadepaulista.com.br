@@ -10,7 +10,7 @@ export function FooterSection() {
           <div className="lp-brand lp-brand--small">
             <img
               className="lp-brand__logo lp-brand__logo--footer"
-              src="/landing/logo-faculdade-paulista.webp"
+              src="/landing/logo-faculdade-paulista-v2.webp"
               alt="Faculdade Paulista"
             />
           </div>

@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-import { emitCoursePrefill } from '../coursePrefill'
+import { prefillCourseAndGoToForm } from '../coursePrefill'
 import { graduationCarouselCourses } from '../data'
 
 function normalizeComparableText(value: string): string {
@@ -44,7 +44,8 @@ export function AllGraduationsCarouselSection() {
   }
 
   const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    if (event.pointerType === 'mouse' && event.button !== 0) return
+    if (event.pointerType === 'mouse') return
+    if (event.button !== 0) return
 
     const track = trackRef.current
     if (!track) return
@@ -109,6 +110,14 @@ export function AllGraduationsCarouselSection() {
   }
 
   const handleClickCapture: React.MouseEventHandler<HTMLDivElement> = (event) => {
+    if (
+      event.target instanceof Element &&
+      event.target.closest('.lp-all-grad-card__cta')
+    ) {
+      dragStateRef.current.moved = false
+      return
+    }
+
     if (dragStateRef.current.moved) {
       event.preventDefault()
       event.stopPropagation()
@@ -173,13 +182,14 @@ export function AllGraduationsCarouselSection() {
                 <a
                   href="#inscricao"
                   className="lp-all-grad-card__cta"
-                  onClick={() =>
-                    emitCoursePrefill({
+                  onClick={(event) => {
+                    event.preventDefault()
+                    prefillCourseAndGoToForm({
                       courseType: 'graduacao',
                       courseValue: course.courseValue,
                       courseLabel: course.title,
                     })
-                  }
+                  }}
                 >
                   INSCREVA-SE
                 </a>

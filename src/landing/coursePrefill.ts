@@ -11,3 +11,13 @@ export function emitCoursePrefill(detail: CoursePrefillDetail) {
   window.dispatchEvent(new CustomEvent<CoursePrefillDetail>(COURSE_PREFILL_EVENT, { detail }))
 }
 
+export function prefillCourseAndGoToForm(detail: CoursePrefillDetail, formId = 'inscricao') {
+  emitCoursePrefill(detail)
+
+  if (typeof document === 'undefined') return
+
+  const formElement = document.getElementById(formId)
+  if (formElement) {
+    formElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}

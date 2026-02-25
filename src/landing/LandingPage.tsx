@@ -9,7 +9,6 @@ import { GraduationCarouselSection } from './components/GraduationCarouselSectio
 import { Header } from './components/Header'
 import { HeroSection } from './components/HeroSection'
 import { JourneySection } from './components/JourneySection'
-import { MobileCta } from './components/MobileCta'
 import { PresentialGraduationSection } from './components/PresentialGraduationSection'
 import { TestimonialsSection } from './components/TestimonialsSection'
 import { WhyChooseSection } from './components/WhyChooseSection'
@@ -29,7 +28,6 @@ export function LandingPage() {
       <TestimonialsSection />
       <FaqSection />
       <FooterSection />
-      <MobileCta />
     </main>
   )
 }

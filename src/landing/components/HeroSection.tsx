@@ -31,7 +31,7 @@ const CRM_LEAD_ENDPOINT =
   '/crm-api/administrativo/leads/adicionar'
 const POS_COURSES_ENDPOINT =
   import.meta.env.VITE_POS_COURSES_ENDPOINT ??
-  '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025.php'
+  '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025-unicesp.php'
 const CRM_NOT_IDENTIFIED = 'Não identificado'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i
@@ -570,7 +570,19 @@ export function HeroSection() {
   return (
     <section className="lp-hero" id="inicio">
       <div className="lp-hero__visual">
-        <div className="lp-shell lp-hero__visual-inner" />
+        <picture className="lp-hero__banner">
+          <source
+            media="(max-width: 720px)"
+            srcSet="/landing/bg-hero-estudante-faculdade-paulista-mobile.webp"
+          />
+          <img
+            src="/landing/bg-hero-estudante-faculdade-paulista.webp"
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+            fetchPriority="high"
+          />
+        </picture>
       </div>
 
       <div className="lp-shell lp-hero__form-shell">

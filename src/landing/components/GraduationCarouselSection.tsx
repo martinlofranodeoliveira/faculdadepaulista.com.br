@@ -1,7 +1,124 @@
-import { useId } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { useCallback, useEffect, useId, useMemo, useState } from 'react'
+import { ArrowRight, ArrowUpDown } from 'lucide-react'
 
-import { graduationCarouselCourses } from '../data'
+const POS_COURSES_ENDPOINT =
+  import.meta.env.VITE_POS_COURSES_ENDPOINT ??
+  '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025-unicesp.php'
+
+const ALL_AREAS = '__all_areas__'
+
+type PostCourse = {
+  value: string
+  label: string
+  url?: string
+  area: string
+}
+
+type LoadStatus = 'loading' | 'success' | 'error'
+
+function normalizeComparableText(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+}
+
+function toSlug(value: string): string {
+  return normalizeComparableText(value)
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function normalizeApiValue(line: string): string {
+  const separatorIndex = line.indexOf(':')
+  if (separatorIndex < 0) return ''
+  return line.slice(separatorIndex + 1).trim()
+}
+
+function parsePostGraduationCourses(raw: string): PostCourse[] {
+  const blocks = raw.split(/\r?\n---\r?\n/g)
+  const unique = new Map<string, PostCourse>()
+
+  blocks.forEach((block) => {
+    const lines = block
+      .split(/\r?\n/g)
+      .map((line) => line.trim())
+      .filter(Boolean)
+
+    let disponibilidade = ''
+    let nivel = ''
+    let nomeCurso = ''
+    let nomeArea = ''
+    let urlCurso = ''
+
+    lines.forEach((line) => {
+      const normalizedLine = normalizeComparableText(line)
+
+      if (normalizedLine.startsWith('disponibilidade:')) {
+        disponibilidade = normalizeApiValue(line)
+        return
+      }
+
+      if (normalizedLine.startsWith('nivel:') || normalizedLine.startsWith('nivel :')) {
+        nivel = normalizeApiValue(line)
+        return
+      }
+
+      if (normalizedLine.startsWith('nome do curso:')) {
+        nomeCurso = normalizeApiValue(line)
+        return
+      }
+
+      if (normalizedLine.startsWith('nome area:')) {
+        nomeArea = normalizeApiValue(line)
+        return
+      }
+
+      if (normalizedLine.startsWith('url curso:')) {
+        urlCurso = normalizeApiValue(line)
+      }
+    })
+
+    if (!disponibilidade || !nivel || !nomeCurso || !urlCurso) return
+
+    const disponibilidadeNormalizada = normalizeComparableText(disponibilidade)
+    const nivelNormalizado = normalizeComparableText(nivel)
+
+    if (!disponibilidadeNormalizada.includes('disponivel')) return
+    if (!nivelNormalizado.includes('pos-graduacao') && !nivelNormalizado.includes('pos graduacao')) {
+      return
+    }
+
+    const courseName = nomeCurso.replace(/\s+/g, ' ').trim()
+
+    let slug = ''
+    try {
+      const parsedUrl = new URL(urlCurso)
+      const segments = parsedUrl.pathname.split('/').filter(Boolean)
+      slug = segments[segments.length - 1] ?? ''
+    } catch {
+      slug = ''
+    }
+
+    if (!slug) slug = toSlug(courseName)
+    if (!slug) return
+
+    const value = `pos-${slug}`
+    const area = (nomeArea || 'GERAL').replace(/\s+/g, ' ').trim().toUpperCase()
+
+    if (!unique.has(value)) {
+      unique.set(value, {
+        value,
+        label: courseName,
+        url: urlCurso,
+        area,
+      })
+    }
+  })
+
+  return [...unique.values()].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'))
+}
 
 function GraduationLabelIcon() {
   const maskId = useId()
@@ -55,52 +172,158 @@ function VideoLabelIcon() {
 }
 
 export function GraduationCarouselSection() {
+  const [courses, setCourses] = useState<PostCourse[]>([])
+  const [status, setStatus] = useState<LoadStatus>('loading')
+  const [errorMessage, setErrorMessage] = useState(
+    'Não foi possível carregar os cursos de pós-graduação.',
+  )
+  const [activeArea, setActiveArea] = useState(ALL_AREAS)
+  const [sortAsc, setSortAsc] = useState(true)
+
+  const loadPostCourses = useCallback(async () => {
+    setStatus('loading')
+    setErrorMessage('Não foi possível carregar os cursos de pós-graduação.')
+
+    try {
+      const response = await fetch(POS_COURSES_ENDPOINT, {
+        method: 'GET',
+        headers: {
+          Accept: 'text/plain, */*',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`Post courses request failed with status ${response.status}`)
+      }
+
+      const rawText = await response.text()
+      const parsedCourses = parsePostGraduationCourses(rawText)
+
+      if (!parsedCourses.length) {
+        throw new Error('No post-graduation courses were parsed from the API response')
+      }
+
+      setCourses(parsedCourses)
+      setStatus('success')
+    } catch (error) {
+      console.error('Erro ao carregar cursos de pós-graduação:', error)
+      setStatus('error')
+      setErrorMessage('Não foi possível carregar os cursos agora. Tente novamente em instantes.')
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadPostCourses()
+  }, [loadPostCourses])
+
+  const areaOptions = useMemo(() => {
+    const uniqueAreas = [...new Set(courses.map((course) => course.area))]
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b, 'pt-BR'))
+
+    return [ALL_AREAS, ...uniqueAreas]
+  }, [courses])
+
+  const filteredCourses = useMemo(() => {
+    const areaFiltered =
+      activeArea === ALL_AREAS
+        ? courses
+        : courses.filter((course) => course.area === activeArea)
+
+    return [...areaFiltered].sort((a, b) =>
+      sortAsc
+        ? a.label.localeCompare(b.label, 'pt-BR')
+        : b.label.localeCompare(a.label, 'pt-BR'),
+    )
+  }, [activeArea, courses, sortAsc])
+
+  const areaLabel = activeArea === ALL_AREAS ? 'TODAS AS ÁREAS' : activeArea
+
   return (
-    <section className="lp-grad-carousel" id="graduacao">
+    <section className="lp-grad-carousel" id="pos-graduacao">
       <div className="lp-shell">
         <header className="lp-grad-carousel__head">
-          <h2>GRADUAÇÕES</h2>
+          <h2>PÓS-GRADUAÇÕES</h2>
           <p>Explore nossos cursos e encontre o caminho ideal para sua carreira.</p>
         </header>
 
-        <div className="lp-grad-carousel__list">
-          {graduationCarouselCourses.map((course) => (
-            <article key={course.courseValue} className="lp-grad-carousel__item">
-              <div className="lp-grad-carousel__image-wrap">
-                <img
-                  src={course.image}
-                  alt={course.title}
-                  style={course.imagePosition ? { objectPosition: course.imagePosition } : undefined}
-                />
-              </div>
-
-              <div className="lp-grad-carousel__content">
-                <div className="lp-grad-carousel__meta">
-                  <span>
-                    <GraduationLabelIcon />
-                    {course.modalityLabel}
-                  </span>
-                  <span>
-                    <VideoLabelIcon />
-                    {course.videoLabel}
-                  </span>
-                </div>
-
-                <h3>{course.title}</h3>
-
-                <div className="lp-grad-carousel__price">
-                  <strong>{course.installmentPrice}</strong>
-                  <span>{course.oldInstallmentPrice}</span>
-                </div>
-              </div>
-
-              <a href="#inscricao" className="lp-grad-carousel__cta">
-                ME INSCREVER
-                <ArrowRight size={14} />
-              </a>
-            </article>
+        <div className="lp-grad-carousel__filters" role="tablist" aria-label="Filtrar cursos por área">
+          {areaOptions.map((area) => (
+            <button
+              key={area}
+              type="button"
+              role="tab"
+              aria-selected={activeArea === area}
+              className={`lp-grad-carousel__filter ${activeArea === area ? 'is-active' : ''}`}
+              onClick={() => setActiveArea(area)}
+            >
+              {area === ALL_AREAS ? 'TODAS' : area}
+            </button>
           ))}
         </div>
+
+        <div className="lp-grad-carousel__toolbar">
+          <p className="lp-grad-carousel__scope">PÓS NA ÁREA DE {areaLabel}</p>
+          <button
+            type="button"
+            className="lp-grad-carousel__sort"
+            aria-label={sortAsc ? 'Ordenar de Z a A' : 'Ordenar de A a Z'}
+            onClick={() => setSortAsc((previous) => !previous)}
+          >
+            <ArrowUpDown size={16} />
+            {sortAsc ? 'AZ' : 'ZA'}
+          </button>
+        </div>
+
+        {status === 'loading' ? (
+          <div className="lp-grad-carousel__state">Carregando cursos de pós-graduação...</div>
+        ) : null}
+
+        {status === 'error' ? (
+          <div className="lp-grad-carousel__state lp-grad-carousel__state--error">
+            <span>{errorMessage}</span>
+            <button type="button" className="lp-grad-carousel__retry" onClick={() => void loadPostCourses()}>
+              Tentar novamente
+            </button>
+          </div>
+        ) : null}
+
+        {status === 'success' ? (
+          <div className="lp-grad-carousel__list">
+            {filteredCourses.length ? (
+              filteredCourses.map((course) => (
+                <article key={course.value} className="lp-grad-carousel__item">
+                  <div className="lp-grad-carousel__content">
+                    <div className="lp-grad-carousel__meta">
+                      <span>
+                        <GraduationLabelIcon />
+                        PÓS-GRADUAÇÃO EAD
+                      </span>
+                      <span>
+                        <VideoLabelIcon />
+                        COM VIDEOAULAS
+                      </span>
+                    </div>
+
+                    <h3>{course.label}</h3>
+
+                    <div className="lp-grad-carousel__price">
+                      <strong>18X R$ 66,00/MÊS</strong>
+                      <span>18X R$132,00</span>
+                    </div>
+                  </div>
+
+                  <a href="#inscricao" className="lp-grad-carousel__cta">
+                    ME INSCREVER
+                    <ArrowRight size={14} />
+                  </a>
+                </article>
+              ))
+            ) : (
+              <div className="lp-grad-carousel__state">Nenhum curso encontrado para esta área.</div>
+            )}
+          </div>
+        ) : null}
       </div>
     </section>
   )

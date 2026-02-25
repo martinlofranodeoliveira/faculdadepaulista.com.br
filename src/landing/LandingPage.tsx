@@ -1,7 +1,7 @@
 import './landing.css'
 
+import { AllGraduationsCarouselSection } from './components/AllGraduationsCarouselSection'
 import { AppShowcaseSection } from './components/AppShowcaseSection'
-import { CourseSection } from './components/CourseSection'
 import { FaqSection } from './components/FaqSection'
 import { FooterSection } from './components/FooterSection'
 import { FutureSection } from './components/FutureSection'
@@ -13,7 +13,6 @@ import { MobileCta } from './components/MobileCta'
 import { PresentialGraduationSection } from './components/PresentialGraduationSection'
 import { TestimonialsSection } from './components/TestimonialsSection'
 import { WhyChooseSection } from './components/WhyChooseSection'
-import { postCourses } from './data'
 
 export function LandingPage() {
   return (
@@ -22,18 +21,12 @@ export function LandingPage() {
       <HeroSection />
       <PresentialGraduationSection />
       <GraduationCarouselSection />
+      <AllGraduationsCarouselSection />
       <WhyChooseSection />
       <JourneySection />
       <AppShowcaseSection />
       <FutureSection />
       <TestimonialsSection />
-      <CourseSection
-        id="pos-graduacao"
-        title="Pós-graduação EAD"
-        description="Explore nossos cursos e encontre o caminho ideal para sua carreira."
-        dark
-        items={postCourses}
-      />
       <FaqSection />
       <FooterSection />
       <MobileCta />

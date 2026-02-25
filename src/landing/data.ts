@@ -28,6 +28,20 @@ export type CourseItem = {
   image: string
 }
 
+export type GraduationCarouselCourseConfig = {
+  courseValue: string
+  installmentPrice: string
+  oldInstallmentPrice: string
+  image: string
+  imagePosition?: string
+  modalityLabel?: string
+  videoLabel?: string
+}
+
+export type GraduationCarouselCourse = GraduationCarouselCourseConfig & {
+  title: string
+}
+
 export type TestimonialItem = {
   name: string
   role: string
@@ -107,6 +121,146 @@ export const formCourseGroups: FormCourseGroup[] = [
     ],
   },
 ]
+
+const graduationCourseLabelLookup = new Map(
+  formCourseGroups[0]?.options.map((option) => [option.value, option.label]) ?? [],
+)
+
+function inferGraduationModalityLabel(courseTitle: string): string {
+  const normalized = courseTitle.toUpperCase()
+  if (normalized.includes('SEMIPRESENCIAL')) return 'GRADUAÇÃO SEMIPRESENCIAL'
+  if (normalized.includes('PRESENCIAL')) return 'GRADUAÇÃO PRESENCIAL'
+  return 'GRADUAÇÃO EAD'
+}
+
+export const graduationCarouselCourseConfigs: GraduationCarouselCourseConfig[] = [
+  {
+    courseValue: 'graduacao-analise-desenvolvimento-sistemas',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-gestao-tecnologia-informacao',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-marketing-digital',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-administracao',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-enfermagem',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseEnfermagem,
+    imagePosition: '47% center',
+  },
+  {
+    courseValue: 'graduacao-psicologia',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.coursePsicologia,
+    imagePosition: '20% center',
+  },
+  {
+    courseValue: 'graduacao-ciencias-contabeis',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseDireito,
+  },
+  {
+    courseValue: 'graduacao-processos-gerenciais',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-gestao-recursos-humanos',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-logistica',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-marketing',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-gestao-comercial',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-gestao-financeira',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-negocios-imobiliarios',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseAdministracao,
+  },
+  {
+    courseValue: 'graduacao-pedagogia',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.coursePsicologia,
+  },
+  {
+    courseValue: 'graduacao-servico-social',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.coursePsicologia,
+  },
+  {
+    courseValue: 'graduacao-gestao-publica',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseDireito,
+  },
+  {
+    courseValue: 'graduacao-seguranca-publica',
+    installmentPrice: '18X R$ 66,00/MÊS',
+    oldInstallmentPrice: '18X R$132,00',
+    image: assets.courseDireito,
+  },
+]
+
+export const graduationCarouselCourses: GraduationCarouselCourse[] = graduationCarouselCourseConfigs.flatMap(
+  (courseConfig) => {
+    const title = graduationCourseLabelLookup.get(courseConfig.courseValue)
+    if (!title) return []
+
+    return [
+      {
+        ...courseConfig,
+        title,
+        modalityLabel: courseConfig.modalityLabel ?? inferGraduationModalityLabel(title),
+        videoLabel: courseConfig.videoLabel ?? 'COM VIDEOAULAS',
+      },
+    ]
+  },
+)
 
 export const journeySteps: JourneyStep[] = [
   { number: '1', title: 'Escolha seu curso', subtitle: 'Defina sua carreira' },

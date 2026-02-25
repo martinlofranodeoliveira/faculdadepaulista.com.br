@@ -1,4 +1,11 @@
-﻿import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type FormEvent,
+  type UIEventHandler,
+} from 'react'
 import {
   ArrowRight,
   GraduationCap,
@@ -17,7 +24,7 @@ import {
 } from '@/components/ui/select'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
 
-import { formCourseGroups, heroFeatures } from '../data'
+import { formCourseGroups } from '../data'
 
 const CRM_LEAD_ENDPOINT =
   import.meta.env.VITE_CRM_LEAD_ENDPOINT ??
@@ -32,6 +39,7 @@ const NAME_REGEX = /^[\p{L}\s.'-]+$/u
 
 type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error'
 type CourseType = 'graduacao' | 'pos'
+type FormStep = 1 | 2 | 3
 type CourseOption = { value: string; label: string; url?: string }
 type FieldName = 'courseType' | 'course' | 'fullName' | 'email' | 'phone'
 type FieldErrors = Partial<Record<FieldName, string>>
@@ -49,6 +57,12 @@ const COURSE_TYPE_OPTIONS: Array<{ value: CourseType; label: string }> = [
   { value: 'graduacao', label: 'Graduação' },
   { value: 'pos', label: 'Pós-graduação EAD' },
 ]
+
+const STEP_FIELDS: Record<FormStep, FieldName[]> = {
+  1: ['courseType', 'course'],
+  2: ['fullName'],
+  3: ['email', 'phone'],
+}
 
 function normalizeComparableText(value: string): string {
   return value
@@ -111,194 +125,6 @@ function parsePostGraduationCourses(raw: string): CourseOption[] {
   return [...unique.values()].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'))
 }
 
-function MetroTrainIcon() {
-  return (
-    <svg
-      viewBox="475 111 170 170"
-      width="20"
-      height="20"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="heroMetroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FF4B4B" />
-          <stop offset="100%" stopColor="#CC1D1D" />
-        </linearGradient>
-      </defs>
-
-      <g id="metro-icon">
-        <path
-          d="M 510 240 L 510 150 Q 510 120 560 120 Q 610 120 610 150 L 610 240 Z"
-          fill="url(#heroMetroGrad)"
-        />
-        <path d="M 510 240 L 610 240 L 605 255 L 515 255 Z" fill="#2C3E50" />
-        <path
-          d="M 520 185 L 520 145 Q 520 130 560 130 Q 600 130 600 145 L 600 185 Z"
-          fill="#1A252F"
-        />
-        <path
-          d="M 520 145 Q 520 130 560 130 L 545 185 L 520 185 Z"
-          fill="#FFFFFF"
-          opacity="0.15"
-        />
-
-        <rect x="522" y="215" width="25" height="10" rx="5" fill="#FFFFFF" />
-        <rect x="573" y="215" width="25" height="10" rx="5" fill="#FFFFFF" />
-        <rect x="524" y="217" width="21" height="6" rx="3" fill="#FFF2CC" />
-        <rect x="575" y="217" width="21" height="6" rx="3" fill="#FFF2CC" />
-
-        <circle cx="560" cy="202" r="12" fill="none" stroke="#FFFFFF" strokeWidth="2" opacity="0.8" />
-        <text
-          x="560"
-          y="207"
-          fontFamily="system-ui, sans-serif"
-          fontWeight="900"
-          fontSize="14"
-          fill="#FFFFFF"
-          textAnchor="middle"
-          opacity="0.9"
-        >
-          M
-        </text>
-
-        <path
-          d="M 500 260 L 620 260"
-          stroke="#94A3B8"
-          strokeWidth="5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M 525 260 L 515 272 M 550 260 L 540 272 M 575 260 L 565 272 M 600 260 L 590 272"
-          stroke="#94A3B8"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
-      </g>
-    </svg>
-  )
-}
-
-function HeroMecIcon() {
-  return (
-    <svg
-      viewBox="0 0 170 170"
-      width="20"
-      height="20"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="heroMecGoldOuter" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FDE047" />
-          <stop offset="100%" stopColor="#B45309" />
-        </linearGradient>
-
-        <linearGradient id="heroMecGoldInner" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#FEF08A" />
-          <stop offset="100%" stopColor="#D97706" />
-        </linearGradient>
-
-        <linearGradient id="heroMecGoldCore" x1="20%" y1="0%" x2="80%" y2="100%">
-          <stop offset="0%" stopColor="#FFFBEB" />
-          <stop offset="40%" stopColor="#FDE047" />
-          <stop offset="50%" stopColor="#FEF08A" />
-          <stop offset="100%" stopColor="#EAB308" />
-        </linearGradient>
-
-        <linearGradient id="heroMecRibbonGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#16A34A" />
-          <stop offset="100%" stopColor="#14532D" />
-        </linearGradient>
-
-        <filter id="heroMecShadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow
-            dx="0"
-            dy="5"
-            stdDeviation="4"
-            floodColor="#000000"
-            floodOpacity="0.15"
-          />
-        </filter>
-
-        <path
-          id="heroMecStar"
-          d="M0 -5 L 1.5 -1.5 L 5.5 -1.5 L 2.3 1.1 L 3.5 5 L 0 2.8 L -3.5 5 L -2.3 1.1 L -5.5 -1.5 L -1.5 -1.5 Z"
-        />
-      </defs>
-
-      <g filter="url(#heroMecShadow)">
-        <path d="M 65 90 L 25 160 L 50 148 L 75 165 L 85 90 Z" fill="url(#heroMecRibbonGrad)" />
-        <path d="M 65 90 L 50 148 L 75 165 L 85 90 Z" fill="#064E3B" opacity="0.3" />
-
-        <path d="M 105 90 L 145 160 L 120 148 L 95 165 L 85 90 Z" fill="url(#heroMecRibbonGrad)" />
-        <path d="M 105 90 L 120 148 L 95 165 L 85 90 Z" fill="#064E3B" opacity="0.3" />
-
-        <circle cx="85" cy="75" r="55" fill="url(#heroMecGoldOuter)" />
-        <circle cx="85" cy="75" r="49" fill="url(#heroMecGoldInner)" />
-        <circle cx="85" cy="75" r="43" fill="url(#heroMecGoldCore)" />
-        <circle
-          cx="85"
-          cy="75"
-          r="46"
-          fill="none"
-          stroke="#16A34A"
-          strokeWidth="1.5"
-          strokeDasharray="3 3"
-          opacity="0.8"
-        />
-
-        <text
-          x="85"
-          y="52"
-          fontFamily="system-ui, sans-serif"
-          fontWeight="900"
-          fontSize="16"
-          fill="#1E3A8A"
-          textAnchor="middle"
-          letterSpacing="1"
-        >
-          MEC
-        </text>
-        <text
-          x="85"
-          y="94"
-          fontFamily="system-ui, sans-serif"
-          fontWeight="900"
-          fontSize="52"
-          fill="#1E3A8A"
-          textAnchor="middle"
-        >
-          5
-        </text>
-
-        <g fill="#1E3A8A">
-          <g transform="translate(56, 103) rotate(-20)">
-            <use href="#heroMecStar" />
-          </g>
-          <g transform="translate(70, 108) rotate(-10)">
-            <use href="#heroMecStar" />
-          </g>
-          <g transform="translate(85, 110)">
-            <use href="#heroMecStar" />
-          </g>
-          <g transform="translate(100, 108) rotate(10)">
-            <use href="#heroMecStar" />
-          </g>
-          <g transform="translate(114, 103) rotate(20)">
-            <use href="#heroMecStar" />
-          </g>
-        </g>
-
-        <path
-          d="M 42 75 A 43 43 0 0 1 128 75 A 50 50 0 0 0 42 75 Z"
-          fill="#FFFFFF"
-          opacity="0.25"
-        />
-      </g>
-    </svg>
-  )
-}
 
 function normalizePhone(value: string): string {
   return value.replace(/\D/g, '').slice(0, 11)
@@ -403,6 +229,7 @@ function parseEnvInteger(value: string | undefined, fallback: number): number {
 }
 
 export function HeroSection() {
+  const [step, setStep] = useState<FormStep>(1)
   const [courseType, setCourseType] = useState<CourseType | ''>('')
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -507,7 +334,7 @@ export function HeroSection() {
 
   const canLoadMoreVisibleCourses = visibleCourses.length < filteredCourses.length
 
-  const handleCourseSearchMenuScroll: React.UIEventHandler<HTMLDivElement> = (event) => {
+  const handleCourseSearchMenuScroll: UIEventHandler<HTMLDivElement> = (event) => {
     if (courseType !== 'pos') return
     if (!canLoadMoreVisibleCourses) return
 
@@ -529,6 +356,56 @@ export function HeroSection() {
     setTouched((previous) => ({ ...previous, [field]: true }))
   }
 
+  const getFieldValue = (field: FieldName): string => {
+    if (field === 'courseType') return courseType
+    if (field === 'course') return course
+    if (field === 'fullName') return fullName
+    if (field === 'email') return email
+    return phone
+  }
+
+  const validateFields = (fields: FieldName[]): boolean => {
+    const nextErrors: FieldErrors = {}
+
+    fields.forEach((field) => {
+      nextErrors[field] = validateField(field, getFieldValue(field))
+    })
+
+    setFieldErrors((previous) => ({ ...previous, ...nextErrors }))
+    setTouched((previous) => {
+      const merged = { ...previous }
+      fields.forEach((field) => {
+        merged[field] = true
+      })
+      return merged
+    })
+
+    return fields.every((field) => !nextErrors[field])
+  }
+
+  const handleStepAdvance = (from: FormStep) => {
+    const isValid = validateFields(STEP_FIELDS[from])
+    if (!isValid) {
+      setSubmitStatus('error')
+      setSubmitMessage('Corrija os campos destacados para continuar.')
+      return
+    }
+
+    if (from === 1) {
+      setIsCourseSearchOpen(false)
+    }
+
+    setStep((current) => (Math.min(current + 1, 3) as FormStep))
+    setSubmitStatus('idle')
+    setSubmitMessage('')
+  }
+
+  const handleStepBack = () => {
+    setStep((current) => (Math.max(current - 1, 1) as FormStep))
+    setSubmitStatus('idle')
+    setSubmitMessage('')
+  }
+
   const validateAllFields = (): FieldErrors => {
     return {
       courseType: validateCourseType(courseType),
@@ -539,8 +416,18 @@ export function HeroSection() {
     }
   }
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    if (step === 1) {
+      handleStepAdvance(1)
+      return
+    }
+
+    if (step === 2) {
+      handleStepAdvance(2)
+      return
+    }
 
     const errors = validateAllFields()
     setFieldErrors(errors)
@@ -655,6 +542,7 @@ export function HeroSection() {
 
       setSubmitStatus('success')
       setSubmitMessage('Cadastro enviado com sucesso. Em breve entraremos em contato.')
+      setStep(1)
       setFullName('')
       setEmail('')
       setPhone('')
@@ -681,49 +569,36 @@ export function HeroSection() {
 
   return (
     <section className="lp-hero" id="inicio">
-      <div className="lp-shell lp-hero__grid">
-        <article className="lp-hero__content">
-          <p className="lp-pill">
-            <span className="lp-pill__dot" />
-            12 VAGAS RESTANTES | TURMA 2026
-          </p>
+      <div className="lp-hero__visual">
+        <div className="lp-shell lp-hero__visual-inner">
+          <article className="lp-hero__content">
+            <p className="lp-pill">TURMAS ABERTAS | 2026</p>
 
-          <h1>
-            Faça sua matrícula e  <br />
-            <span> Ganhe 3 Pós-Graduações</span>
-            <br />
-            Incluídas na sua jornada!!!
-          </h1>
+            <h1>
+              <span className="lp-hero__headline-top">FAÇA SUA MATRÍCULA</span>
+              <strong>GANHE</strong>
+            </h1>
 
-          <p className="lp-hero__description">
-            Os melhores cursos de Graduação e Pós-graduação com Nota Máxima no MEC (5)
-            para você estudar onde e quando quiser com suporte e tutores especialistas
-            para guiar seu aprendizado.
-          </p>
+            <p className="lp-hero__description">
+              Os melhores cursos de Graduação e Pós-graduação com Nota Máxima no MEC (5)
+              para você estudar onde e quando quiser com suporte e tutores especialistas
+              para guiar seu aprendizado.
+            </p>
+          </article>
+        </div>
+      </div>
 
-          <div className="lp-hero__features">
-            {heroFeatures.map((item, index) => (
-              <div key={item.title} className="lp-hero__feature">
-                <span className="lp-hero__feature-icon">
-                  {index === 0 ? <MetroTrainIcon /> : <HeroMecIcon />}
-                </span>
-                <span>{item.title}</span>
-              </div>
-            ))}
-          </div>
-        </article>
-
+      <div className="lp-shell lp-hero__form-shell">
         <article className="lp-hero-form" id="inscricao">
-          
-          <h2>PREENCHA O FORMULÁRIO E SELECIONE O CURSO QUE VOCÊ DESEJA</h2>
-          <p>
-            Preencha seus dados abaixo e aguarde uma de nossas Consultoras Especialistas
-            entrar em contato.
-          </p>
+          <div className="lp-hero-form__lead">
+            <h2>Encontre seu Curso</h2>
+            <ArrowRight size={22} aria-hidden="true" />
+          </div>
 
           <form className="lp-hero-form__fields" onSubmit={handleSubmit} noValidate>
-            <div className="lp-hero-form__row lp-hero-form__row--course">
-              <div className="lp-field-wrap">
+            {step === 1 ? (
+              <div className="lp-hero-form__row lp-hero-form__row--wizard lp-hero-form__row--step-1">
+                <div className="lp-field-wrap lp-hero-form__field-cell--modality">
                 <div className={`lp-field lp-field--select ${courseTypeInvalid ? 'is-invalid' : ''}`}>
                   <span className="lp-field__icon" aria-hidden="true">
                     <GraduationCap size={14} />
@@ -757,7 +632,7 @@ export function HeroSection() {
                           applyFieldValidation('courseType', courseType)
                         }}
                       >
-                        <SelectValue className="lp-select-value" placeholder="Selecione" />
+                        <SelectValue className="lp-select-value" placeholder="Modalidade" />
                       </SelectTrigger>
                       <SelectContent className="lp-select-content" position="popper" sideOffset={6}>
                         {COURSE_TYPE_OPTIONS.map((item) => (
@@ -787,7 +662,7 @@ export function HeroSection() {
                   </span>
                   <input
                     type="text"
-                    placeholder="Selecione seu curso"
+                    placeholder="Busque o curso"
                     value={courseSearch}
                     disabled={isCourseSearchDisabled}
                     autoComplete="off"
@@ -918,43 +793,63 @@ export function HeroSection() {
                   </span>
                 ) : null}
               </div>
+              <button type="submit" className="lp-main-button lp-hero-form__submit">
+                INSCREVA-SE
+                <ArrowRight size={14} />
+              </button>
             </div>
+            ) : null}
 
-            <div className="lp-field-wrap">
-              <label className={`lp-field ${fullNameInvalid ? 'is-invalid' : ''}`}>
-                <span className="lp-field__icon" aria-hidden="true">
-                  <User size={14} />
-                </span>
-                <input
-                  type="text"
-                  placeholder="Nome Completo"
-                  value={fullName}
-                  autoComplete="name"
-                  maxLength={120}
-                  aria-invalid={fullNameInvalid}
-                  aria-describedby={fullNameInvalid ? 'hero-full-name-error' : undefined}
-                  onBlur={() => {
-                    markTouched('fullName')
-                    applyFieldValidation('fullName', fullName)
-                  }}
-                  onChange={(event) => {
-                    const value = normalizeName(event.target.value)
-                    setFullName(value)
-                    if (touched.fullName) {
-                      applyFieldValidation('fullName', value)
-                    }
-                  }}
-                />
-              </label>
-              {fullNameInvalid ? (
-                <span className="lp-field__error" id="hero-full-name-error">
-                  {fieldErrors.fullName}
-                </span>
-              ) : null}
-            </div>
+            {step === 2 ? (
+              <div className="lp-hero-form__row lp-hero-form__row--wizard lp-hero-form__row--step-2">
+                <div className="lp-field-wrap">
+                  <label className={`lp-field ${fullNameInvalid ? 'is-invalid' : ''}`}>
+                    <span className="lp-field__icon" aria-hidden="true">
+                      <User size={14} />
+                    </span>
+                    <input
+                      type="text"
+                      placeholder="Nome completo"
+                      value={fullName}
+                      autoComplete="name"
+                      maxLength={120}
+                      aria-invalid={fullNameInvalid}
+                      aria-describedby={fullNameInvalid ? 'hero-full-name-error' : undefined}
+                      onBlur={() => {
+                        markTouched('fullName')
+                        applyFieldValidation('fullName', fullName)
+                      }}
+                      onChange={(event) => {
+                        const value = normalizeName(event.target.value)
+                        setFullName(value)
+                        if (touched.fullName) {
+                          applyFieldValidation('fullName', value)
+                        }
+                      }}
+                    />
+                  </label>
+                  {fullNameInvalid ? (
+                    <span className="lp-field__error" id="hero-full-name-error">
+                      {fieldErrors.fullName}
+                    </span>
+                  ) : null}
+                </div>
 
-            <div className="lp-hero-form__row lp-hero-form__row--contact">
-              <div className="lp-field-wrap">
+                <div className="lp-hero-form__actions">
+                  <button type="button" className="lp-hero-form__back" onClick={handleStepBack}>
+                    Voltar
+                  </button>
+                  <button type="submit" className="lp-main-button lp-hero-form__submit">
+                    PRÓXIMA
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
+            {step === 3 ? (
+              <div className="lp-hero-form__row lp-hero-form__row--wizard lp-hero-form__row--step-3">
+                <div className="lp-field-wrap">
                 <label className={`lp-field ${emailInvalid ? 'is-invalid' : ''}`}>
                   <span className="lp-field__icon" aria-hidden="true">
                     <Mail size={14} />
@@ -1020,16 +915,22 @@ export function HeroSection() {
                   </span>
                 ) : null}
               </div>
-            </div>
 
-            <button
-              type="submit"
-              className="lp-main-button lp-hero-form__submit"
-              disabled={submitStatus === 'submitting'}
-            >
-              {submitStatus === 'submitting' ? 'ENVIANDO...' : 'INSCREVA-SE AGORA'}
-              <ArrowRight size={14} />
-            </button>
+              <div className="lp-hero-form__actions">
+                <button type="button" className="lp-hero-form__back" onClick={handleStepBack}>
+                  Voltar
+                </button>
+                <button
+                  type="submit"
+                  className="lp-main-button lp-hero-form__submit"
+                  disabled={submitStatus === 'submitting'}
+                >
+                  {submitStatus === 'submitting' ? 'ENVIANDO...' : 'ENVIAR'}
+                  <ArrowRight size={14} />
+                </button>
+              </div>
+            </div>
+            ) : null}
           </form>
 
           {submitMessage ? (
@@ -1039,10 +940,11 @@ export function HeroSection() {
               {submitMessage}
             </small>
           ) : null}
-
-          <small>Ao se inscrever, você concorda com nossa Política de Privacidade.</small>
         </article>
       </div>
     </section>
   )
 }
+
+
+

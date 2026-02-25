@@ -1,37 +1,13 @@
 @font-face {
-  font-family: 'Liberation Sans';
+  font-family: 'Kumbh Sans';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 100 900;
   font-display: swap;
-  src: url('./assets/fonts/LiberationSans-Regular.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Liberation Sans';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('./assets/fonts/LiberationSans-Italic.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Liberation Sans';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('./assets/fonts/LiberationSans-Bold.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Liberation Sans';
-  font-style: italic;
-  font-weight: 700;
-  font-display: swap;
-  src: url('./assets/fonts/LiberationSans-BoldItalic.ttf') format('truetype');
+  src: url('./assets/fonts/KumbhSans-VariableFont_YOPQ,wght.ttf') format('truetype');
 }
 
 :root {
-  --lp-font-body: 'Liberation Sans', Arial, sans-serif;
+  --lp-font-body: 'Kumbh Sans', Arial, sans-serif;
 }
 
 *,

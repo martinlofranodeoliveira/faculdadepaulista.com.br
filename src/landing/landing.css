@@ -142,7 +142,7 @@ section[id] {
 
 .lp-header__cta {
   align-items: center;
-  background: #C50002;
+  background: linear-gradient(180deg, #FE0000 0%, #C50002 100%);
   border-radius: 41px;
   box-shadow: none;
   color: #fff;
@@ -1983,7 +1983,7 @@ section[id] {
 }
 
 .lp-all-grad__track {
-  cursor: grab;
+  cursor: default;
   display: flex;
   gap: 18px;
   overflow-x: auto;
@@ -1998,7 +1998,7 @@ section[id] {
 }
 
 .lp-all-grad__track.is-dragging {
-  cursor: grabbing;
+  cursor: default;
   scroll-behavior: auto;
 }
 
@@ -2039,6 +2039,7 @@ section[id] {
   letter-spacing: -0.02em;
   line-height: 1;
   margin-top: 20px;
+  margin-bottom: 10px;
   min-height: 18px;
   padding: 0 10px;
   text-transform: uppercase;
@@ -2673,6 +2674,14 @@ section[id] {
 
   .lp-all-grad__control {
     display: none;
+  }
+
+  .lp-all-grad__track {
+    cursor: grab;
+  }
+
+  .lp-all-grad__track.is-dragging {
+    cursor: grabbing;
   }
 
   .lp-all-grad-card {

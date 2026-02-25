@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 
+import { emitCoursePrefill } from '../coursePrefill'
 import type { CourseItem } from '../data'
 
 type CourseSectionProps = {
@@ -19,6 +20,7 @@ export function CourseSection({
   items,
 }: CourseSectionProps) {
   const trackRef = useRef<HTMLDivElement | null>(null)
+  const inferredCourseType = id === 'pos-graduacao' ? 'pos' : 'graduacao'
   const dragStateRef = useRef({
     isDragging: false,
     pointerId: -1,
@@ -154,7 +156,15 @@ export function CourseSection({
               <div className="lp-course-card__body">
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
-                <a href="#inscricao">
+                <a
+                  href="#inscricao"
+                  onClick={() =>
+                    emitCoursePrefill({
+                      courseType: inferredCourseType,
+                      courseLabel: item.title,
+                    })
+                  }
+                >
                   Saiba mais
                   <ArrowRight size={14} />
                 </a>

@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
+import { emitCoursePrefill } from '../coursePrefill'
 import { graduationCarouselCourses } from '../data'
 
 function normalizeComparableText(value: string): string {
@@ -169,7 +170,17 @@ export function AllGraduationsCarouselSection() {
                   <span className="lp-all-grad-card__fixed">FIXOS</span>
                 </div>
 
-                <a href="#inscricao" className="lp-all-grad-card__cta">
+                <a
+                  href="#inscricao"
+                  className="lp-all-grad-card__cta"
+                  onClick={() =>
+                    emitCoursePrefill({
+                      courseType: 'graduacao',
+                      courseValue: course.courseValue,
+                      courseLabel: course.title,
+                    })
+                  }
+                >
                   INSCREVA-SE
                 </a>
               </article>

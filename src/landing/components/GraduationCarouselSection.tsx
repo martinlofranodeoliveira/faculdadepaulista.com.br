@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ArrowUpDown } from 'lucide-react'
 
+import { emitCoursePrefill } from '../coursePrefill'
+
 const POS_COURSES_ENDPOINT =
   import.meta.env.VITE_POS_COURSES_ENDPOINT ??
   '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025-unicesp.php'
@@ -12,6 +14,8 @@ type PostCourse = {
   label: string
   url?: string
   area: string
+  oldInstallmentPrice: string
+  currentInstallmentPrice: string
 }
 
 type LoadStatus = 'loading' | 'success' | 'error'
@@ -36,6 +40,25 @@ function normalizeApiValue(line: string): string {
   return line.slice(separatorIndex + 1).trim()
 }
 
+function formatApiInstallmentPrice(value: string): string {
+  if (!value) return value
+
+  return value
+    .replace(/\s+/g, ' ')
+    .replace(/(\d+)\s*x\s*/i, '$1X ')
+    .replace(/R\$\s*/i, 'R$ ')
+    .trim()
+    .toUpperCase()
+}
+
+function fallbackOldInstallmentPrice(): string {
+  return '18X R$ 132,00'
+}
+
+function fallbackCurrentInstallmentPrice(): string {
+  return '18X R$ 66,00'
+}
+
 function parsePostGraduationCourses(raw: string): PostCourse[] {
   const blocks = raw.split(/\r?\n---\r?\n/g)
   const unique = new Map<string, PostCourse>()
@@ -51,6 +74,8 @@ function parsePostGraduationCourses(raw: string): PostCourse[] {
     let nomeCurso = ''
     let nomeArea = ''
     let urlCurso = ''
+    let precoDe = ''
+    let precoPor = ''
 
     lines.forEach((line) => {
       const normalizedLine = normalizeComparableText(line)
@@ -77,6 +102,16 @@ function parsePostGraduationCourses(raw: string): PostCourse[] {
 
       if (normalizedLine.startsWith('url curso:')) {
         urlCurso = normalizeApiValue(line)
+        return
+      }
+
+      if (normalizedLine.startsWith('de:')) {
+        precoDe = normalizeApiValue(line)
+        return
+      }
+
+      if (normalizedLine.startsWith('por:')) {
+        precoPor = normalizeApiValue(line)
       }
     })
 
@@ -113,6 +148,9 @@ function parsePostGraduationCourses(raw: string): PostCourse[] {
         label: courseName,
         url: urlCurso,
         area,
+        oldInstallmentPrice: formatApiInstallmentPrice(precoDe) || fallbackOldInstallmentPrice(),
+        currentInstallmentPrice:
+          formatApiInstallmentPrice(precoPor) || fallbackCurrentInstallmentPrice(),
       })
     }
   })
@@ -293,13 +331,23 @@ export function GraduationCarouselSection() {
                     <h3>{course.label}</h3>
 
                     <div className="lp-grad-carousel__price">
-                      <strong>18X R$ 66,00/MÊS</strong>
-                      <span>18X R$132,00</span>
+                      <strong>{course.currentInstallmentPrice}/MÊS</strong>
+                      <span>{course.oldInstallmentPrice}</span>
                     </div>
                   </div>
 
-                  <a href="#inscricao" className="lp-grad-carousel__cta">
-                    INSCREVA-SE                    
+                  <a
+                    href="#inscricao"
+                    className="lp-grad-carousel__cta"
+                    onClick={() =>
+                      emitCoursePrefill({
+                        courseType: 'pos',
+                        courseValue: course.value,
+                        courseLabel: course.label,
+                      })
+                    }
+                  >
+                    INSCREVA-SE
                   </a>
                 </article>
               ))

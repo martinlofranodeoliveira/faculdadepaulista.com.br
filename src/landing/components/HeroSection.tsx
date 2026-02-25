@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/select'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
 
+import { COURSE_PREFILL_EVENT, type CoursePrefillDetail } from '../coursePrefill'
 import { formCourseGroups } from '../data'
 
 const CRM_LEAD_ENDPOINT =
@@ -347,6 +348,56 @@ export function HeroSection() {
     )
   }
 
+  const handleCoursePrefill = useCallback(
+    (detail: CoursePrefillDetail) => {
+      const normalizedLabel = detail.courseLabel.trim()
+      const normalizedLabelComparable = normalizeComparableText(normalizedLabel)
+      const preferredOptions =
+        detail.courseType === 'graduacao' ? allCourseOptions : postCourseOptions
+
+      const resolvedOption = preferredOptions.find((option) => {
+        return normalizeComparableText(option.label) === normalizedLabelComparable
+      })
+
+      const nextCourseValue = detail.courseValue?.trim() || resolvedOption?.value || ''
+      const nextCourseLabel = resolvedOption?.label || normalizedLabel
+
+      setCourseType(detail.courseType)
+      setCourse(nextCourseValue)
+      setCourseSearch(nextCourseLabel)
+      setStep(1)
+      setIsCourseSearchOpen(false)
+      setSubmitStatus('idle')
+      setSubmitMessage('')
+
+      setFieldErrors((previous) => ({
+        ...previous,
+        courseType: undefined,
+        course: undefined,
+      }))
+
+      setTouched((previous) => ({
+        ...previous,
+        courseType: false,
+        course: false,
+      }))
+    },
+    [allCourseOptions, postCourseOptions],
+  )
+
+  useEffect(() => {
+    const listener: EventListener = (event) => {
+      const customEvent = event as CustomEvent<CoursePrefillDetail>
+      if (!customEvent.detail) return
+      handleCoursePrefill(customEvent.detail)
+    }
+
+    window.addEventListener(COURSE_PREFILL_EVENT, listener)
+    return () => {
+      window.removeEventListener(COURSE_PREFILL_EVENT, listener)
+    }
+  }, [handleCoursePrefill])
+
   const applyFieldValidation = (field: FieldName, value: string) => {
     const error = validateField(field, value)
     setFieldErrors((previous) => ({ ...previous, [field]: error }))
@@ -454,7 +505,7 @@ export function HeroSection() {
       const storedTrackingParams = readStoredUtmParams()
       const trackingParams = { ...storedTrackingParams, ...trackedFromUrl }
       const phoneDigits = normalizePhone(phone)
-      const courseLabel = courseLookup.get(course) ?? course
+      const courseLabel = (courseLookup.get(course) ?? courseSearch.trim()) || course
       const isPostGraduation = courseType === 'pos' || isPostGraduationCourse(course)
       const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 40)
       const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 66)

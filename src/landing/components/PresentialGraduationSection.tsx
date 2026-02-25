@@ -1,7 +1,11 @@
 import type { ReactNode } from 'react'
 
+import { emitCoursePrefill } from '../coursePrefill'
+
 type PresentialCourseHighlight = {
   id: string
+  courseValue: string
+  courseLabel: string
   title: string
   mode: string
   image: string
@@ -18,6 +22,8 @@ type PresentialCourseHighlight = {
 const presentialCourses: PresentialCourseHighlight[] = [
   {
     id: 'enfermagem',
+    courseValue: 'graduacao-enfermagem',
+    courseLabel: 'Enfermagem Presencial',
     title: 'Enfermagem',
     mode: 'Bacharelado Presencial',
     image: '/landing/presential-enfermagem-figma.jpg',
@@ -36,6 +42,8 @@ const presentialCourses: PresentialCourseHighlight[] = [
   },
   {
     id: 'psicologia',
+    courseValue: 'graduacao-psicologia',
+    courseLabel: 'Psicologia Presencial',
     title: 'Psicologia',
     mode: 'Bacharelado Presencial',
     image: '/landing/presential-psicologia-figma.jpg',
@@ -164,7 +172,17 @@ export function PresentialGraduationSection() {
                   <span>de {course.originalPrice}</span>
                 </div>
 
-                <a href="#inscricao" className="lp-presential-card__cta">
+                <a
+                  href="#inscricao"
+                  className="lp-presential-card__cta"
+                  onClick={() =>
+                    emitCoursePrefill({
+                      courseType: 'graduacao',
+                      courseValue: course.courseValue,
+                      courseLabel: course.courseLabel,
+                    })
+                  }
+                >
                   SAIBA MAIS
                   <ArrowForwardIcon />
                 </a>

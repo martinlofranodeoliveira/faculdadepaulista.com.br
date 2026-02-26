@@ -154,7 +154,27 @@ export function AllGraduationsCarouselSection() {
     }
 
     if (dragState.axis === 'x' && dragState.moved) {
-      snapToNearestCard(track, 'smooth')
+      const metrics = getTrackMetrics(track)
+      if (!metrics) {
+        snapToNearestCard(track, 'smooth')
+      } else {
+        const deltaX = event.clientX - dragState.startX
+        const swipeThreshold = Math.max(20, Math.min(56, metrics.step * 0.12))
+        const startIndex = clampIndex(
+          Math.round(dragState.startScrollLeft / metrics.step),
+          metrics.maxIndex,
+        )
+
+        const targetIndex =
+          Math.abs(deltaX) >= swipeThreshold
+            ? clampIndex(startIndex + (deltaX < 0 ? 1 : -1), metrics.maxIndex)
+            : clampIndex(Math.round(track.scrollLeft / metrics.step), metrics.maxIndex)
+
+        track.scrollTo({
+          left: targetIndex * metrics.step,
+          behavior: 'smooth',
+        })
+      }
     }
 
     resetDragState(track.scrollLeft, dragState.axis === 'x' && dragState.moved)

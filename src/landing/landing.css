@@ -2099,7 +2099,7 @@ section[id] {
   scroll-snap-type: x mandatory;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  touch-action: pan-x pan-y;
+  touch-action: pan-y;
 }
 
 .lp-all-grad__track::-webkit-scrollbar {
@@ -2108,6 +2108,7 @@ section[id] {
 
 .lp-all-grad__track.is-dragging {
   cursor: default;
+  scroll-snap-type: none;
   scroll-behavior: auto;
 }
 

@@ -95,6 +95,9 @@ export function AllGraduationsCarouselSection() {
     const track = trackRef.current
     if (!track) return
 
+    // Stop any in-flight smooth scroll before starting a new drag gesture.
+    track.scrollTo({ left: track.scrollLeft, behavior: 'auto' })
+
     dragStateRef.current = {
       isDragging: true,
       pointerId: event.pointerId,
@@ -116,7 +119,7 @@ export function AllGraduationsCarouselSection() {
     const deltaY = event.clientY - dragState.startY
 
     if (dragState.axis === null) {
-      if (Math.abs(deltaX) < 4 && Math.abs(deltaY) < 4) return
+      if (Math.abs(deltaX) < 2 && Math.abs(deltaY) < 2) return
 
       if (Math.abs(deltaY) > Math.abs(deltaX)) {
         resetDragState(track.scrollLeft, false)
@@ -130,7 +133,9 @@ export function AllGraduationsCarouselSection() {
 
     if (dragState.axis !== 'x') return
 
-    if (!dragState.moved && Math.abs(deltaX) > 4) {
+    event.preventDefault()
+
+    if (!dragState.moved && Math.abs(deltaX) > 2) {
       dragState.moved = true
     }
 

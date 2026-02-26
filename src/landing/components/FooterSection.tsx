@@ -1,76 +1,85 @@
-import { Facebook, Instagram, Mail, MapPin, Phone } from 'lucide-react'
-
-import { assets } from '../data'
-
 export function FooterSection() {
+  const currentYear = new Date().getFullYear()
+
   return (
     <footer className="lp-footer" id="contato">
-      <div className="lp-shell lp-footer__grid">
-        <article>
-          <div className="lp-brand lp-brand--small">
+      <div className="lp-shell lp-footer__inner">
+        <div className="lp-footer__grid">
+          <article className="lp-footer__brand">
             <img
-              className="lp-brand__logo lp-brand__logo--footer"
-              src="/landing/logo-faculdade-paulista-v2.webp"
+              className="lp-footer__logo"
+              src="/landing/logo-white-faculdade-paulista.webp"
               alt="Faculdade Paulista"
+              loading="lazy"
             />
+            <p>
+              Excelência no ensino superior com foco na inovação e na empregabilidade dos
+              nossos alunos.
+            </p>
+            <div className="lp-footer__social">
+              <a href="#" aria-label="Facebook">
+                <img
+                  src="/landing/footer/social-facebook.svg"
+                  alt=""
+                  aria-hidden="true"
+                  className="lp-footer__social-icon lp-footer__social-icon--facebook"
+                />
+              </a>
+              <a href="#" aria-label="Instagram">
+                <img
+                  src="/landing/footer/social-instagram.svg"
+                  alt=""
+                  aria-hidden="true"
+                  className="lp-footer__social-icon lp-footer__social-icon--instagram"
+                />
+              </a>
+            </div>
+          </article>
+
+          <article className="lp-footer__contact">
+            <h3>Contato</h3>
+            <ul>
+              <li className="is-map">
+                <img src="/landing/footer/icon-map.svg" alt="" aria-hidden="true" />
+                <span>
+                  Av. Álvaro Ramos, 1200
+                  <br />
+                  Belém - São Paulo, SP
+                </span>
+              </li>
+              <li className="is-phone">
+                <img src="/landing/footer/icon-phone.svg" alt="" aria-hidden="true" />
+                <a href="tel:+551140028922">(11) 4002-8922</a>
+              </li>
+              <li className="is-mail">
+                <img src="/landing/footer/icon-mail.svg" alt="" aria-hidden="true" />
+                <a href="mailto:contato@paulista.edu.br">contato@paulista.edu.br</a>
+              </li>
+            </ul>
+          </article>
+
+          <article className="lp-footer__location">
+            <h3>Localização</h3>
+            <div className="lp-footer__map">
+              <img src="/landing/footer/map.png" alt="Mapa da localização da Faculdade Paulista" />
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Av.+Álvaro+Ramos,+1200,+Belém,+São+Paulo+-+SP"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img src="/landing/footer/icon-map-button.svg" alt="" aria-hidden="true" />
+                Ver no Maps
+              </a>
+            </div>
+          </article>
+        </div>
+
+        <div className="lp-footer__bottom">
+          <span>{`\u00A9 ${currentYear} Faculdade Paulista. Todos os direitos reservados.`}</span>
+          <div>
+            <a href="/politica-de-privacidade">Política de Privacidade</a>
+            <a href="/termos-de-uso">Termos de Uso</a>
           </div>
-          <p>
-            Excelência no ensino superior com foco em inovação, empregabilidade e
-            desenvolvimento humano.
-          </p>
-          <div className="lp-footer__social">
-            <a href="#inicio" aria-label="Facebook">
-              <Facebook size={12} />
-            </a>
-            <a href="#inicio" aria-label="Instagram">
-              <Instagram size={12} />
-            </a>
-          </div>
-        </article>
-
-        <article>
-          <h3>Contato</h3>
-          <p>
-            <MapPin size={13} />
-            Av. Álvaro Ramos, 1200
-            <br />
-            Belém - São Paulo, SP
-          </p>
-          <p>
-            <Phone size={13} />
-            (11) 4002-8922
-          </p>
-          <p>
-            <Mail size={13} />
-            contato@paulista.edu.br
-          </p>
-        </article>
-
-        <article>
-          <h3>Acesso Rápido</h3>
-          <a href="#inicio">Portal do Aluno</a>
-          <a href="#inicio">Calendário Acadêmico</a>
-          <a href="#inicio">Biblioteca Virtual</a>
-          <a href="#inicio">Trabalhe Conosco</a>
-        </article>
-
-        <article>
-          <h3>Localização</h3>
-          <div className="lp-footer__map">
-            <img src={assets.map} alt="Mapa com localização da faculdade" />
-            <a href="#inicio">
-              <MapPin size={12} />
-              Ver no Maps
-            </a>
-          </div>
-        </article>
-      </div>
-
-      <div className="lp-shell lp-footer__bottom">
-        <span>© 2026 Faculdade Paulista. Todos os direitos reservados.</span>
-        <div>
-          <a href="#inicio">Política de Privacidade</a>
-          <a href="#inicio">Termos de Uso</a>
         </div>
       </div>
     </footer>

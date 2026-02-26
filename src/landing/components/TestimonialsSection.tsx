@@ -7,11 +7,10 @@ export function TestimonialsSection() {
     <section className="lp-stories" id="depoimentos">
       <div className="lp-shell">
         <header className="lp-stories__head">
-          <p>QUEM VIVE A PAULISTA RECOMENDA</p>
           <h2>
-            DEPOIMENTOS DE QUEM
+            JUNTE-SE A VÁRIOS ALUNOS QUE
             <br />
-            JÁ TRANSFORMOU <span>A CARREIRA</span>
+            TRANSFORMARAM <span>A CARREIRA</span>
           </h2>
           <small>
             Resultados reais de alunos e ex-alunos que conquistaram novas oportunidades
@@ -20,12 +19,18 @@ export function TestimonialsSection() {
         </header>
 
         <div className="lp-stories__grid">
-          {testimonials.map((item, index) => (
-            <article
-              key={item.name}
-              className={`lp-story-card ${index % 3 === 1 ? 'lp-story-card--offset' : ''}`}
-            >
-              <div className="lp-story-card__stars">★★★★★</div>
+          {testimonials.map((item) => (
+            <article key={item.name} className="lp-story-card">
+              <div className="lp-story-card__stars" aria-label="5 de 5 estrelas">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <img
+                    key={`${item.name}-star-${index}`}
+                    src="/landing/stories/star-red.svg"
+                    alt=""
+                    aria-hidden="true"
+                  />
+                ))}
+              </div>
               <p>{item.text}</p>
               <div className="lp-story-card__person">
                 <img src={item.avatar} alt={item.name} />

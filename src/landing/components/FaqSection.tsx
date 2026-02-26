@@ -1,5 +1,3 @@
-import { ChevronDown } from 'lucide-react'
-
 import { faqItems } from '../data'
 
 export function FaqSection() {
@@ -7,17 +5,19 @@ export function FaqSection() {
     <section className="lp-faq">
       <div className="lp-shell lp-faq__inner">
         <h2>Dúvidas Frequentes</h2>
-        <p>
-          Separamos as perguntas mais comuns para te ajudar a tomar a melhor decisão.
-        </p>
         <div className="lp-faq__list">
           {faqItems.map((item) => (
-            <details key={item.question}>
-              <summary>
-                <span>{item.question}</span>
-                <ChevronDown size={14} />
+            <details key={item.question} className="lp-faq__item">
+              <summary className="lp-faq__summary">
+                <span className="lp-faq__question">{item.question}</span>
+                <img
+                  src="/landing/faq-chevron.svg"
+                  alt=""
+                  aria-hidden="true"
+                  className="lp-faq__chevron"
+                />
               </summary>
-              <p>{item.answer}</p>
+              <p className="lp-faq__answer">{item.answer}</p>
             </details>
           ))}
         </div>

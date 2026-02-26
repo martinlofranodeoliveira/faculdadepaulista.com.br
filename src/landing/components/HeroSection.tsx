@@ -595,11 +595,7 @@ export function HeroSection() {
             ),
         fonteTexto:
           import.meta.env.VITE_CRM_FONTE_TEXTO ?? 'Landing Page Faculdade Paulista',
-        origem: pickTrackingValue(
-          trackingParams,
-          ['origem'],
-          import.meta.env.VITE_CRM_ORIGEM ?? '4',
-        ),
+        origem: '1',
         criativo: pickTrackingValue(trackingParams, [
           'criativo',
           'conteudo_anuncio',

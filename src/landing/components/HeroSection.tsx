@@ -1,4 +1,4 @@
-import {
+﻿import {
   useCallback,
   useEffect,
   useMemo,
@@ -41,7 +41,7 @@ const NAME_REGEX = /^[\p{L}\s.'-]+$/u
 type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error'
 type CourseType = 'graduacao' | 'pos'
 type FormStep = 1 | 2 | 3
-type CourseOption = { value: string; label: string; url?: string }
+type CourseOption = { value: string; label: string; url?: string; courseId?: number }
 type FieldName = 'courseType' | 'course' | 'fullName' | 'email' | 'phone'
 type FieldErrors = Partial<Record<FieldName, string>>
 type Touched = Record<FieldName, boolean>
@@ -55,14 +55,34 @@ const EMPTY_TOUCHED: Touched = {
 }
 
 const COURSE_TYPE_OPTIONS: Array<{ value: CourseType; label: string }> = [
-  { value: 'graduacao', label: 'Graduação' },
-  { value: 'pos', label: 'Pós-graduação EAD' },
+  { value: 'graduacao', label: 'GraduaÃ§Ã£o' },
+  { value: 'pos', label: 'PÃ³s-graduaÃ§Ã£o EAD' },
 ]
 
 const STEP_FIELDS: Record<FormStep, FieldName[]> = {
   1: ['courseType', 'course'],
   2: ['fullName'],
   3: ['email', 'phone'],
+}
+
+const GRADUATION_CRM_COURSE_IDS: Record<string, number> = {
+  'graduacao-administracao': 1,
+  'graduacao-analise-desenvolvimento-sistemas': 6,
+  'graduacao-gestao-recursos-humanos': 5,
+  'graduacao-gestao-tecnologia-informacao': 4,
+  'graduacao-pedagogia': 2,
+  'graduacao-negocios-imobiliarios': 3,
+  'graduacao-logistica': 7,
+  'graduacao-processos-gerenciais': 8,
+  'graduacao-marketing': 9,
+  'graduacao-ciencias-contabeis': 11,
+  'graduacao-gestao-comercial': 12,
+  'graduacao-seguranca-publica': 15,
+  'graduacao-gestao-publica': 14,
+  'graduacao-servico-social': 16,
+  'graduacao-gestao-financeira': 13,
+  'graduacao-psicologia': 0,
+  'graduacao-enfermagem': 0,
 }
 
 function normalizeComparableText(value: string): string {
@@ -79,15 +99,32 @@ function toSlug(value: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
+function extractIntegerFromBlock(block: string, patterns: RegExp[]): number | undefined {
+  for (const pattern of patterns) {
+    const match = block.match(pattern)?.[1]?.trim()
+    if (!match) continue
+
+    const parsed = Number.parseInt(match, 10)
+    if (Number.isFinite(parsed)) return parsed
+  }
+  return undefined
+}
+
 function parsePostGraduationCourses(raw: string): CourseOption[] {
   const blocks = raw.split(/\r?\n---\r?\n/g)
   const unique = new Map<string, CourseOption>()
 
   blocks.forEach((block) => {
     const disponibilidade = block.match(/Disponibilidade:\s*(.+)/i)?.[1]?.trim()
-    const nivel = block.match(/N[ií]vel:\s*(.+)/i)?.[1]?.trim()
+    const nivel = block.match(/N[iÃ­]vel:\s*(.+)/i)?.[1]?.trim()
     const nome = block.match(/Nome do Curso:\s*(.+)/i)?.[1]?.trim()
     const url = block.match(/Url Curso:\s*(.+)/i)?.[1]?.trim()
+    const courseId = extractIntegerFromBlock(block, [
+      /ID\s*(?:do\s*)?Curso:\s*(\d+)/i,
+      /id\s*curso:\s*(\d+)/i,
+      /idcurso:\s*(\d+)/i,
+      /curso\s*id:\s*(\d+)/i,
+    ])
 
     if (!disponibilidade || !nivel || !nome || !url) return
 
@@ -119,6 +156,7 @@ function parsePostGraduationCourses(raw: string): CourseOption[] {
         value,
         label: nomeLimpo,
         url,
+        courseId,
       })
     }
   })
@@ -158,7 +196,7 @@ function validateFullName(value: string): string | undefined {
 function validateEmail(value: string): string | undefined {
   const normalized = value.trim()
   if (!normalized) return 'Informe seu e-mail.'
-  if (!EMAIL_REGEX.test(normalized)) return 'Digite um e-mail válido.'
+  if (!EMAIL_REGEX.test(normalized)) return 'Digite um e-mail vÃ¡lido.'
   return undefined
 }
 
@@ -166,13 +204,13 @@ function validatePhone(value: string): string | undefined {
   const digits = normalizePhone(value)
   if (!digits) return 'Informe seu telefone.'
   if (digits.length !== 10 && digits.length !== 11) {
-    return 'Digite um telefone com DDD válido.'
+    return 'Digite um telefone com DDD vÃ¡lido.'
   }
   return undefined
 }
 
 function validateCourseType(value: string): string | undefined {
-  if (!value) return 'Selecione Graduação ou Pós-graduação.'
+  if (!value) return 'Selecione GraduaÃ§Ã£o ou PÃ³s-graduaÃ§Ã£o.'
   return undefined
 }
 
@@ -229,6 +267,10 @@ function parseEnvInteger(value: string | undefined, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback
 }
 
+function getGraduationCourseId(courseValue: string): number {
+  return GRADUATION_CRM_COURSE_IDS[courseValue] ?? 0
+}
+
 export function HeroSection() {
   const [step, setStep] = useState<FormStep>(1)
   const [courseType, setCourseType] = useState<CourseType | ''>('')
@@ -275,11 +317,11 @@ export function HeroSection() {
       setPostCourseOptions(parsedCourses)
       setPostCourseStatus('success')
     } catch (error) {
-      console.error('Erro ao carregar cursos de pós-graduação da API:', error)
+      console.error('Erro ao carregar cursos de pÃ³s-graduaÃ§Ã£o da API:', error)
       setPostCourseOptions([])
       setPostCourseStatus('error')
       setPostCourseErrorMessage(
-        'Não foi possível carregar os cursos de Pós-graduação no momento.',
+        'NÃ£o foi possÃ­vel carregar os cursos de PÃ³s-graduaÃ§Ã£o no momento.',
       )
     }
   }, [])
@@ -292,16 +334,24 @@ export function HeroSection() {
     return formCourseGroups.flatMap((group) => group.options)
   }, [])
 
-  const courseLookup = useMemo(() => {
-    const map = new Map<string, string>()
+  const courseOptionsLookup = useMemo(() => {
+    const map = new Map<string, CourseOption>()
     allCourseOptions.forEach((item) => {
-      map.set(item.value, item.label)
+      map.set(item.value, item)
     })
     postCourseOptions.forEach((item) => {
-      map.set(item.value, item.label)
+      map.set(item.value, item)
     })
     return map
   }, [allCourseOptions, postCourseOptions])
+
+  const courseLookup = useMemo(() => {
+    const map = new Map<string, string>()
+    courseOptionsLookup.forEach((item, key) => {
+      map.set(key, item.label)
+    })
+    return map
+  }, [courseOptionsLookup])
 
   const courseOptionsByType = useMemo<Record<CourseType, CourseOption[]>>(() => {
     return {
@@ -505,14 +555,18 @@ export function HeroSection() {
       const storedTrackingParams = readStoredUtmParams()
       const trackingParams = { ...storedTrackingParams, ...trackedFromUrl }
       const phoneDigits = normalizePhone(phone)
+      const selectedCourseOption = courseOptionsLookup.get(course)
       const courseLabel = (courseLookup.get(course) ?? courseSearch.trim()) || course
       const isPostGraduation = courseType === 'pos' || isPostGraduationCourse(course)
-      const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 40)
-      const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 66)
-      const etapaPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_POS, 67)
-      const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 8)
-      const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 8)
+      const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 9)
+      const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 50)
+      const etapaPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_POS, 50)
+      const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 5)
+      const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 5)
       const statusLead = parseEnvInteger(import.meta.env.VITE_CRM_STATUS_LEAD, 1)
+      const poloId = parseEnvInteger(import.meta.env.VITE_CRM_POLO, 4658)
+      const gradCourseId = getGraduationCourseId(course)
+      const postCourseId = selectedCourseOption?.courseId ?? 0
 
       const payload = {
         aluno: 0,
@@ -521,7 +575,7 @@ export function HeroSection() {
         telefone: phoneDigits,
         empresa: empresaId,
         matricula: '',
-        idCurso: 0,
+        idCurso: isPostGraduation ? postCourseId : gradCourseId,
         curso: courseLabel,
         etapa: isPostGraduation ? etapaPos : etapaGrad,
         cpf: '',
@@ -529,20 +583,21 @@ export function HeroSection() {
         funil: isPostGraduation ? funilPos : funilGrad,
         status: statusLead,
         observacao: isPostGraduation
-          ? 'PÓS-GRADUAÇÃO: Inscrito'
-          : 'GRADUAÇÃO: Inscrição Vestibular',
+          ? 'PÓS-GRADUAÇÃO: Lead Landing Page Faculdade Paulista'
+          : 'GRADUAÇÃO: Lead Landing Page Faculdade Paulista',
         campanha: pickTrackingValue(trackingParams, ['campanha', 'utm_campaign']),
         midia: pickTrackingValue(trackingParams, ['midia', 'utm_medium']),
         fonte: pickTrackingValue(
           trackingParams,
           ['id_fonte_crm', 'fonte', 'utm_source'],
-          import.meta.env.VITE_CRM_FONTE_ID ?? CRM_NOT_IDENTIFIED,
+          import.meta.env.VITE_CRM_FONTE_ID ?? '33',
         ),
-        fonteTexto: import.meta.env.VITE_CRM_FONTE_TEXTO ?? 'Faculdade Paulista',
+        fonteTexto:
+          import.meta.env.VITE_CRM_FONTE_TEXTO ?? 'Landing Page Faculdade Paulista',
         origem: pickTrackingValue(
           trackingParams,
           ['origem'],
-          import.meta.env.VITE_CRM_ORIGEM ?? '0',
+          import.meta.env.VITE_CRM_ORIGEM ?? '4',
         ),
         criativo: pickTrackingValue(trackingParams, [
           'criativo',
@@ -565,7 +620,7 @@ export function HeroSection() {
           'adset',
           'utm_term',
         ]),
-        polo: import.meta.env.VITE_CRM_POLO ?? '',
+        polo: poloId,
       }
 
       const headers: Record<string, string> = {
@@ -606,7 +661,7 @@ export function HeroSection() {
     } catch (error) {
       console.error('Erro ao enviar lead para o CRM:', error)
       setSubmitStatus('error')
-      setSubmitMessage('Não foi possível enviar agora. Tente novamente em instantes.')
+      setSubmitMessage('NÃ£o foi possÃ­vel enviar agora. Tente novamente em instantes.')
     }
   }
 
@@ -778,12 +833,12 @@ export function HeroSection() {
                   <div
                     className="lp-course-search__menu"
                     role="listbox"
-                    aria-label="Cursos disponíveis"
+                    aria-label="Cursos disponÃ­veis"
                     onScroll={handleCourseSearchMenuScroll}
                   >
                     {courseType === 'pos' && postCourseStatus === 'loading' ? (
                       <span className="lp-course-search__empty">
-                        Carregando cursos de Pós-graduação...
+                        Carregando cursos de PÃ³s-graduaÃ§Ã£o...
                       </span>
                     ) : courseType === 'pos' && postCourseStatus === 'error' ? (
                       <div className="lp-course-search__error">
@@ -888,7 +943,7 @@ export function HeroSection() {
                     Voltar
                   </button>
                   <button type="submit" className="lp-main-button lp-hero-form__submit">
-                    PRÓXIMA
+                    PRÃ“XIMA
                     <ArrowRight size={14} />
                   </button>
                 </div>
@@ -993,6 +1048,7 @@ export function HeroSection() {
     </section>
   )
 }
+
 
 
 

@@ -1707,7 +1707,7 @@ section[id] {
   border-radius: 7px;
   color: #222b38;
   display: flex;
-  font-size: 14px;
+  font-size: 13px;
   gap: 12px;
   height: 42px;
   line-height: 1.1;
@@ -1725,6 +1725,23 @@ section[id] {
 
 .lp-presential-card__benefits li svg {
   flex-shrink: 0;
+}
+
+@media (min-width: 721px) {
+  .lp-presential-card__benefits li {
+    align-items: flex-start;
+    padding-bottom: 6px;
+    padding-top: 6px;
+  }
+
+  .lp-presential-card__benefits li span {
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: initial;
+    display: block;
+    line-height: 1.18;
+    overflow: visible;
+    white-space: normal;
+  }
 }
 
 .lp-presential-card__price {
@@ -2166,6 +2183,13 @@ section[id] {
 .lp-all-grad-card__price-old {
   color: rgba(1, 1, 1, 0.2);
   margin-bottom: 7px;
+}
+
+.lp-all-grad-card__price-current-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .lp-all-grad-card__price-old span,
@@ -3032,7 +3056,7 @@ section[id] {
   }
 
   .lp-hero__form-shell {
-    margin-top: -12px;
+    margin-top: -37px;
   }
 
   .lp-hero-form__lead {
@@ -3053,13 +3077,31 @@ section[id] {
   }
 
   .lp-grad-carousel__filters {
-    gap: 8px;
+    flex-wrap: nowrap;
+    gap: 12px;
+    margin-top: 14px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-right: 28px;
+    scroll-snap-type: x mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    touch-action: pan-x;
+  }
+
+  .lp-grad-carousel__filters::-webkit-scrollbar {
+    display: none;
   }
 
   .lp-grad-carousel__filter {
+    border-radius: 6px;
+    flex: 0 0 auto;
     font-size: 12px;
-    height: 36px;
-    padding: 0 12px;
+    height: 34px;
+    min-width: max-content;
+    padding: 0 20px;
+    scroll-snap-align: start;
+    white-space: nowrap;
   }
 
   .lp-grad-carousel__toolbar {
@@ -3130,7 +3172,7 @@ section[id] {
   }
 
   .lp-all-grad__head p {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .lp-all-grad-card {
@@ -3152,49 +3194,110 @@ section[id] {
   }
 
   .lp-presential h2 {
-    font-size: clamp(28px, 8.4vw, 34px);
+    font-size: clamp(25px, 7.4vw, 31px);
+    letter-spacing: -0.02em;
+    line-height: 1.08;
+  }
+
+  .lp-presential__grid {
+    gap: 14px;
+    margin-top: 16px;
   }
 
   .lp-presential-card {
-    gap: 14px;
-    grid-template-columns: 1fr;
-    padding: 14px;
+    align-items: center;
+    border-radius: 14px;
+    gap: 10px;
+    grid-template-columns: minmax(118px, 134px) minmax(0, 1fr);
+    padding: 10px;
   }
 
   .lp-presential-card__image,
   .lp-presential-card__image.is-compact {
-    border-radius: 14px;
-    height: 300px;
-    max-width: 100%;
-  }
-
-  .lp-presential-card__head h3 {
-    font-size: clamp(28px, 8vw, 34px);
-  }
-
-  .lp-presential-card__mode {
-    font-size: 14px;
-  }
-
-  .lp-presential-card__location {
-    font-size: 16px;
-  }
-
-  .lp-presential-card__benefits {
-    grid-template-columns: 1fr;
-  }
-
-  .lp-presential-card__benefits li {
-    font-size: 14px;
+    border-radius: 10px;
+    height: 254px;
+    max-width: 134px;
     width: 100%;
   }
 
+  .lp-presential-card__content {
+    gap: 10px;
+    min-height: 248px;
+  }
+
+  .lp-presential-card__head {
+    gap: 4px;
+  }
+
+  .lp-presential-card__start {
+    border-radius: 5px;
+    font-size: 12px;
+    min-height: 24px;
+    padding: 0 8px;
+  }
+
+  .lp-presential-card__head h3 {
+    font-size: clamp(21px, 5.4vw, 24px);
+    line-height: 1.1;
+  }
+
+  .lp-presential-card__mode {
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .lp-presential-card__mode svg {
+    height: 13px;
+    width: 16px;
+  }
+
+  .lp-presential-card__location {
+    font-size: 12px;
+    line-height: 1.1;
+  }
+
+  .lp-presential-card__benefits {
+    gap: 5px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-presential-card__benefits li {
+    border-radius: 4px;
+    font-size: 10px;
+    gap: 6px;
+    height: 26px;
+    padding: 3px 6px;
+    width: 100%;
+  }
+
+  .lp-presential-card__benefits li svg {
+    height: 14px;
+    width: 14px;
+  }
+
+  .lp-presential-card__price {
+    gap: 8px;
+  }
+
   .lp-presential-card__price strong {
-    font-size: 24px;
+    font-size: 13px;
   }
 
   .lp-presential-card__price span {
-    font-size: 18px;
+    font-size: 13px;
+  }
+
+  .lp-presential-card__cta {
+    border-radius: 6px;
+    font-size: 13px;
+    gap: 6px;
+    height: 40px;
+    width: 100%;
+  }
+
+  .lp-presential-card__cta svg {
+    height: 12px;
+    width: 12px;
   }
 
   .lp-journey__steps {
@@ -3236,12 +3339,54 @@ section[id] {
     grid-template-rows: auto;
   }
 
+  .lp-future__mec h3{
+    font-size: clamp(23px, 2.4vw, 30px);
+  }
+
   .lp-future__location {
-    min-height: 330px;
+    border-radius: 21px;
+    box-shadow: 0 3px 15px -1.5px rgba(0, 0, 0, 0.05);
+    height: clamp(340px, 94vw, 412px);
+    min-height: 0;
+  }
+
+  .lp-future__location > img {
+    object-position: center top;
   }
 
   .lp-future__location-content {
-    padding: 24px 20px;
+    background:
+      linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.4) 50%,
+        rgba(0, 0, 0, 0.9) 100%
+      );
+    padding: 24px;
+  }
+
+  .lp-future__location-pin {
+    border-radius: 9px;
+    height: 36px;
+    width: 36px;
+  }
+
+  .lp-future__location-pin svg {
+    height: 20px;
+    width: 20px;
+  }
+
+  .lp-future__location h3 {
+    font-size: 18px;
+    letter-spacing: -0.01em;
+    line-height: 24px;
+    margin: 12px 0 6px;
+  }
+
+  .lp-future__location p {
+    font-size: 12px;
+    line-height: 16.8px;
+    max-width: 100%;
   }
 
   .lp-future__mec,
@@ -3250,6 +3395,50 @@ section[id] {
     grid-column: 1;
     grid-row: auto;
     padding: 24px 20px;
+  }
+
+  .lp-future__history {
+    align-items: center;
+    border-radius: 21px;
+    box-shadow: 0 4px 20.6px 1px rgba(0, 0, 0, 0.1);
+    flex-direction: row;
+    gap: 22px;
+    justify-content: flex-start;
+    min-height: 122px;
+    padding: 20px 22px;
+    text-align: left;
+  }
+
+  .lp-future__history-mark {
+    flex: 0 0 72px;
+    margin: 0;
+    width: 72px;
+  }
+
+  .lp-future__history-mark strong {
+    font-size: 29px;
+    top: 43%;
+  }
+
+  .lp-future__history-title {
+    font-size: clamp(18px, 5vw, 20px);
+    line-height: 1.25;
+    margin: 0;
+    max-width: none;
+    white-space: nowrap;
+  }
+
+  .lp-future__history-star--top {
+    left: clamp(108px, 34vw, 136px);
+    right: auto;
+    top: 10px;
+    width: 15px;
+  }
+
+  .lp-future__history-star--bottom {
+    left: 8px;
+    top: 60px;
+    width: 15px;
   }
 
   .lp-future__mec {
@@ -3261,6 +3450,7 @@ section[id] {
   .lp-future__mec-badge {
     align-self: flex-end;
     width: min(148px, 42vw);
+    display: none;
   }
 
   .lp-future__partners-row {
@@ -3405,12 +3595,59 @@ section[id] {
 
   .lp-presential-card__image,
   .lp-presential-card__image.is-compact {
-    height: 260px;
+    height: 224px;
+    max-width: 120px;
+  }
+
+  .lp-presential-card {
+    gap: 8px;
+    grid-template-columns: minmax(102px, 120px) minmax(0, 1fr);
+    padding: 8px;
+  }
+
+  .lp-presential-card__content {
+    gap: 8px;
+    min-height: 224px;
+  }
+
+  .lp-presential-card__start {
+    font-size: 10px;
+    min-height: 20px;
+    padding: 0 6px;
+  }
+
+  .lp-presential-card__head h3 {
+    font-size: clamp(18px, 6.2vw, 21px);
+  }
+
+  .lp-presential-card__mode {
+    font-size: 11px;
+  }
+
+  .lp-presential-card__location {
+    font-size: 11px;
+  }
+
+  .lp-presential-card__benefits li {
+    font-size: 9px;
+    gap: 4px;
+    height: 24px;
+    padding: 2px 5px;
+  }
+
+  .lp-presential-card__benefits li svg {
+    height: 12px;
+    width: 12px;
+  }
+
+  .lp-presential-card__price strong,
+  .lp-presential-card__price span {
+    font-size: 12px;
   }
 
   .lp-presential-card__cta {
-    font-size: 14px;
-    height: 44px;
+    font-size: 12px;
+    height: 34px;
   }
 
   .lp-all-grad-card {
@@ -3443,7 +3680,7 @@ section[id] {
   }
 
   .lp-hero__form-shell {
-    margin-top: -8px;
+    margin-top: -37px;
   }
 
   .lp-main-button {
@@ -3471,7 +3708,38 @@ section[id] {
   }
 
   .lp-future__location {
-    min-height: 300px;
+    height: clamp(320px, 96vw, 396px);
+  }
+
+  .lp-future__history {
+    gap: 14px;
+    min-height: 104px;
+    padding: 18px 16px;
+  }
+
+  .lp-future__history-mark {
+    flex-basis: 64px;
+    width: 64px;
+  }
+
+  .lp-future__history-mark strong {
+    font-size: 25px;
+  }
+
+  .lp-future__history-title {
+    font-size: 17px;
+  }
+
+  .lp-future__history-star--top {
+    left: 90px;
+    top: 13px;
+    width: 14px;
+  }
+
+  .lp-future__history-star--bottom {
+    left: 6px;
+    top: 65px;
+    width: 14px;
   }
 
   .lp-future-logo img {

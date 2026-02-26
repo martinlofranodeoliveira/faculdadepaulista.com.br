@@ -173,10 +173,12 @@ export function AllGraduationsCarouselSection() {
                   <p className="lp-all-grad-card__price-old">
                     <span>De:</span> {course.oldInstallmentPrice}
                   </p>
-                  <p className="lp-all-grad-card__price-current">
-                    <span>Por:</span> {course.installmentPrice}
-                  </p>
-                  <span className="lp-all-grad-card__fixed">FIXOS</span>
+                  <div className="lp-all-grad-card__price-current-row">
+                    <p className="lp-all-grad-card__price-current">
+                      <span>Por:</span> {course.installmentPrice}
+                    </p>
+                    <span className="lp-all-grad-card__fixed">FIXOS</span>
+                  </div>
                 </div>
 
                 <a

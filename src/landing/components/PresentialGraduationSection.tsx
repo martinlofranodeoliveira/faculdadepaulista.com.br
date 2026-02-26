@@ -33,7 +33,7 @@ const presentialCourses: PresentialCourseHighlight[] = [
     location: '200m do Metro Belém | SP',
     benefits: [
       'Estágio no 1 Semestre',
-      'Ganhe Grátis Curso EAD',
+      'Ganhe Grátis Cursos EAD',
       'Laboratório Moderno',
       'Laboratório Moderno',
     ],
@@ -53,7 +53,7 @@ const presentialCourses: PresentialCourseHighlight[] = [
     location: '200m do Metro Belém | SP',
     benefits: [
       'Estágio no 1 Semestre',
-      'Ganhe Grátis Curso EAD',
+      'Ganhe Grátis Cursos EAD',
       'Laboratório Moderno',
       'Laboratório Moderno',
     ],

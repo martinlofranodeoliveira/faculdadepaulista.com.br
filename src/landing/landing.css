@@ -1951,7 +1951,7 @@ section[id] {
 
 .lp-grad-carousel__content h3 {
   color: #000;
-  font-size: clamp(19px, 1.62vw, 31px);
+  font-size: clamp(19px, 1.62vw, 21px);
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.12;
@@ -1968,7 +1968,7 @@ section[id] {
 
 .lp-grad-carousel__price strong {
   color: #101010;
-  font-size: clamp(24px, 1.9vw, 24px);
+  font-size: clamp(24px, 1.9vw, 21px);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.1;
@@ -1976,7 +1976,7 @@ section[id] {
 
 .lp-grad-carousel__price span {
   color: rgba(43, 33, 33, 0.25);
-  font-size: clamp(17px, 1.32vw, 24px);
+  font-size: clamp(17px, 1.32vw, 21px);
   font-weight: 700;
   line-height: 1.1;
   text-decoration: line-through;

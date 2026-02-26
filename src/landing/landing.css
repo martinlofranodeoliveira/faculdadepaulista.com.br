@@ -3121,7 +3121,7 @@ section[id] {
   }
 
   .lp-grad-carousel__list {
-    max-height: 520px;
+    max-height: 340px;
     overflow-y: auto;
     padding-right: 0;
   }
@@ -3137,15 +3137,15 @@ section[id] {
   }
 
   .lp-grad-carousel__content h3 {
-    font-size: clamp(20px, 5.5vw, 24px);
+    font-size: clamp(16px, 5.5vw, 16px);
   }
 
   .lp-grad-carousel__price strong {
-    font-size: clamp(24px, 6.2vw, 28px);
+    font-size: clamp(16px, 6.2vw, 16px);
   }
 
   .lp-grad-carousel__price span {
-    font-size: clamp(16px, 4.7vw, 20px);
+    font-size: clamp(16px, 4.7vw, 16px);
   }
 
   .lp-grad-carousel__cta {

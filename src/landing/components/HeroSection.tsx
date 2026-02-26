@@ -560,7 +560,6 @@ export function HeroSection() {
       const isPostGraduation = courseType === 'pos' || isPostGraduationCourse(course)
       const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 9)
       const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 50)
-      const etapaPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_POS, 50)
       const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 5)
       const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 5)
       const statusLead = parseEnvInteger(import.meta.env.VITE_CRM_STATUS_LEAD, 1)
@@ -577,7 +576,7 @@ export function HeroSection() {
         matricula: '',
         idCurso: isPostGraduation ? postCourseId : gradCourseId,
         curso: courseLabel,
-        etapa: isPostGraduation ? etapaPos : etapaGrad,
+        etapa: isPostGraduation ? 50 : etapaGrad,
         cpf: '',
         valor: '',
         funil: isPostGraduation ? funilPos : funilGrad,
@@ -587,11 +586,13 @@ export function HeroSection() {
           : 'GRADUAÇÃO: Lead Landing Page Faculdade Paulista',
         campanha: pickTrackingValue(trackingParams, ['campanha', 'utm_campaign']),
         midia: pickTrackingValue(trackingParams, ['midia', 'utm_medium']),
-        fonte: pickTrackingValue(
-          trackingParams,
-          ['id_fonte_crm', 'fonte', 'utm_source'],
-          import.meta.env.VITE_CRM_FONTE_ID ?? '33',
-        ),
+        fonte: isPostGraduation
+          ? '33'
+          : pickTrackingValue(
+              trackingParams,
+              ['id_fonte_crm', 'fonte', 'utm_source'],
+              import.meta.env.VITE_CRM_FONTE_ID ?? '33',
+            ),
         fonteTexto:
           import.meta.env.VITE_CRM_FONTE_TEXTO ?? 'Landing Page Faculdade Paulista',
         origem: pickTrackingValue(

@@ -25,20 +25,65 @@ export function AllGraduationsCarouselSection() {
     isDragging: false,
     pointerId: -1,
     startX: 0,
+    startY: 0,
     startScrollLeft: 0,
     moved: false,
+    axis: null as 'x' | 'y' | null,
   })
+
+  const getTrackMetrics = (track: HTMLDivElement) => {
+    const card = track.querySelector<HTMLElement>('.lp-all-grad-card')
+    if (!card) return null
+
+    const styles = window.getComputedStyle(track)
+    const gap =
+      Number.parseFloat(styles.columnGap || styles.gap || '0') ||
+      Number.parseFloat(styles.rowGap || '0') ||
+      0
+    const cardWidth = card.getBoundingClientRect().width
+    const step = cardWidth + gap
+    if (step <= 0) return null
+
+    const maxIndex = Math.max(0, Math.round((track.scrollWidth - track.clientWidth) / step))
+    return { step, maxIndex }
+  }
+
+  const clampIndex = (value: number, maxIndex: number) => Math.min(Math.max(0, value), maxIndex)
+
+  const snapToNearestCard = (track: HTMLDivElement, behavior: ScrollBehavior = 'smooth') => {
+    const metrics = getTrackMetrics(track)
+    if (!metrics) return
+
+    const nearestIndex = clampIndex(Math.round(track.scrollLeft / metrics.step), metrics.maxIndex)
+    track.scrollTo({
+      left: nearestIndex * metrics.step,
+      behavior,
+    })
+  }
+
+  const resetDragState = (scrollLeft: number, moved = false) => {
+    dragStateRef.current = {
+      isDragging: false,
+      pointerId: -1,
+      startX: 0,
+      startY: 0,
+      startScrollLeft: scrollLeft,
+      moved,
+      axis: null,
+    }
+  }
 
   const scrollByCard = (direction: 1 | -1) => {
     const track = trackRef.current
     if (!track) return
 
-    const card = track.querySelector<HTMLElement>('.lp-all-grad-card')
-    const cardWidth = card?.getBoundingClientRect().width ?? 306
-    const gap = 18
+    const metrics = getTrackMetrics(track)
+    if (!metrics) return
+    const currentIndex = clampIndex(Math.round(track.scrollLeft / metrics.step), metrics.maxIndex)
+    const targetIndex = clampIndex(currentIndex + direction, metrics.maxIndex)
 
-    track.scrollBy({
-      left: direction * (cardWidth + gap),
+    track.scrollTo({
+      left: targetIndex * metrics.step,
       behavior: 'smooth',
     })
   }
@@ -54,12 +99,11 @@ export function AllGraduationsCarouselSection() {
       isDragging: true,
       pointerId: event.pointerId,
       startX: event.clientX,
+      startY: event.clientY,
       startScrollLeft: track.scrollLeft,
       moved: false,
+      axis: null,
     }
-
-    track.classList.add('is-dragging')
-    track.setPointerCapture(event.pointerId)
   }
 
   const handlePointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
@@ -69,6 +113,23 @@ export function AllGraduationsCarouselSection() {
     if (!track || !dragState.isDragging || dragState.pointerId !== event.pointerId) return
 
     const deltaX = event.clientX - dragState.startX
+    const deltaY = event.clientY - dragState.startY
+
+    if (dragState.axis === null) {
+      if (Math.abs(deltaX) < 4 && Math.abs(deltaY) < 4) return
+
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        resetDragState(track.scrollLeft, false)
+        return
+      }
+
+      dragState.axis = 'x'
+      track.classList.add('is-dragging')
+      track.setPointerCapture(event.pointerId)
+    }
+
+    if (dragState.axis !== 'x') return
+
     if (!dragState.moved && Math.abs(deltaX) > 4) {
       dragState.moved = true
     }
@@ -87,13 +148,11 @@ export function AllGraduationsCarouselSection() {
       track.releasePointerCapture(event.pointerId)
     }
 
-    dragStateRef.current = {
-      isDragging: false,
-      pointerId: -1,
-      startX: 0,
-      startScrollLeft: track.scrollLeft,
-      moved: dragState.moved,
+    if (dragState.axis === 'x' && dragState.moved) {
+      snapToNearestCard(track, 'smooth')
     }
+
+    resetDragState(track.scrollLeft, dragState.axis === 'x' && dragState.moved)
   }
 
   const handlePointerCancel: React.PointerEventHandler<HTMLDivElement> = (event) => {
@@ -105,8 +164,8 @@ export function AllGraduationsCarouselSection() {
       track.releasePointerCapture(event.pointerId)
     }
 
-    dragStateRef.current.isDragging = false
-    dragStateRef.current.pointerId = -1
+    snapToNearestCard(track, 'auto')
+    resetDragState(track.scrollLeft, false)
   }
 
   const handleClickCapture: React.MouseEventHandler<HTMLDivElement> = (event) => {

@@ -55,8 +55,8 @@ const EMPTY_TOUCHED: Touched = {
 }
 
 const COURSE_TYPE_OPTIONS: Array<{ value: CourseType; label: string }> = [
-  { value: 'graduacao', label: 'GraduaÃ§Ã£o' },
-  { value: 'pos', label: 'PÃ³s-graduaÃ§Ã£o EAD' },
+  { value: 'graduacao', label: 'Graduação' },
+  { value: 'pos', label: 'Pós-graduação EAD' },
 ]
 
 const STEP_FIELDS: Record<FormStep, FieldName[]> = {
@@ -116,7 +116,7 @@ function parsePostGraduationCourses(raw: string): CourseOption[] {
 
   blocks.forEach((block) => {
     const disponibilidade = block.match(/Disponibilidade:\s*(.+)/i)?.[1]?.trim()
-    const nivel = block.match(/N[iÃ­]vel:\s*(.+)/i)?.[1]?.trim()
+    const nivel = block.match(/N[ií]vel:\s*(.+)/i)?.[1]?.trim()
     const nome = block.match(/Nome do Curso:\s*(.+)/i)?.[1]?.trim()
     const url = block.match(/Url Curso:\s*(.+)/i)?.[1]?.trim()
     const courseId = extractIntegerFromBlock(block, [
@@ -196,7 +196,7 @@ function validateFullName(value: string): string | undefined {
 function validateEmail(value: string): string | undefined {
   const normalized = value.trim()
   if (!normalized) return 'Informe seu e-mail.'
-  if (!EMAIL_REGEX.test(normalized)) return 'Digite um e-mail vÃ¡lido.'
+  if (!EMAIL_REGEX.test(normalized)) return 'Digite um e-mail válido.'
   return undefined
 }
 
@@ -204,13 +204,13 @@ function validatePhone(value: string): string | undefined {
   const digits = normalizePhone(value)
   if (!digits) return 'Informe seu telefone.'
   if (digits.length !== 10 && digits.length !== 11) {
-    return 'Digite um telefone com DDD vÃ¡lido.'
+    return 'Digite um telefone com DDD válido.'
   }
   return undefined
 }
 
 function validateCourseType(value: string): string | undefined {
-  if (!value) return 'Selecione GraduaÃ§Ã£o ou PÃ³s-graduaÃ§Ã£o.'
+  if (!value) return 'Selecione Graduação ou Pós-graduação.'
   return undefined
 }
 
@@ -317,11 +317,11 @@ export function HeroSection() {
       setPostCourseOptions(parsedCourses)
       setPostCourseStatus('success')
     } catch (error) {
-      console.error('Erro ao carregar cursos de pÃ³s-graduaÃ§Ã£o da API:', error)
+      console.error('Erro ao carregar cursos de pós-graduação da API:', error)
       setPostCourseOptions([])
       setPostCourseStatus('error')
       setPostCourseErrorMessage(
-        'NÃ£o foi possÃ­vel carregar os cursos de PÃ³s-graduaÃ§Ã£o no momento.',
+        'Não foi possível carregar os cursos de Pós-graduação no momento.',
       )
     }
   }, [])
@@ -661,7 +661,7 @@ export function HeroSection() {
     } catch (error) {
       console.error('Erro ao enviar lead para o CRM:', error)
       setSubmitStatus('error')
-      setSubmitMessage('NÃ£o foi possÃ­vel enviar agora. Tente novamente em instantes.')
+      setSubmitMessage('Não foi possível enviar agora. Tente novamente em instantes.')
     }
   }
 
@@ -833,12 +833,12 @@ export function HeroSection() {
                   <div
                     className="lp-course-search__menu"
                     role="listbox"
-                    aria-label="Cursos disponÃ­veis"
+                    aria-label="Cursos disponíveis"
                     onScroll={handleCourseSearchMenuScroll}
                   >
                     {courseType === 'pos' && postCourseStatus === 'loading' ? (
                       <span className="lp-course-search__empty">
-                        Carregando cursos de PÃ³s-graduaÃ§Ã£o...
+                        Carregando cursos de Pós-graduação...
                       </span>
                     ) : courseType === 'pos' && postCourseStatus === 'error' ? (
                       <div className="lp-course-search__error">
@@ -943,7 +943,7 @@ export function HeroSection() {
                     Voltar
                   </button>
                   <button type="submit" className="lp-main-button lp-hero-form__submit">
-                    PRÃ“XIMA
+                    PRÓXIMA
                     <ArrowRight size={14} />
                   </button>
                 </div>

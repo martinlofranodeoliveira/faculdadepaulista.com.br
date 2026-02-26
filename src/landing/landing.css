@@ -1985,7 +1985,7 @@ section[id] {
 
 .lp-grad-carousel__price strong {
   color: #101010;
-  font-size: clamp(24px, 1.9vw, 21px);
+  font-size: clamp(21px, 1.9vw, 21px);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.1;

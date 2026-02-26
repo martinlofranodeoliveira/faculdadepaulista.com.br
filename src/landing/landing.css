@@ -34,7 +34,7 @@ section[id] {
   align-items: center;
   background: var(--lp-buttom-grad);
   border: 0;
-  border-radius: 999px;
+  border-radius: 12px;
   box-shadow: 0 10px 22px -10px rgba(255, 17, 17, 0.55);
   color: #fff;
   cursor: pointer;

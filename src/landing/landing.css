@@ -2095,11 +2095,11 @@ section[id] {
   cursor: default;
   display: flex;
   gap: 18px;
-  overflow-x: auto;
+  overflow-x: hidden;
   scroll-snap-type: x mandatory;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  touch-action: pan-y;
+  touch-action: pan-x pan-y;
 }
 
 .lp-all-grad__track::-webkit-scrollbar {
@@ -2884,11 +2884,13 @@ section[id] {
   }
 
   .lp-all-grad__track {
-    cursor: grab;
+    cursor: default;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .lp-all-grad__track.is-dragging {
-    cursor: grabbing;
+    cursor: default;
   }
 
   .lp-all-grad-card {

@@ -88,26 +88,8 @@ export function AllGraduationsCarouselSection() {
     })
   }
 
-  const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = (event) => {
-    if (event.pointerType === 'mouse') return
-    if (event.button !== 0) return
-
-    const track = trackRef.current
-    if (!track) return
-
-    // Stop any in-flight smooth scroll before starting a new drag gesture.
-    track.scrollTo({ left: track.scrollLeft, behavior: 'auto' })
-
-    dragStateRef.current = {
-      isDragging: true,
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      startScrollLeft: track.scrollLeft,
-      moved: false,
-      axis: null,
-    }
-  }
+  // Drag by pointer is disabled; mobile relies on native scrolling and desktop uses arrows.
+  const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = () => {}
 
   const handlePointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
     const track = trackRef.current

@@ -35,7 +35,6 @@ section[id] {
   background: var(--lp-buttom-grad);
   border: 0;
   border-radius: 12px;
-  box-shadow: 0 10px 22px -10px rgba(255, 17, 17, 0.55);
   color: #fff;
   cursor: pointer;
   display: inline-flex;
@@ -52,7 +51,6 @@ section[id] {
 }
 
 .lp-main-button:hover {
-  box-shadow: 0 16px 28px -12px rgba(255, 17, 17, 0.62);
   transform: translateY(-1px);
 }
 
@@ -737,7 +735,7 @@ section[id] {
 .lp-course-modal__head h3 {
   color: #0b111f;
   font-family: 'Kumbh Sans', Arial, sans-serif;
-  font-size: 25px;
+  font-size: 21px;
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.6;

@@ -4,6 +4,8 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { prefillCourseAndGoToForm } from '../coursePrefill'
 import { graduationCarouselCourses } from '../data'
 
+const coursesWithoutFixedBadge = new Set(['graduacao-enfermagem', 'graduacao-psicologia'])
+
 function normalizeComparableText(value: string): string {
   return value
     .normalize('NFD')
@@ -243,7 +245,9 @@ export function AllGraduationsCarouselSection() {
                     <p className="lp-all-grad-card__price-current">
                       <span>Por:</span> {course.installmentPrice}
                     </p>
-                    <span className="lp-all-grad-card__fixed">FIXOS</span>
+                    {!coursesWithoutFixedBadge.has(course.courseValue) ? (
+                      <span className="lp-all-grad-card__fixed">FIXOS</span>
+                    ) : null}
                   </div>
                 </div>
 

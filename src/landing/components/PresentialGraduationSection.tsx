@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 
 import { emitCoursePrefill } from '../coursePrefill'
 
@@ -37,8 +37,8 @@ const presentialCourses: PresentialCourseHighlight[] = [
       'Laboratório Moderno',
       'Laboratório Moderno',
     ],
-    currentPrice: 'R$ 799,90 /Mês',
-    originalPrice: 'R$ 1.099,90',
+    currentPrice: 'R$ 449,00',
+    originalPrice: 'R$ 1.890,00',
   },
   {
     id: 'psicologia',
@@ -57,8 +57,8 @@ const presentialCourses: PresentialCourseHighlight[] = [
       'Laboratório Moderno',
       'Laboratório Moderno',
     ],
-    currentPrice: 'R$ 799,90 /Mês',
-    originalPrice: 'R$ 1.099,90',
+    currentPrice: 'R$ 549,00',
+    originalPrice: 'R$ 1.890,00',
   },
 ]
 
@@ -194,3 +194,5 @@ export function PresentialGraduationSection() {
     </section>
   )
 }
+
+

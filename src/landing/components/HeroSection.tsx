@@ -6,14 +6,7 @@
   type FormEvent,
   type UIEventHandler,
 } from 'react'
-import {
-  ArrowRight,
-  GraduationCap,
-  Mail,
-  Phone,
-  Search,
-  User,
-} from 'lucide-react'
+import { Search } from 'lucide-react'
 
 import {
   Select,
@@ -210,12 +203,12 @@ function validatePhone(value: string): string | undefined {
 }
 
 function validateCourseType(value: string): string | undefined {
-  if (!value) return 'Selecione Graduação ou Pós-graduação.'
+  if (!value) return 'Selecione para continuar'
   return undefined
 }
 
 function validateCourse(value: string): string | undefined {
-  if (!value) return 'Selecione um curso.'
+  if (!value) return 'Informe o curso para continuar'
   return undefined
 }
 
@@ -269,6 +262,22 @@ function parseEnvInteger(value: string | undefined, fallback: number): number {
 
 function getGraduationCourseId(courseValue: string): number {
   return GRADUATION_CRM_COURSE_IDS[courseValue] ?? 0
+}
+
+function FormChevronDownIcon() {
+  return (
+    <svg width="9" height="5" viewBox="0 0 9 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M1 0.75L4.5 4.25L8 0.75" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  )
+}
+
+function FormBackIcon() {
+  return (
+    <svg width="9" height="9" viewBox="0 0 9 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5.75 1L2.25 4.5L5.75 8" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  )
 }
 
 export function HeroSection() {
@@ -488,7 +497,7 @@ export function HeroSection() {
     const isValid = validateFields(STEP_FIELDS[from])
     if (!isValid) {
       setSubmitStatus('error')
-      setSubmitMessage('Corrija os campos destacados para continuar.')
+      setSubmitMessage('')
       return
     }
 
@@ -543,7 +552,7 @@ export function HeroSection() {
     const hasErrors = Object.values(errors).some(Boolean)
     if (hasErrors) {
       setSubmitStatus('error')
-      setSubmitMessage('Corrija os campos destacados para continuar.')
+      setSubmitMessage('')
       return
     }
 
@@ -669,6 +678,10 @@ export function HeroSection() {
   const courseInvalid = Boolean(touched.course && fieldErrors.course)
   const isPostCoursesLoading = courseType === 'pos' && postCourseStatus === 'loading'
   const isCourseSearchDisabled = !courseType || isPostCoursesLoading
+  const formLeadTitle = step === 1 ? 'Encontre seu curso' : 'Informe os dados'
+  const showStepOneInlineError =
+    step === 1 && submitStatus === 'error' && (courseTypeInvalid || courseInvalid)
+  const stepOneInlineErrorMessage = fieldErrors.courseType ?? fieldErrors.course ?? ''
 
   return (
     <section className="lp-hero" id="inicio">
@@ -691,8 +704,7 @@ export function HeroSection() {
       <div className="lp-shell lp-hero__form-shell">
         <article className="lp-hero-form" id="inscricao">
           <div className="lp-hero-form__lead">
-            <h2>Encontre seu Curso</h2>
-            <ArrowRight size={22} aria-hidden="true" />
+            <h2>{formLeadTitle}</h2>
           </div>
 
           <form className="lp-hero-form__fields" onSubmit={handleSubmit} noValidate>
@@ -701,7 +713,7 @@ export function HeroSection() {
                 <div className="lp-field-wrap lp-hero-form__field-cell--modality">
                 <div className={`lp-field lp-field--select ${courseTypeInvalid ? 'is-invalid' : ''}`}>
                   <span className="lp-field__icon" aria-hidden="true">
-                    <GraduationCap size={14} />
+                    <FormChevronDownIcon />
                   </span>
                   <div className="lp-select-wrapper">
                     <Select
@@ -894,22 +906,27 @@ export function HeroSection() {
                 ) : null}
               </div>
               <button type="submit" className="lp-main-button lp-hero-form__submit">
-                INSCREVA-SE
-                <ArrowRight size={14} />
+                CONTINUAR
               </button>
             </div>
             ) : null}
 
             {step === 2 ? (
               <div className="lp-hero-form__row lp-hero-form__row--wizard lp-hero-form__row--step-2">
-                <div className="lp-field-wrap">
-                  <label className={`lp-field ${fullNameInvalid ? 'is-invalid' : ''}`}>
-                    <span className="lp-field__icon" aria-hidden="true">
-                      <User size={14} />
-                    </span>
+                <button
+                  type="button"
+                  className="lp-hero-form__back"
+                  onClick={handleStepBack}
+                >
+                  <FormBackIcon />
+                  Voltar
+                </button>
+
+                <div className="lp-field-wrap lp-hero-form__field-wrap--name">
+                  <label className={`lp-field lp-field--plain ${fullNameInvalid ? 'is-invalid' : ''}`}>
                     <input
                       type="text"
-                      placeholder="Nome completo"
+                      placeholder="Digite o nome"
                       value={fullName}
                       autoComplete="name"
                       maxLength={120}
@@ -935,28 +952,28 @@ export function HeroSection() {
                   ) : null}
                 </div>
 
-                <div className="lp-hero-form__actions">
-                  <button type="button" className="lp-hero-form__back" onClick={handleStepBack}>
-                    Voltar
-                  </button>
-                  <button type="submit" className="lp-main-button lp-hero-form__submit">
-                    PRÓXIMA
-                    <ArrowRight size={14} />
-                  </button>
-                </div>
+                <button type="submit" className="lp-main-button lp-hero-form__submit">
+                  SALVAR
+                </button>
               </div>
             ) : null}
 
             {step === 3 ? (
               <div className="lp-hero-form__row lp-hero-form__row--wizard lp-hero-form__row--step-3">
-                <div className="lp-field-wrap">
-                <label className={`lp-field ${emailInvalid ? 'is-invalid' : ''}`}>
-                  <span className="lp-field__icon" aria-hidden="true">
-                    <Mail size={14} />
-                  </span>
+                <button
+                  type="button"
+                  className="lp-hero-form__back"
+                  onClick={handleStepBack}
+                >
+                  <FormBackIcon />
+                  Voltar
+                </button>
+
+                <div className="lp-field-wrap lp-hero-form__field-wrap--email">
+                <label className={`lp-field lp-field--plain ${emailInvalid ? 'is-invalid' : ''}`}>
                   <input
                     type="email"
-                    placeholder="Seu melhor e-mail"
+                    placeholder="Seu melhor email"
                     value={email}
                     autoComplete="email"
                     maxLength={120}
@@ -982,15 +999,12 @@ export function HeroSection() {
                 ) : null}
               </div>
 
-              <div className="lp-field-wrap">
-                <label className={`lp-field ${phoneInvalid ? 'is-invalid' : ''}`}>
-                  <span className="lp-field__icon" aria-hidden="true">
-                    <Phone size={14} />
-                  </span>
+              <div className="lp-field-wrap lp-hero-form__field-wrap--phone">
+                <label className={`lp-field lp-field--plain ${phoneInvalid ? 'is-invalid' : ''}`}>
                   <input
                     type="tel"
                     inputMode="numeric"
-                    placeholder="(11) 99999-9999"
+                    placeholder="Telefone"
                     value={phone}
                     autoComplete="tel-national"
                     maxLength={15}
@@ -1016,24 +1030,22 @@ export function HeroSection() {
                 ) : null}
               </div>
 
-              <div className="lp-hero-form__actions">
-                <button type="button" className="lp-hero-form__back" onClick={handleStepBack}>
-                  Voltar
-                </button>
-                <button
-                  type="submit"
-                  className="lp-main-button lp-hero-form__submit"
-                  disabled={submitStatus === 'submitting'}
-                >
-                  {submitStatus === 'submitting' ? 'ENVIANDO...' : 'ENVIAR'}
-                  <ArrowRight size={14} />
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="lp-main-button lp-hero-form__submit"
+                disabled={submitStatus === 'submitting'}
+              >
+                {submitStatus === 'submitting' ? 'ENVIANDO...' : 'ENVIAR'}
+              </button>
             </div>
             ) : null}
           </form>
 
-          {submitMessage ? (
+          {showStepOneInlineError && stepOneInlineErrorMessage ? (
+            <small className="lp-hero-form__status is-error">{stepOneInlineErrorMessage}</small>
+          ) : null}
+
+          {submitMessage && !showStepOneInlineError ? (
             <small
               className={`lp-hero-form__status ${submitStatus === 'error' ? 'is-error' : ''}`}
             >

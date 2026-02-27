@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-import { prefillCourseAndGoToForm } from '../coursePrefill'
+import { openCourseLeadModal } from '../coursePrefill'
 import { graduationCarouselCourses } from '../data'
 
 const coursesWithoutFixedBadge = new Set(['graduacao-enfermagem', 'graduacao-psicologia'])
@@ -256,14 +256,14 @@ export function AllGraduationsCarouselSection() {
                   className="lp-all-grad-card__cta"
                   onClick={(event) => {
                     event.preventDefault()
-                    prefillCourseAndGoToForm({
+                    openCourseLeadModal({
                       courseType: 'graduacao',
                       courseValue: course.courseValue,
                       courseLabel: course.title,
                     })
                   }}
                 >
-                  INSCREVA-SE
+                  SAIBA MAIS
                 </a>
               </article>
             ))}

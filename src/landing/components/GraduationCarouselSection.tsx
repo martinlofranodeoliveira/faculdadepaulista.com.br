@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ArrowUpDown } from 'lucide-react'
 
-import { emitCoursePrefill } from '../coursePrefill'
+import { openCourseLeadModal } from '../coursePrefill'
 
 const POS_COURSES_ENDPOINT =
   import.meta.env.VITE_POS_COURSES_ENDPOINT ??
@@ -13,6 +13,7 @@ type PostCourse = {
   value: string
   label: string
   url?: string
+  courseId?: number
   area: string
   oldInstallmentPrice: string
   currentInstallmentPrice: string
@@ -57,6 +58,17 @@ function fallbackOldInstallmentPrice(): string {
 
 function fallbackCurrentInstallmentPrice(): string {
   return '18X R$ 66,00'
+}
+
+function extractIntegerFromBlock(block: string, patterns: RegExp[]): number | undefined {
+  for (const pattern of patterns) {
+    const match = block.match(pattern)?.[1]?.trim()
+    if (!match) continue
+
+    const parsed = Number.parseInt(match, 10)
+    if (Number.isFinite(parsed)) return parsed
+  }
+  return undefined
 }
 
 function parsePostGraduationCourses(raw: string): PostCourse[] {
@@ -141,12 +153,19 @@ function parsePostGraduationCourses(raw: string): PostCourse[] {
 
     const value = `pos-${slug}`
     const area = (nomeArea || 'GERAL').replace(/\s+/g, ' ').trim().toUpperCase()
+    const courseId = extractIntegerFromBlock(block, [
+      /ID\s*(?:do\s*)?Curso:\s*(\d+)/i,
+      /id\s*curso:\s*(\d+)/i,
+      /idcurso:\s*(\d+)/i,
+      /curso\s*id:\s*(\d+)/i,
+    ])
 
     if (!unique.has(value)) {
       unique.set(value, {
         value,
         label: courseName,
         url: urlCurso,
+        courseId,
         area,
         oldInstallmentPrice: formatApiInstallmentPrice(precoDe) || fallbackOldInstallmentPrice(),
         currentInstallmentPrice:
@@ -339,15 +358,17 @@ export function GraduationCarouselSection() {
                   <a
                     href="#inscricao"
                     className="lp-grad-carousel__cta"
-                    onClick={() =>
-                      emitCoursePrefill({
+                    onClick={(event) => {
+                      event.preventDefault()
+                      openCourseLeadModal({
                         courseType: 'pos',
                         courseValue: course.value,
                         courseLabel: course.label,
+                        courseId: course.courseId,
                       })
-                    }
+                    }}
                   >
-                    INSCREVA-SE
+                    SAIBA MAIS
                   </a>
                 </article>
               ))

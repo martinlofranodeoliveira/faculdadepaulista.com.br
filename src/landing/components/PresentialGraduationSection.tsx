@@ -1,6 +1,6 @@
 ﻿import type { ReactNode } from 'react'
 
-import { emitCoursePrefill } from '../coursePrefill'
+import { openCourseLeadModal } from '../coursePrefill'
 
 type PresentialCourseHighlight = {
   id: string
@@ -175,13 +175,14 @@ export function PresentialGraduationSection() {
                 <a
                   href="#inscricao"
                   className="lp-presential-card__cta"
-                  onClick={() =>
-                    emitCoursePrefill({
+                  onClick={(event) => {
+                    event.preventDefault()
+                    openCourseLeadModal({
                       courseType: 'graduacao',
                       courseValue: course.courseValue,
                       courseLabel: course.courseLabel,
                     })
-                  }
+                  }}
                 >
                   SAIBA MAIS
                   <ArrowForwardIcon />

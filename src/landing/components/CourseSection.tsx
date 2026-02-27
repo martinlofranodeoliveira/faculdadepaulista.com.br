@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react'
 
-import { emitCoursePrefill } from '../coursePrefill'
+import { openCourseLeadModal } from '../coursePrefill'
 import type { CourseItem } from '../data'
 
 type CourseSectionProps = {
@@ -158,12 +158,13 @@ export function CourseSection({
                 <p>{item.description}</p>
                 <a
                   href="#inscricao"
-                  onClick={() =>
-                    emitCoursePrefill({
+                  onClick={(event) => {
+                    event.preventDefault()
+                    openCourseLeadModal({
                       courseType: inferredCourseType,
                       courseLabel: item.title,
                     })
-                  }
+                  }}
                 >
                   Saiba mais
                   <ArrowRight size={14} />

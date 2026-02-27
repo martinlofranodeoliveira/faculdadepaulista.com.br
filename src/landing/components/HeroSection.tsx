@@ -2,6 +2,7 @@
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type FormEvent,
   type UIEventHandler,
@@ -34,6 +35,11 @@ const NAME_REGEX = /^[\p{L}\s.'-]+$/u
 type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error'
 type CourseType = 'graduacao' | 'pos'
 type FormStep = 1 | 2 | 3
+type StepTransitionDirection = 'forward' | 'backward'
+type StepTransition = {
+  phase: 'out' | 'in'
+  direction: StepTransitionDirection
+}
 type CourseOption = { value: string; label: string; url?: string; courseId?: number }
 type FieldName = 'courseType' | 'course' | 'fullName' | 'email' | 'phone'
 type FieldErrors = Partial<Record<FieldName, string>>
@@ -57,6 +63,9 @@ const STEP_FIELDS: Record<FormStep, FieldName[]> = {
   2: ['fullName'],
   3: ['email', 'phone'],
 }
+
+const STEP_TRANSITION_MS = 320
+const STEP_TRANSITION_PHASE_MS = STEP_TRANSITION_MS / 2
 
 const GRADUATION_CRM_COURSE_IDS: Record<string, number> = {
   'graduacao-administracao': 1,
@@ -298,9 +307,19 @@ export function HeroSection() {
   const [touched, setTouched] = useState<Touched>(EMPTY_TOUCHED)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
   const [submitMessage, setSubmitMessage] = useState('')
+  const [stepTransition, setStepTransition] = useState<StepTransition | null>(null)
+  const stepTransitionTimerRef = useRef<number | null>(null)
 
   useEffect(() => {
     syncUtmParamsFromUrl(window.location.search)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (stepTransitionTimerRef.current) {
+        window.clearTimeout(stepTransitionTimerRef.current)
+      }
+    }
   }, [])
 
   const loadPostCourses = useCallback(async () => {
@@ -421,6 +440,12 @@ export function HeroSection() {
       const nextCourseValue = detail.courseValue?.trim() || resolvedOption?.value || ''
       const nextCourseLabel = resolvedOption?.label || normalizedLabel
 
+      if (stepTransitionTimerRef.current) {
+        window.clearTimeout(stepTransitionTimerRef.current)
+        stepTransitionTimerRef.current = null
+      }
+
+      setStepTransition(null)
       setCourseType(detail.courseType)
       setCourse(nextCourseValue)
       setCourseSearch(nextCourseLabel)
@@ -493,6 +518,26 @@ export function HeroSection() {
     return fields.every((field) => !nextErrors[field])
   }
 
+  const runStepTransition = (nextStep: FormStep, direction: StepTransitionDirection) => {
+    if (nextStep === step) return
+
+    if (stepTransitionTimerRef.current) {
+      window.clearTimeout(stepTransitionTimerRef.current)
+    }
+
+    setStepTransition({ direction, phase: 'out' })
+
+    stepTransitionTimerRef.current = window.setTimeout(() => {
+      setStep(nextStep)
+      setStepTransition({ direction, phase: 'in' })
+
+      stepTransitionTimerRef.current = window.setTimeout(() => {
+        setStepTransition(null)
+        stepTransitionTimerRef.current = null
+      }, STEP_TRANSITION_PHASE_MS)
+    }, STEP_TRANSITION_PHASE_MS)
+  }
+
   const handleStepAdvance = (from: FormStep) => {
     const isValid = validateFields(STEP_FIELDS[from])
     if (!isValid) {
@@ -505,13 +550,13 @@ export function HeroSection() {
       setIsCourseSearchOpen(false)
     }
 
-    setStep((current) => (Math.min(current + 1, 3) as FormStep))
+    runStepTransition((Math.min(from + 1, 3) as FormStep), 'forward')
     setSubmitStatus('idle')
     setSubmitMessage('')
   }
 
   const handleStepBack = () => {
-    setStep((current) => (Math.max(current - 1, 1) as FormStep))
+    runStepTransition((Math.max(step - 1, 1) as FormStep), 'backward')
     setSubmitStatus('idle')
     setSubmitMessage('')
   }
@@ -654,6 +699,11 @@ export function HeroSection() {
 
       setSubmitStatus('success')
       setSubmitMessage('Cadastro enviado com sucesso. Em breve entraremos em contato.')
+      if (stepTransitionTimerRef.current) {
+        window.clearTimeout(stepTransitionTimerRef.current)
+        stepTransitionTimerRef.current = null
+      }
+      setStepTransition(null)
       setStep(1)
       setFullName('')
       setEmail('')
@@ -678,6 +728,10 @@ export function HeroSection() {
   const courseInvalid = Boolean(touched.course && fieldErrors.course)
   const isPostCoursesLoading = courseType === 'pos' && postCourseStatus === 'loading'
   const isCourseSearchDisabled = !courseType || isPostCoursesLoading
+  const isStepAnimating = Boolean(stepTransition)
+  const stepTransitionClass = stepTransition
+    ? `is-${stepTransition.direction}-${stepTransition.phase}`
+    : ''
   const formLeadTitle = step === 1 ? 'Encontre seu curso' : 'Informe os dados'
   const showStepOneInlineError =
     step === 1 && submitStatus === 'error' && (courseTypeInvalid || courseInvalid)
@@ -708,6 +762,10 @@ export function HeroSection() {
           </div>
 
           <form className="lp-hero-form__fields" onSubmit={handleSubmit} noValidate>
+            <div
+              className={`lp-hero-form__step-frame ${stepTransitionClass}`}
+              aria-live="polite"
+            >
             {step === 1 ? (
               <div className="lp-hero-form__row lp-hero-form__row--wizard lp-hero-form__row--step-1">
                 <div className="lp-field-wrap lp-hero-form__field-cell--modality">
@@ -905,7 +963,11 @@ export function HeroSection() {
                   </span>
                 ) : null}
               </div>
-              <button type="submit" className="lp-main-button lp-hero-form__submit">
+              <button
+                type="submit"
+                className="lp-main-button lp-hero-form__submit"
+                disabled={isStepAnimating}
+              >
                 CONTINUAR
               </button>
             </div>
@@ -917,6 +979,7 @@ export function HeroSection() {
                   type="button"
                   className="lp-hero-form__back"
                   onClick={handleStepBack}
+                  disabled={isStepAnimating}
                 >
                   <FormBackIcon />
                   Voltar
@@ -952,7 +1015,11 @@ export function HeroSection() {
                   ) : null}
                 </div>
 
-                <button type="submit" className="lp-main-button lp-hero-form__submit">
+                <button
+                  type="submit"
+                  className="lp-main-button lp-hero-form__submit"
+                  disabled={isStepAnimating}
+                >
                   SALVAR
                 </button>
               </div>
@@ -964,6 +1031,7 @@ export function HeroSection() {
                   type="button"
                   className="lp-hero-form__back"
                   onClick={handleStepBack}
+                  disabled={isStepAnimating}
                 >
                   <FormBackIcon />
                   Voltar
@@ -1033,12 +1101,13 @@ export function HeroSection() {
               <button
                 type="submit"
                 className="lp-main-button lp-hero-form__submit"
-                disabled={submitStatus === 'submitting'}
+                disabled={submitStatus === 'submitting' || isStepAnimating}
               >
                 {submitStatus === 'submitting' ? 'ENVIANDO...' : 'ENVIAR'}
               </button>
             </div>
             ) : null}
+            </div>
           </form>
 
           {showStepOneInlineError && stepOneInlineErrorMessage ? (

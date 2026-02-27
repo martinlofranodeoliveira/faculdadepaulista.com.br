@@ -327,6 +327,90 @@ section[id] {
   grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto;
 }
 
+.lp-hero-form__step-frame {
+  display: grid;
+  width: 100%;
+}
+
+.lp-hero-form__step-frame.is-forward-out,
+.lp-hero-form__step-frame.is-forward-in,
+.lp-hero-form__step-frame.is-backward-out,
+.lp-hero-form__step-frame.is-backward-in {
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.lp-hero-form__step-frame.is-forward-out {
+  animation: lpStepOutToLeft 160ms ease forwards;
+}
+
+.lp-hero-form__step-frame.is-forward-in {
+  animation: lpStepInFromRight 160ms ease forwards;
+}
+
+.lp-hero-form__step-frame.is-backward-out {
+  animation: lpStepOutToRight 160ms ease forwards;
+}
+
+.lp-hero-form__step-frame.is-backward-in {
+  animation: lpStepInFromLeft 160ms ease forwards;
+}
+
+@keyframes lpStepOutToLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+@keyframes lpStepInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes lpStepOutToRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+}
+
+@keyframes lpStepInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-hero-form__step-frame.is-forward-out,
+  .lp-hero-form__step-frame.is-forward-in,
+  .lp-hero-form__step-frame.is-backward-out,
+  .lp-hero-form__step-frame.is-backward-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .lp-hero-form__field-cell--modality {
   max-width: 164px;
 }
@@ -3875,7 +3959,7 @@ section[id] {
   }
 
   .lp-hero-form__back {
-    width: 100%;
+    max-width: 120px;
   }
 
   .lp-hero__form-shell {

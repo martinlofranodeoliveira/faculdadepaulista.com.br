@@ -133,7 +133,7 @@ export function PresentialGraduationSection() {
   return (
     <section className="lp-presential">
       <div className="lp-shell">
-        <h2>GRADUAÇÃO PRESENCIAL</h2>
+        <h1>GRADUAÇÃO PRESENCIAL</h1>
 
         <div className="lp-presential__grid">
           {presentialCourses.map((course) => (

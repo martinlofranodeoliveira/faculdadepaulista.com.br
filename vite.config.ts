@@ -23,6 +23,22 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    target: "es2018",
+    sourcemap: false,
+    minify: "terser",
+    cssMinify: "lightningcss",
+    terserOptions: {
+      compress: {
+        passes: 2,
+        drop_console: true,
+        drop_debugger: true,
+      },
+      format: {
+        comments: false,
+      },
+    },
+  },
   server: {
     proxy: {
       "/crm-api": {

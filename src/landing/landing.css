@@ -645,7 +645,6 @@ section[id] {
   background: linear-gradient(180deg, #fe0000 0%, #c50002 100%);
   border: 0;
   border-radius: 12px;
-  box-shadow: 0 10px 15px -3px rgba(254, 0, 0, 0.25), 0 4px 6px -4px rgba(254, 0, 0, 0.25);
   color: #fff;
   cursor: pointer;
   display: inline-flex;
@@ -743,6 +742,7 @@ section[id] {
   letter-spacing: -0.02em;
   line-height: 1.6;
   margin: 0;
+  text-transform: uppercase;
 }
 
 .lp-course-modal__head p {
@@ -798,7 +798,6 @@ section[id] {
   background: linear-gradient(180deg, #fe0000 0%, #c50002 100%);
   border: 0;
   border-radius: 12px;
-  box-shadow: 0 10px 15px -3px rgba(254, 0, 0, 0.25), 0 4px 6px -4px rgba(254, 0, 0, 0.25);
   color: #fff;
   cursor: pointer;
   display: inline-flex;

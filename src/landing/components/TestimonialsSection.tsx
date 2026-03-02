@@ -10,11 +10,11 @@ export function TestimonialsSection() {
           <h2>
             JUNTE-SE A VÁRIOS ALUNOS QUE
             <br />
-            TRANSFORMARAM <span>A CARREIRA</span>
+            TRANSFORMARAM <span>SUAS CARREIRAS</span>
           </h2>
           <small>
-            Resultados reais de alunos e ex-alunos que conquistaram novas oportunidades
-            com o apoio da nossa metodologia.
+            Confira a experiência real de alunos que transformaram sua trajetória com nossas
+            graduações e especializações.
           </small>
         </header>
 

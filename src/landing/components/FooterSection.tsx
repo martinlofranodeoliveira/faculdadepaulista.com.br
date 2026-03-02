@@ -53,7 +53,9 @@ export function FooterSection() {
               </li>
               <li className="is-mail">
                 <img src="/landing/footer/icon-mail.svg" alt="" aria-hidden="true" />
-                <a href="mailto:contato@paulista.edu.br">contato@paulista.edu.br</a>
+                <a href="mailto:contato@faculdadepaulista.com.br">
+                  contato@faculdadepaulista.com.br
+                </a>
               </li>
             </ul>
           </article>

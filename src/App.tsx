@@ -1,5 +1,6 @@
 import { LandingPage } from './landing/LandingPage'
 import { LegalPage } from './legal/LegalPage'
+import { ThankYouPage } from './thankyou/ThankYouPage'
 
 function App() {
   const normalizedPath =
@@ -11,6 +12,10 @@ function App() {
 
   if (normalizedPath === '/termos-de-uso') {
     return <LegalPage kind="terms" />
+  }
+
+  if (normalizedPath === '/obrigado') {
+    return <ThankYouPage />
   }
 
   return <LandingPage />

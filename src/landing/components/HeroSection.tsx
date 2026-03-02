@@ -27,6 +27,7 @@ const CRM_LEAD_ENDPOINT =
 const POS_COURSES_ENDPOINT =
   import.meta.env.VITE_POS_COURSES_ENDPOINT ??
   '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025-unicesp.php'
+const THANK_YOU_PATH = '/obrigado'
 const CRM_NOT_IDENTIFIED = 'Não identificado'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i
@@ -698,22 +699,10 @@ export function HeroSection() {
       }
 
       setSubmitStatus('success')
-      setSubmitMessage('Cadastro enviado com sucesso. Em breve entraremos em contato.')
-      if (stepTransitionTimerRef.current) {
-        window.clearTimeout(stepTransitionTimerRef.current)
-        stepTransitionTimerRef.current = null
-      }
-      setStepTransition(null)
-      setStep(1)
-      setFullName('')
-      setEmail('')
-      setPhone('')
-      setCourseType('')
-      setCourse('')
-      setCourseSearch('')
-      setIsCourseSearchOpen(false)
-      setFieldErrors({})
-      setTouched(EMPTY_TOUCHED)
+      setSubmitMessage('Cadastro enviado com sucesso.')
+      window.setTimeout(() => {
+        window.location.assign(THANK_YOU_PATH)
+      }, 220)
     } catch (error) {
       console.error('Erro ao enviar lead para o CRM:', error)
       setSubmitStatus('error')

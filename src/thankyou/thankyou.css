@@ -1,0 +1,122 @@
+.lp-thanks-page {
+  align-items: center;
+  background: #ebebeb;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.lp-thanks-page__inner {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: min(100%, 693px);
+}
+
+.lp-thanks-page__logo {
+  display: block;
+  height: auto;
+  width: 154px;
+}
+
+.lp-thanks-card {
+  background: #d50000;
+  border-radius: 18px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  padding: 104px 20px 106px;
+  position: relative;
+  text-align: center;
+  width: 100%;
+}
+
+.lp-thanks-card::before {
+  background:
+    radial-gradient(circle at 16% 16%, rgba(0, 0, 0, 0.08) 0 1px, transparent 1.2px),
+    radial-gradient(circle at 86% 70%, rgba(0, 0, 0, 0.08) 0 1px, transparent 1.2px);
+  background-size: 34px 34px, 34px 34px;
+  content: '';
+  inset: 0;
+  opacity: 0.45;
+  pointer-events: none;
+  position: absolute;
+}
+
+.lp-thanks-title {
+  display: inline-grid;
+  font-size: clamp(48px, 5.2vw, 75px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+  margin: 0;
+  place-items: center;
+  position: relative;
+}
+
+.lp-thanks-title__main,
+.lp-thanks-title__shadow {
+  grid-area: 1 / 1;
+}
+
+.lp-thanks-title__shadow {
+  color: #000;
+  transform: translate(5px, 6px);
+}
+
+.lp-thanks-title__main {
+  color: #fff;
+}
+
+.lp-thanks-card p {
+  color: #fff;
+  font-size: clamp(14px, 1.2vw, 18px);
+  margin: 10px 0 0;
+  position: relative;
+  z-index: 1;
+}
+
+.lp-thanks-button {
+  align-items: center;
+  background: linear-gradient(180deg, #fe0000 0%, #c50002 100%);
+  border-radius: 12px;
+  color: #fff;
+  display: inline-flex;
+  gap: 10px;
+  justify-content: center;
+  min-height: 50px;
+  padding: 0 32px;
+  text-decoration: none;
+}
+
+.lp-thanks-button span {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+@media (max-width: 720px) {
+  .lp-thanks-page__inner {
+    gap: 16px;
+  }
+
+  .lp-thanks-page__logo {
+    width: 132px;
+  }
+
+  .lp-thanks-card {
+    border-radius: 16px;
+    padding: 74px 18px 78px;
+  }
+
+  .lp-thanks-button {
+    min-height: 46px;
+    padding: 0 20px;
+  }
+
+  .lp-thanks-button span {
+    font-size: 17px;
+  }
+}
+

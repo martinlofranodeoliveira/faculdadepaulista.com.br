@@ -7,6 +7,7 @@ import type { CoursePrefillDetail } from '../coursePrefill'
 const CRM_LEAD_ENDPOINT =
   import.meta.env.VITE_CRM_LEAD_ENDPOINT ??
   '/crm-api/administrativo/leads/adicionar'
+const THANK_YOU_PATH = '/obrigado'
 const CRM_NOT_IDENTIFIED = 'Não identificado'
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i
 const NAME_REGEX = /^[\p{L}\s.'-]+$/u
@@ -299,8 +300,8 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
       setSubmitMessage('Cadastro enviado com sucesso.')
 
       closeTimer.current = window.setTimeout(() => {
-        onClose()
-      }, 900)
+        window.location.assign(THANK_YOU_PATH)
+      }, 220)
     } catch (error) {
       console.error('Erro ao enviar lead para o CRM:', error)
       setSubmitStatus('error')

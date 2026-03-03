@@ -35,7 +35,7 @@ const NAME_REGEX = /^[\p{L}\s.'-]+$/u
 
 type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error'
 type CourseType = 'graduacao' | 'pos'
-type FormStep = 1 | 2 | 3
+type FormStep = 1 | 2
 type StepTransitionDirection = 'forward' | 'backward'
 type StepTransition = {
   phase: 'out' | 'in'
@@ -61,8 +61,7 @@ const COURSE_TYPE_OPTIONS: Array<{ value: CourseType; label: string }> = [
 
 const STEP_FIELDS: Record<FormStep, FieldName[]> = {
   1: ['courseType', 'course'],
-  2: ['fullName'],
-  3: ['email', 'phone'],
+  2: ['fullName', 'email', 'phone'],
 }
 
 const STEP_TRANSITION_MS = 320
@@ -551,7 +550,7 @@ export function HeroSection() {
       setIsCourseSearchOpen(false)
     }
 
-    runStepTransition((Math.min(from + 1, 3) as FormStep), 'forward')
+    runStepTransition((Math.min(from + 1, 2) as FormStep), 'forward')
     setSubmitStatus('idle')
     setSubmitMessage('')
   }
@@ -577,11 +576,6 @@ export function HeroSection() {
 
     if (step === 1) {
       handleStepAdvance(1)
-      return
-    }
-
-    if (step === 2) {
-      handleStepAdvance(2)
       return
     }
 
@@ -978,7 +972,7 @@ export function HeroSection() {
                   <label className={`lp-field lp-field--plain ${fullNameInvalid ? 'is-invalid' : ''}`}>
                     <input
                       type="text"
-                      placeholder="Digite o nome"
+                      placeholder="Digite seu nome"
                       value={fullName}
                       autoComplete="name"
                       maxLength={120}
@@ -1003,28 +997,6 @@ export function HeroSection() {
                     </span>
                   ) : null}
                 </div>
-
-                <button
-                  type="submit"
-                  className="lp-main-button lp-hero-form__submit"
-                  disabled={isStepAnimating}
-                >
-                  SALVAR
-                </button>
-              </div>
-            ) : null}
-
-            {step === 3 ? (
-              <div className="lp-hero-form__row lp-hero-form__row--wizard lp-hero-form__row--step-3">
-                <button
-                  type="button"
-                  className="lp-hero-form__back"
-                  onClick={handleStepBack}
-                  disabled={isStepAnimating}
-                >
-                  <FormBackIcon />
-                  Voltar
-                </button>
 
                 <div className="lp-field-wrap lp-hero-form__field-wrap--email">
                 <label className={`lp-field lp-field--plain ${emailInvalid ? 'is-invalid' : ''}`}>

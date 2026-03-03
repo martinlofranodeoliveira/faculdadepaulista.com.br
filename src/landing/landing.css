@@ -321,11 +321,7 @@ section[id] {
 }
 
 .lp-hero-form__row--step-2 {
-  grid-template-columns: auto minmax(0, 1fr) auto;
-}
-
-.lp-hero-form__row--step-3 {
-  grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr) auto;
 }
 
 .lp-hero-form__step-frame {
@@ -3098,8 +3094,7 @@ section[id] {
   }
 
   .lp-hero-form__row--step-1,
-  .lp-hero-form__row--step-2,
-  .lp-hero-form__row--step-3 {
+  .lp-hero-form__row--step-2 {
     grid-template-columns: 1fr;
   }
 

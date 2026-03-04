@@ -1682,14 +1682,18 @@ section[id] {
   align-items: center;
   display: inline-flex;
   flex-shrink: 0;
+  height: 64px;
   justify-content: center;
   line-height: 0;
   opacity: 0.45;
+  width: 190px;
 }
 
 .lp-future-logo img {
   display: block;
-  height: 56px;
+  height: auto;
+  max-height: 56px;
+  max-width: 100%;
   object-fit: contain;
   width: auto;
 }
@@ -2253,10 +2257,10 @@ section[id] {
 
 .lp-grad-carousel__content h3 {
   color: #000;
-  font-size: clamp(15px, 1.62vw, 21px);
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.14;
+  line-height: 1.2;
   margin: 0;
   text-transform: uppercase;
 }
@@ -2542,6 +2546,14 @@ section[id] {
   width: 100%;
 }
 
+.lp-all-grad-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+  margin-top: 20px;
+}
+
 .lp-all-grad-card__mode {
   align-items: center;
   border: 1px solid #c50002;
@@ -2552,8 +2564,23 @@ section[id] {
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1;
-  margin-top: 20px;
-  margin-bottom: 10px;
+  margin: 0;
+  min-height: 18px;
+  padding: 0 10px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.lp-all-grad-card__mec {
+  align-items: center;
+  border: 1px solid #c50002;
+  border-radius: 4.317px;
+  color: #c50002;
+  display: inline-flex;
+  font-size: 10.12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.13;
   min-height: 18px;
   padding: 0 10px;
   text-transform: uppercase;
@@ -3123,8 +3150,9 @@ section[id] {
     padding-right: 54px;
   }
 
-  .lp-future-logo img {
-    height: 50px;
+  .lp-future-logo {
+    height: 58px;
+    width: 170px;
   }
 }
 
@@ -3569,8 +3597,10 @@ section[id] {
     font-size: 10.95px;
   }
 
-  .lp-grad-carousel__content h3 {
-    font-size: 15px;
+  .lp-grad-carousel__content h3,
+  .lp-all-grad-card h3 {
+    font-size: 18px;
+    line-height: 1.2;
   }
 
   .lp-grad-carousel__price strong {
@@ -3667,10 +3697,6 @@ section[id] {
   .lp-all-grad-card {
     flex-basis: min(86vw, 300px);
     min-height: 340px;
-  }
-
-  .lp-all-grad-card h3 {
-    font-size: 22px;
   }
 
   .lp-all-grad-card__price-old,
@@ -3947,8 +3973,9 @@ section[id] {
     padding-right: 30px;
   }
 
-  .lp-future-logo img {
-    height: 38px;
+  .lp-future-logo {
+    height: 44px;
+    width: 136px;
   }
 
   .lp-future__partners p {
@@ -4143,10 +4170,6 @@ section[id] {
     flex-basis: min(90vw, 300px);
   }
 
-  .lp-all-grad-card h3 {
-    font-size: 20px;
-  }
-
   .lp-field {
     height: 42px;
   }
@@ -4231,8 +4254,9 @@ section[id] {
     width: 14px;
   }
 
-  .lp-future-logo img {
-    height: 32px;
+  .lp-future-logo {
+    height: 38px;
+    width: 120px;
   }
 
   .lp-footer__map {

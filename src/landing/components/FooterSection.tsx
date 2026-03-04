@@ -1,4 +1,4 @@
-export function FooterSection() {
+﻿export function FooterSection() {
   const currentYear = new Date().getFullYear()
 
   return (
@@ -42,9 +42,9 @@ export function FooterSection() {
               <li className="is-map">
                 <img src="/landing/footer/icon-map.svg" alt="" aria-hidden="true" />
                 <span>
-                  Av. Álvaro Ramos, 1200
+                  R. Júlio de Castilhos, 777 - Metrô Belém,
                   <br />
-                  Belém - São Paulo, SP
+                  São Paulo - SP, 03059-005
                 </span>
               </li>
               <li className="is-phone">
@@ -65,7 +65,7 @@ export function FooterSection() {
             <div className="lp-footer__map">
               <img src="/landing/footer/map.png" alt="Mapa da localização da Faculdade Paulista" />
               <a
-                href="https://www.google.com/maps/search/?api=1&query=Av.+Álvaro+Ramos,+1200,+Belém,+São+Paulo+-+SP"
+                href="https://www.google.com/maps/search/?api=1&query=R.+Júlio+de+Castilhos,+777+-+Metrô+Belém,+São+Paulo+-+SP,+03059-005"
                 target="_blank"
                 rel="noreferrer"
               >

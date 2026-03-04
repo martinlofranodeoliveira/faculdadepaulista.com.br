@@ -233,7 +233,10 @@ export function AllGraduationsCarouselSection() {
                   />
                 </div>
 
-                <span className="lp-all-grad-card__mode">{inferGraduationMode(course.title)}</span>
+                <div className="lp-all-grad-card__badges">
+                  <span className="lp-all-grad-card__mec">RECONHECIDO MEC</span>
+                  <span className="lp-all-grad-card__mode">{inferGraduationMode(course.title)}</span>
+                </div>
 
                 <h3>{course.title}</h3>
 

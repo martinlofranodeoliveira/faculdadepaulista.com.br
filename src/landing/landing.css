@@ -10,6 +10,10 @@
   --lp-brand-2: #ff3b1d;
   --lp-border: #e0d7d7;
   --lp-buttom-grad: linear-gradient(180deg, #FE0000 0%, #C50002 100%);
+  --lp-section-title-size: clamp(32px, 3.2vw, 42px);
+  --lp-section-title-line-height: 1.08;
+  --lp-section-title-letter-spacing: -0.03em;
+  --lp-section-title-size-mobile: clamp(26px, 8vw, 32px);
 }
 
 .lp-page {
@@ -2838,6 +2842,22 @@ section[id] {
   text-transform: uppercase;
 }
 
+.lp-journey h2,
+.lp-app h2,
+.lp-why__head h2,
+.lp-future__head h2,
+.lp-stories__head h2,
+.lp-presential h1,
+.lp-grad-carousel__head h2,
+.lp-all-grad__head h2,
+.lp-courses__head h2,
+.lp-faq__inner h2 {
+  font-size: var(--lp-section-title-size);
+  letter-spacing: var(--lp-section-title-letter-spacing);
+  line-height: var(--lp-section-title-line-height);
+  text-transform: uppercase;
+}
+
 .lp-faq__list {
   display: grid;
   gap: 16px;
@@ -4095,6 +4115,21 @@ section[id] {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
+  }
+
+  .lp-journey h2,
+  .lp-app h2,
+  .lp-why__head h2,
+  .lp-future__head h2,
+  .lp-stories__head h2,
+  .lp-presential h1,
+  .lp-grad-carousel__head h2,
+  .lp-all-grad__head h2,
+  .lp-courses__head h2,
+  .lp-faq__inner h2 {
+    font-size: var(--lp-section-title-size-mobile);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
   }
 
 }

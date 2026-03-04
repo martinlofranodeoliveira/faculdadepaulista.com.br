@@ -16,9 +16,9 @@ function normalizeComparableText(value: string): string {
 
 function inferGraduationMode(courseTitle: string): string {
   const normalized = normalizeComparableText(courseTitle)
-  if (normalized.includes('semipresencial')) return 'GRADUAÇÃO SEMIPRESENCIAL'
-  if (normalized.includes('presencial')) return 'GRADUAÇÃO PRESENCIAL'
-  return 'GRADUAÇÃO EAD'
+  if (normalized.includes('semipresencial')) return 'SEMIPRESENCIAL'
+  if (normalized.includes('presencial')) return 'PRESENCIAL'
+  return 'EAD'
 }
 
 export function AllGraduationsCarouselSection() {

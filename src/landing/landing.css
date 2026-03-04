@@ -1467,7 +1467,7 @@ section[id] {
 
 .lp-future__location h3 {
   color: #fff;
-  font-size: clamp(28px, 2.2vw, 36px);
+  font-size: clamp(28px, 2.2vw, 30px);
   letter-spacing: -0.02em;
   margin: 18px 0 8px;
   text-transform: uppercase;
@@ -3980,7 +3980,7 @@ section[id] {
   }
 
   .lp-future__location h3 {
-    font-size: 18px;
+    font-size: 23px;
     letter-spacing: -0.01em;
     line-height: 24px;
     margin: 12px 0 6px;

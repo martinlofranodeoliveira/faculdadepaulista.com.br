@@ -52,8 +52,9 @@ export function FutureSection() {
               </span>
               <h3>METRO BELÉM</h3>
               <p>
-                Laboratórios de última geração, bibliotecas completas e espaços de
-                convivência projetados para maximizar seu aprendizado e networking.
+              Estamos no coração da cidade, com fácil acesso por transporte público e
+                perto dos principais centros empresariais, facilitando sua rotina de estudos
+                e trabalho.
               </p>
             </div>
           </article>
@@ -62,9 +63,8 @@ export function FutureSection() {
             <div className="lp-future__mec-content">
               <h3>NOTA MÁXIMA NO MEC</h3>
               <p>
-                Estamos no coração da cidade, com fácil acesso por transporte público e
-                perto dos principais centros empresariais, facilitando sua rotina de estudos
-                e trabalho.
+              Laboratórios de última geração, bibliotecas completas e espaços de
+              convivência projetados para maximizar seu aprendizado e networking.
               </p>
             </div>
             <img

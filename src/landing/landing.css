@@ -2063,7 +2063,7 @@ section[id] {
 
 @media (min-width: 721px) {
   .lp-presential-card__benefits li {
-    align-items: flex-start;
+    align-items: center;
     padding-bottom: 6px;
     padding-top: 6px;
   }

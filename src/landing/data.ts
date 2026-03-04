@@ -378,17 +378,37 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Como funciona o vestibular online?',
     answer:
-      'Você faz sua inscrição e recebe o link da prova online. O resultado é divulgado rapidamente.',
+      'O vestibular é realizado de forma digital, com foco em facilitar o seu acesso ao Ensino Superior. Além da prova online, você pode ingressar utilizando sua nota do ENEM, como Segunda Graduação (aproveitando disciplinas já cursadas) ou via transferência externa de outra Instituição.',
   },
   {
     question: 'Quais são as formas de pagamento?',
     answer:
-      'Aceitamos boleto, pix e cartão de crédito. Também temos parcelamentos e condições promocionais.',
+      'Buscamos facilitar o seu acesso ao Ensino Superior com opções flexíveis. Você pode realizar o pagamento das mensalidades via PIX, garantindo a baixa imediata no sistema, ou através de cartão de crédito, com a possibilidade de parcelamento. Nosso objetivo é que a questão financeira não seja um obstáculo para a sua Formação Profissional.',
   },
   {
-    question: 'O diploma EAD tem a mesma validade?',
+    question: 'Quem pode se inscrever na Enfermagem?',
     answer:
-      'Sim. O diploma de cursos EAD reconhecidos possui a mesma validade de cursos presenciais.',
+      'Qualquer pessoa que tenha concluído o Ensino Médio. Este curso é ideal para quem possui vocação para o cuidado humano, responsabilidade ética e o desejo de liderar equipes de Saúde em ambientes de alta tecnologia.',
+  },
+  {
+    question: 'Quem pode se inscrever na Psicologia?',
+    answer:
+      'Qualquer pessoa que tenha concluído o Ensino Médio. Este curso é ideal para quem possui vocação para o cuidado humano, responsabilidade ética e o desejo de liderar equipes de Saúde em ambientes de alta tecnologia.',
+  },
+  {
+    question: 'Como funciona a transferência ou retorno?',
+    answer:
+      'Para quem vem de outra Instituição, o processo de transferência é focado no aproveitamento de créditos: basta apresentar seu Histórico e as Ementas das Disciplinas cursadas para que nossa Coordenação analise as equivalências. Já para ex-alunos que desejam retomar o sonho da Graduação, o processo é simplificado através de um requerimento de retorno junto à nossa secretaria Acadêmica (sujeito à disponibilidade de vaga na turma correspondente).',
+  },
+  {
+    question: 'Como a Faculdade prepara os alunos para o mercado de trabalho?',
+    answer:
+      'A Faculdade Paulista oferece aos alunos uma formação acadêmica sólida, preparando-os para atuar em diversas áreas do mercado de trabalho. Com o nosso currículo atualizado e atendimento personalizado, você estará apto para enfrentar os desafios do mercado com confiança e competência.',
+  },
+  {
+    question: 'Quais são as oportunidades de carreira para os alunos formados?',
+    answer:
+      'A Faculdade Paulista oferece aos alunos uma formação acadêmica sólida, preparando-os para atuar em diversas áreas do mercado de trabalho. Com o nosso currículo atualizado e atendimento personalizado, você estará apto para enfrentar os desafios do mercado com confiança e competência.',
   },
 ]
 

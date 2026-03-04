@@ -8,6 +8,7 @@ const POS_COURSES_ENDPOINT =
   '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025-unicesp.php'
 
 const ALL_AREAS = '__all_areas__'
+const COURSES_PER_PAGE = 5
 
 type PostCourse = {
   value: string
@@ -221,6 +222,7 @@ export function GraduationCarouselSection() {
   )
   const [activeArea, setActiveArea] = useState(ALL_AREAS)
   const [sortAsc, setSortAsc] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
 
   const loadPostCourses = useCallback(async () => {
     setStatus('loading')
@@ -279,7 +281,43 @@ export function GraduationCarouselSection() {
     )
   }, [activeArea, courses, sortAsc])
 
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [activeArea, sortAsc, courses])
+
+  const totalPages = Math.max(1, Math.ceil(filteredCourses.length / COURSES_PER_PAGE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages)
+    }
+  }, [currentPage, totalPages])
+
+  const paginatedCourses = useMemo(() => {
+    const start = (safeCurrentPage - 1) * COURSES_PER_PAGE
+    return filteredCourses.slice(start, start + COURSES_PER_PAGE)
+  }, [filteredCourses, safeCurrentPage])
+
+  const shownCoursesCount = paginatedCourses.length
+  const totalCoursesCount = filteredCourses.length
+
+  const visiblePageNumbers = useMemo(() => {
+    const maxVisiblePages = 3
+    let startPage = Math.max(1, safeCurrentPage - 1)
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1)
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1)
+    }
+
+    return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index)
+  }, [safeCurrentPage, totalPages])
+
   const areaLabel = activeArea === ALL_AREAS ? 'TODAS AS ÁREAS' : activeArea
+
+  const canGoToPreviousPage = safeCurrentPage > 1
+  const canGoToNextPage = safeCurrentPage < totalPages
 
   return (
     <section className="lp-grad-carousel" id="pos-graduacao">
@@ -331,51 +369,152 @@ export function GraduationCarouselSection() {
         ) : null}
 
         {status === 'success' ? (
-          <div className="lp-grad-carousel__list">
-            {filteredCourses.length ? (
-              filteredCourses.map((course) => (
-                <article key={course.value} className="lp-grad-carousel__item">
-                  <div className="lp-grad-carousel__content">
-                    <div className="lp-grad-carousel__meta">
-                      <span>
-                        <GraduationLabelIcon />
-                        PÓS-GRADUAÇÃO EAD
-                      </span>
-                      <span>
-                        <VideoLabelIcon />
-                        COM VIDEOAULAS
-                      </span>
+          <>
+            <div className="lp-grad-carousel__list">
+              {paginatedCourses.length ? (
+                paginatedCourses.map((course) => (
+                  <article key={course.value} className="lp-grad-carousel__item">
+                    <div className="lp-grad-carousel__content">
+                      <div className="lp-grad-carousel__meta">
+                        <span>
+                          <GraduationLabelIcon />
+                          PÓS-GRADUAÇÃO EAD
+                        </span>
+                        <span>
+                          <VideoLabelIcon />
+                          COM VIDEOAULAS
+                        </span>
+                      </div>
+
+                      <h3>{course.label}</h3>
+
+                      <div className="lp-grad-carousel__price">
+                        <strong>{course.currentInstallmentPrice}/MÊS</strong>
+                        <span>{course.oldInstallmentPrice}</span>
+                      </div>
                     </div>
 
-                    <h3>{course.label}</h3>
+                    <a
+                      href="#inscricao"
+                      className="lp-grad-carousel__cta"
+                      onClick={(event) => {
+                        event.preventDefault()
+                        openCourseLeadModal({
+                          courseType: 'pos',
+                          courseValue: course.value,
+                          courseLabel: course.label,
+                          courseId: course.courseId,
+                        })
+                      }}
+                    >
+                      SAIBA MAIS
+                    </a>
+                  </article>
+                ))
+              ) : (
+                <div className="lp-grad-carousel__state">Nenhum curso encontrado para esta área.</div>
+              )}
+            </div>
 
-                    <div className="lp-grad-carousel__price">
-                      <strong>{course.currentInstallmentPrice}/MÊS</strong>
-                      <span>{course.oldInstallmentPrice}</span>
+            {totalCoursesCount > 0 ? (
+              <div className="lp-grad-carousel__footer">
+                <div className="lp-grad-carousel__note">
+                  <span className="lp-grad-carousel__note-icon" aria-hidden="true">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="12" cy="12" r="9.5" stroke="currentColor" strokeWidth="2" />
+                      <line x1="12" y1="11" x2="12" y2="17" stroke="currentColor" strokeWidth="2" />
+                      <circle cx="12" cy="7.5" r="1.2" fill="currentColor" />
+                    </svg>
+                  </span>
+                  <p>
+                    Os cursos atendem às normativas e exigências estabelecidas pelo COREN,
+                    assegurando conformidade com a legislação profissional vigente.
+                  </p>
+                </div>
+
+                <div className="lp-grad-carousel__pagination" aria-label="Paginação dos cursos">
+                  <div className="lp-grad-carousel__pagination-controls">
+                    <button
+                      type="button"
+                      className="lp-grad-carousel__page-nav lp-grad-carousel__page-nav--prev"
+                      aria-label="Página anterior"
+                      disabled={!canGoToPreviousPage}
+                      onClick={() => setCurrentPage((previous) => Math.max(1, previous - 1))}
+                    >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M14.5 5L8 11.5L14.5 18"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+
+                    <div className="lp-grad-carousel__pages">
+                      {visiblePageNumbers.map((pageNumber) => (
+                        <button
+                          key={pageNumber}
+                          type="button"
+                          className={`lp-grad-carousel__page-number ${
+                            safeCurrentPage === pageNumber ? 'is-active' : ''
+                          }`}
+                          aria-label={`Ir para página ${pageNumber}`}
+                          aria-current={safeCurrentPage === pageNumber ? 'page' : undefined}
+                          onClick={() => setCurrentPage(pageNumber)}
+                        >
+                          {pageNumber}
+                        </button>
+                      ))}
                     </div>
+
+                    <button
+                      type="button"
+                      className="lp-grad-carousel__page-nav lp-grad-carousel__page-nav--next"
+                      aria-label="Próxima página"
+                      disabled={!canGoToNextPage}
+                      onClick={() => setCurrentPage((previous) => Math.min(totalPages, previous + 1))}
+                    >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M9.5 5L16 11.5L9.5 18"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
                   </div>
 
-                  <a
-                    href="#inscricao"
-                    className="lp-grad-carousel__cta"
-                    onClick={(event) => {
-                      event.preventDefault()
-                      openCourseLeadModal({
-                        courseType: 'pos',
-                        courseValue: course.value,
-                        courseLabel: course.label,
-                        courseId: course.courseId,
-                      })
-                    }}
-                  >
-                    SAIBA MAIS
-                  </a>
-                </article>
-              ))
-            ) : (
-              <div className="lp-grad-carousel__state">Nenhum curso encontrado para esta área.</div>
-            )}
-          </div>
+                  <p className="lp-grad-carousel__pagination-count">
+                    {shownCoursesCount} de {totalCoursesCount} cursos
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </>
         ) : null}
       </div>
     </section>

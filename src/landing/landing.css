@@ -3786,6 +3786,7 @@ section[id] {
     font-size: clamp(25px, 7.4vw, 31px);
     letter-spacing: -0.02em;
     line-height: 1.08;
+    text-align: center;
   }
 
   .lp-presential__head {

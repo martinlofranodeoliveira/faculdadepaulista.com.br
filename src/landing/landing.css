@@ -2102,11 +2102,16 @@ section[id] {
 }
 
 .lp-grad-carousel__head p {
-  color: #1b1b1b;
-  font-size: clamp(14px, 1.35vw, 18px);
-  line-height: 1.45;
+  color: #0f0c0a;
+  font-size: clamp(16px, 1.8vw, 22px);
+  line-height: 1.36;
+  text-transform: uppercase;
   margin: 0;
-  max-width: 437px;
+  max-width: 520px;
+}
+
+.lp-grad-carousel__head p strong {
+  font-weight: 800;
 }
 
 .lp-grad-carousel__filters {

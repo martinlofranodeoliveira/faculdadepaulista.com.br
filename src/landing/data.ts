@@ -378,37 +378,37 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Como funciona o vestibular online?',
     answer:
-      'O vestibular é realizado de forma digital, com foco em facilitar o seu acesso ao Ensino Superior. Além da prova online, você pode ingressar utilizando sua nota do ENEM, como Segunda Graduação (aproveitando disciplinas já cursadas) ou via transferência externa de outra Instituição.',
+      'Nosso processo seletivo é moderno e adaptado à sua rotina. A avaliação é realizada de forma digital, consistindo em uma prova de redação online com resultado ágil. Além disso, você pode ingressar imediatamente utilizando sua nota do ENEM, realizar uma Segunda Graduação sem vestibular ou solicitar sua Transferência para garantir uma formação de alto nível.',
   },
   {
     question: 'Quais são as formas de pagamento?',
     answer:
-      'Buscamos facilitar o seu acesso ao Ensino Superior com opções flexíveis. Você pode realizar o pagamento das mensalidades via PIX, garantindo a baixa imediata no sistema, ou através de cartão de crédito, com a possibilidade de parcelamento. Nosso objetivo é que a questão financeira não seja um obstáculo para a sua Formação Profissional.',
+      'Oferecemos total conveniência financeira para viabilizar seus estudos. Você pode optar pelo pagamento via PIX, boleto bancário ou cartão de crédito. Para maior tranquilidade, disponibilizamos o crédito recorrente, uma modalidade que debita a mensalidade mensalmente sem comprometer o limite total do seu cartão.',
   },
   {
-    question: 'Quem pode se inscrever na Enfermagem?',
+    question: 'Quem pode se inscrever nos cursos de graduação?',
     answer:
-      'Qualquer pessoa que tenha concluído o Ensino Médio. Este curso é ideal para quem possui vocação para o cuidado humano, responsabilidade ética e o desejo de liderar equipes de Saúde em ambientes de alta tecnologia.',
+      'Nossos Cursos de Graduação (Bacharelados, Licenciaturas e Tecnólogos) são destinados a todos que concluíram o Ensino Médio. Seja para quem busca a primeira formação ou para Profissionais que desejam uma transição de Carreira, a Faculdade Paulista oferece o suporte necessário para o desenvolvimento de competências de destaque.',
   },
   {
-    question: 'Quem pode se inscrever na Psicologia?',
+    question: 'Quem pode se inscrever nos cursos de pós-graduação?',
     answer:
-      'Qualquer pessoa que tenha concluído o Ensino Médio. Este curso é ideal para quem possui vocação para o cuidado humano, responsabilidade ética e o desejo de liderar equipes de Saúde em ambientes de alta tecnologia.',
+      'A Pós-Graduação é voltada para Profissionais que já possuem Diploma de Ensino Superior e buscam Especialização técnica ou estratégica. Oferecemos um portfólio completo para quem deseja assumir cargos de liderança, atualizar conhecimentos, pontuar em Concursos e aumentar sua competitividade no Mercado de trabalho.',
   },
   {
     question: 'Como funciona a transferência ou retorno?',
     answer:
-      'Para quem vem de outra Instituição, o processo de transferência é focado no aproveitamento de créditos: basta apresentar seu Histórico e as Ementas das Disciplinas cursadas para que nossa Coordenação analise as equivalências. Já para ex-alunos que desejam retomar o sonho da Graduação, o processo é simplificado através de um requerimento de retorno junto à nossa secretaria Acadêmica (sujeito à disponibilidade de vaga na turma correspondente).',
+      'Se você deseja migrar de outra Instituição, basta submeter seu Histórico e Ementas para que nossa Coordenação avalie o aproveitamento das disciplinas já cursadas. Para ex-alunos que desejam reativar sua trajetória Acadêmica, a retomada é feita de forma simplificada por meio de um requerimento de retorno em nossa Secretaria.',
   },
   {
-    question: 'Como a Faculdade prepara os alunos para o mercado de trabalho?',
+    question: 'Como funciona as modalidades de ensino na Faculdade Paulista?',
     answer:
-      'A Faculdade Paulista oferece aos alunos uma formação acadêmica sólida, preparando-os para atuar em diversas áreas do mercado de trabalho. Com o nosso currículo atualizado e atendimento personalizado, você estará apto para enfrentar os desafios do mercado com confiança e competência.',
+      'Nossa estrutura é multimodal para atender a todos os perfis de Alunos:- Presencial: Imersão total no Campus para Cursos que exigem prática intensiva e contato direto, como Enfermagem e Psicologia;- EAD: Flexibilidade total para você estudar onde e quando quiser, com conteúdo de alta qualidade disponível 24h através do nosso App exclusivo e Plataforma;- Semipresencial: O equilíbrio perfeito, unindo a autonomia do digital com encontros presenciais estratégicos para atividades práticas e networking.',
   },
   {
-    question: 'Quais são as oportunidades de carreira para os alunos formados?',
+    question: 'Como a Faculdade Paulista prepara os alunos para o mercado de trabalho?',
     answer:
-      'A Faculdade Paulista oferece aos alunos uma formação acadêmica sólida, preparando-os para atuar em diversas áreas do mercado de trabalho. Com o nosso currículo atualizado e atendimento personalizado, você estará apto para enfrentar os desafios do mercado com confiança e competência.',
+      'Nossa metodologia é focada na experiência real, adaptada para cada modalidade de ensino:- Para os cursos presenciais de Enfermagem e Psicologia: Oferecemos imersão prática em ambientes profissionais próprios. Os alunos de Enfermagem treinam em laboratórios de última geração com simuladores de alta fidelidade que replicam a rotina hospitalar. Já os alunos de Psicologia contam com o suporte da Clínica-Escola própria, realizando atendimentos supervisionados à comunidade para desenvolver competências clínicas, organizacionais e sociais.- Para os cursos EAD e Semipresenciais: Utilizamos uma plataforma digital intuitiva que traz o Mercado para dentro da aula. Através de estudos de caso reais, curadoria de professores atuantes no setor e ferramentas que estimulam o empreendedorismo e a inovação, garantimos que o aluno desenvolva as competências mais exigidas pelas empresas modernas.- Carga Horária e Estágios: Todos os nossos Cursos cumprem rigorosamente as Diretrizes Curriculares Nacionais, com cargas horárias robustas que incluem Estágios Curriculais obrigatórios para garantir que você saia da Faculdade pronto para atuar com segurança e liderança.',
   },
 ]
 

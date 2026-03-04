@@ -324,7 +324,10 @@ export function GraduationCarouselSection() {
       <div className="lp-shell">
         <header className="lp-grad-carousel__head">
           <h2>PÓS-GRADUAÇÕES</h2>
-          <p>Explore nossos cursos e encontre o caminho ideal para sua carreira.</p>
+          <p>
+            <span>PROFISSIONAIS PÓS-GRADUADOS </span>
+            <strong>RECEBEM SALÁRIOS ATÉ 2X MAIORES</strong>
+          </p>
         </header>
 
         <div className="lp-grad-carousel__filters" role="tablist" aria-label="Filtrar cursos por área">
@@ -378,7 +381,7 @@ export function GraduationCarouselSection() {
                       <div className="lp-grad-carousel__meta">
                         <span>
                           <GraduationLabelIcon />
-                          PÓS-GRADUAÇÃO EAD
+                          RECONHECIDO MEC
                         </span>
                         <span>
                           <VideoLabelIcon />

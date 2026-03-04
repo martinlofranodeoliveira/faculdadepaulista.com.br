@@ -2916,12 +2916,22 @@ section[id] {
   transform: rotate(180deg);
 }
 
+.lp-faq__item[open] .lp-faq__summary {
+  padding-bottom: 12px;
+}
+
 .lp-faq__answer {
   color: rgba(255, 255, 255, 0.86);
   font-size: 14px;
-  line-height: 22px;
+  line-height: 1.65;
   margin: 0;
+  white-space: pre-line;
   padding: 0 24px 24px;
+}
+
+.lp-faq__answer strong {
+  color: #fff;
+  font-weight: 700;
 }
 
 .lp-footer {

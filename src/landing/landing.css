@@ -1856,11 +1856,16 @@ section[id] {
   padding: clamp(34px, 3.8vw, 48px) 0 clamp(30px, 3.3vw, 44px);
 }
 
+.lp-presential .lp-shell {
+  max-width: 1286px;
+}
+
 .lp-presential__head {
   align-items: center;
   display: flex;
   gap: 16px;
   justify-content: space-between;
+  min-height: 63px;
 }
 
 .lp-presential h1 {
@@ -1882,6 +1887,7 @@ section[id] {
   display: inline-flex;
   gap: 10px;
   min-height: 62px;
+  min-width: 452px;
   padding: 9px 18px 9px 14px;
 }
 
@@ -1897,7 +1903,7 @@ section[id] {
 .lp-presential__location p {
   color: #4d5b70;
   font-size: 18px;
-  line-height: 1.15;
+  line-height: 1.2;
   margin: 0;
 }
 
@@ -1908,27 +1914,32 @@ section[id] {
 
 .lp-presential__grid {
   display: grid;
-  gap: clamp(10px, 1.2vw, 14px);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  grid-template-columns: minmax(0, 627px) minmax(0, 598px);
   justify-content: center;
-  margin-top: clamp(22px, 2.2vw, 30px);
+  margin-top: 24px;
 }
 
 .lp-presential-card {
-  align-items: center;
+  align-items: stretch;
   background: #fff;
   border: 1px solid rgba(0, 0, 0, 0.25);
-  border-radius: 16px;
+  border-radius: 18px;
   display: grid;
-  gap: 17px;
+  gap: 16px;
   grid-template-columns: minmax(0, 252px) minmax(0, 1fr);
+  height: 423px;
   overflow: clip;
   padding: 16px;
 }
 
+.lp-presential-card--compact-image {
+  grid-template-columns: minmax(0, 222px) minmax(0, 1fr);
+}
+
 .lp-presential-card__image {
   border-radius: 18px;
-  height: 421px;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -1952,8 +1963,9 @@ section[id] {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  height: 100%;
   justify-content: space-between;
-  min-height: 411px;
+  min-height: 0;
   min-width: 0;
 }
 
@@ -2017,6 +2029,10 @@ section[id] {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+.lp-presential-card__benefits li:nth-child(3) {
+  grid-column: 1 / -1;
 }
 
 .lp-presential-card__benefits li {
@@ -3809,6 +3825,7 @@ section[id] {
     border-radius: 14px;
     gap: 10px;
     grid-template-columns: minmax(118px, 134px) minmax(0, 1fr);
+    height: auto;
     padding: 10px;
   }
 

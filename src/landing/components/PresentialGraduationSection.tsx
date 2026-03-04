@@ -10,10 +10,11 @@ type PresentialCourseHighlight = {
   mode: string
   image: string
   imageAlt: string
+  cardClassName?: string
   imageClassName?: string
   imagePosition?: string
   startDate: string
-  benefits: [string, string, string, string]
+  benefits: [string, string, string]
   currentPrice: string
   originalPrice: string
 }
@@ -31,8 +32,7 @@ const presentialCourses: PresentialCourseHighlight[] = [
     startDate: 'Início das aulas: 01/07/26',
     benefits: [
       'Estágio no 1 Semestre',
-      'Ganhe Grátis Cursos EAD',
-      'Laboratório Moderno',
+      'Ganhe Grátis +3 Pós EAD',
       'Laboratório Moderno',
     ],
     currentPrice: 'R$ 449,00',
@@ -46,12 +46,12 @@ const presentialCourses: PresentialCourseHighlight[] = [
     mode: 'Bacharelado Presencial',
     image: '/landing/presential-psicologia-figma.jpg',
     imageAlt: 'Estudante de psicologia em atividade acadêmica',
+    cardClassName: 'lp-presential-card--compact-image',
     imageClassName: 'is-compact',
     startDate: 'Início das aulas: 01/07/26',
     benefits: [
       'Estágio no 1 Semestre',
-      'Ganhe Grátis Cursos EAD',
-      'Laboratório Moderno',
+      'Ganhe Grátis Curso EAD',
       'Laboratório Moderno',
     ],
     currentPrice: 'R$ 549,00',
@@ -164,7 +164,10 @@ export function PresentialGraduationSection() {
 
         <div className="lp-presential__grid">
           {presentialCourses.map((course) => (
-            <article key={course.id} className="lp-presential-card">
+            <article
+              key={course.id}
+              className={`lp-presential-card ${course.cardClassName ?? ''}`}
+            >
               <div className={`lp-presential-card__image ${course.imageClassName ?? ''}`}>
                 <img
                   src={course.image}
@@ -184,10 +187,9 @@ export function PresentialGraduationSection() {
                 </div>
 
                 <ul className="lp-presential-card__benefits">
-                  <BenefitItem>{course.benefits[0]}</BenefitItem>
-                  <BenefitItem>{course.benefits[1]}</BenefitItem>
-                  <BenefitItem>{course.benefits[2]}</BenefitItem>
-                  <BenefitItem>{course.benefits[3]}</BenefitItem>
+                  {course.benefits.map((benefit) => (
+                    <BenefitItem key={benefit}>{benefit}</BenefitItem>
+                  ))}
                 </ul>
 
                 <div className="lp-presential-card__price">

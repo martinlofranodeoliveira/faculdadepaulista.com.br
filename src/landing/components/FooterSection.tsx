@@ -42,9 +42,9 @@
               <li className="is-map">
                 <img src="/landing/footer/icon-map.svg" alt="" aria-hidden="true" />
                 <span>
-                  R. Júlio de Castilhos, 777 - Metrô Belém,
+                  Rua Dr. Diogo de Faria, 66 - Vila Mariana,
                   <br />
-                  São Paulo - SP, 03059-005
+                  São Paulo - SP, CEP: 04037-000
                 </span>
               </li>
               <li className="is-phone">
@@ -65,7 +65,7 @@
             <div className="lp-footer__map">
               <img src="/landing/footer/map.png" alt="Mapa da localização da Faculdade Paulista" />
               <a
-                href="https://www.google.com/maps/search/?api=1&query=R.+Júlio+de+Castilhos,+777+-+Metrô+Belém,+São+Paulo+-+SP,+03059-005"
+                href="https://www.google.com/maps/search/?api=1&query=Rua+Dr.+Diogo+de+Faria,+66+-+Vila+Mariana,+S%C3%A3o+Paulo+-+SP,+04037-000"
                 target="_blank"
                 rel="noreferrer"
               >

@@ -3998,7 +3998,7 @@ section[id] {
   }
 
   .lp-all-grad-card h3 {
-    font-size: 13.723px;
+    font-size: 14.723px;
     line-height: 1.2;
     text-transform: none;
   }
@@ -4034,12 +4034,12 @@ section[id] {
 
   .lp-all-grad-card__price-old,
   .lp-all-grad-card__price-old span {
-    font-size: 12.198px;
+    font-size: 13.198px;
   }
 
   .lp-all-grad-card__price-current,
   .lp-all-grad-card__price-current span {
-    font-size: 12.198px;
+    font-size: 13.198px;
   }
 
   .lp-all-grad-card__price-current-row {
@@ -4047,12 +4047,12 @@ section[id] {
   }
 
   .lp-all-grad-card__fixed {
-    border-radius: 3.291px;
-    font-size: 7.715px;
-    font-weight: 700;
-    height: 13.723px;
-    padding: 0 5px;
     text-transform: lowercase;
+    border-radius: 3.291px;
+    height: 13.723px;
+    padding: 7px 5px;
+    font-size: 10.715px;
+    font-weight: 700;
   }
 
   .lp-all-grad-card__cta {

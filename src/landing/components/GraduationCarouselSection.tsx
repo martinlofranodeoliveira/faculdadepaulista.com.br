@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { ArrowUpDown } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { openCourseLeadModal } from '../coursePrefill'
 
@@ -21,6 +20,7 @@ type PostCourse = {
 }
 
 type LoadStatus = 'loading' | 'success' | 'error'
+type SortOrder = 'asc' | 'desc'
 
 function normalizeComparableText(value: string): string {
   return value
@@ -214,6 +214,38 @@ function VideoLabelIcon() {
   )
 }
 
+function SortFilterIcon() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M3.33301 5H16.6663"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M5.83301 10H14.1663"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8.33301 15H11.6663"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 export function GraduationCarouselSection() {
   const [courses, setCourses] = useState<PostCourse[]>([])
   const [status, setStatus] = useState<LoadStatus>('loading')
@@ -221,8 +253,9 @@ export function GraduationCarouselSection() {
     'Não foi possível carregar os cursos de pós-graduação.',
   )
   const [activeArea, setActiveArea] = useState(ALL_AREAS)
-  const [sortAsc, setSortAsc] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
+  const listRef = useRef<HTMLDivElement | null>(null)
 
   const loadPostCourses = useCallback(async () => {
     setStatus('loading')
@@ -274,16 +307,13 @@ export function GraduationCarouselSection() {
         ? courses
         : courses.filter((course) => course.area === activeArea)
 
-    return [...areaFiltered].sort((a, b) =>
-      sortAsc
-        ? a.label.localeCompare(b.label, 'pt-BR')
-        : b.label.localeCompare(a.label, 'pt-BR'),
-    )
-  }, [activeArea, courses, sortAsc])
+    const sorted = [...areaFiltered].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'))
+    return sortOrder === 'asc' ? sorted : sorted.reverse()
+  }, [activeArea, courses, sortOrder])
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [activeArea, sortAsc, courses])
+  }, [activeArea, courses, sortOrder])
 
   const totalPages = Math.max(1, Math.ceil(filteredCourses.length / COURSES_PER_PAGE))
   const safeCurrentPage = Math.min(currentPage, totalPages)
@@ -301,6 +331,8 @@ export function GraduationCarouselSection() {
 
   const shownCoursesCount = paginatedCourses.length
   const totalCoursesCount = filteredCourses.length
+  const scopeLabel =
+    activeArea === ALL_AREAS ? 'PÓS EM TODAS AS ÁREAS' : `PÓS NA ÁREA DE ${activeArea}`
 
   const visiblePageNumbers = useMemo(() => {
     const maxVisiblePages = 3
@@ -314,20 +346,18 @@ export function GraduationCarouselSection() {
     return Array.from({ length: endPage - startPage + 1 }, (_, index) => startPage + index)
   }, [safeCurrentPage, totalPages])
 
-  const areaLabel = activeArea === ALL_AREAS ? 'TODAS AS ÁREAS' : activeArea
-
   const canGoToPreviousPage = safeCurrentPage > 1
   const canGoToNextPage = safeCurrentPage < totalPages
+
+  useEffect(() => {
+    listRef.current?.scrollTo({ top: 0, behavior: 'auto' })
+  }, [activeArea, safeCurrentPage, sortOrder])
 
   return (
     <section className="lp-grad-carousel" id="pos-graduacao">
       <div className="lp-shell">
         <header className="lp-grad-carousel__head">
-          <h2>PÓS-GRADUAÇÕES</h2>
-          <p>
-            <span>PROFISSIONAIS PÓS-GRADUADOS </span>
-            <strong>RECEBEM SALÁRIOS ATÉ 2X MAIORES</strong>
-          </p>
+          <h2>PÓS-GRADUAÇÕES EAD</h2>
         </header>
 
         <div className="lp-grad-carousel__filters" role="tablist" aria-label="Filtrar cursos por área">
@@ -345,18 +375,7 @@ export function GraduationCarouselSection() {
           ))}
         </div>
 
-        <div className="lp-grad-carousel__toolbar">
-          <p className="lp-grad-carousel__scope">PÓS NA ÁREA DE {areaLabel}</p>
-          <button
-            type="button"
-            className="lp-grad-carousel__sort"
-            aria-label={sortAsc ? 'Ordenar de Z a A' : 'Ordenar de A a Z'}
-            onClick={() => setSortAsc((previous) => !previous)}
-          >
-            <ArrowUpDown size={16} />
-            {sortAsc ? 'AZ' : 'ZA'}
-          </button>
-        </div>
+        <div className="lp-grad-carousel__divider" aria-hidden="true" />
 
         {status === 'loading' ? (
           <div className="lp-grad-carousel__state">Carregando cursos de pós-graduação...</div>
@@ -365,7 +384,11 @@ export function GraduationCarouselSection() {
         {status === 'error' ? (
           <div className="lp-grad-carousel__state lp-grad-carousel__state--error">
             <span>{errorMessage}</span>
-            <button type="button" className="lp-grad-carousel__retry" onClick={() => void loadPostCourses()}>
+            <button
+              type="button"
+              className="lp-grad-carousel__retry"
+              onClick={() => void loadPostCourses()}
+            >
               Tentar novamente
             </button>
           </div>
@@ -373,73 +396,79 @@ export function GraduationCarouselSection() {
 
         {status === 'success' ? (
           <>
-            <div className="lp-grad-carousel__list">
-              {paginatedCourses.length ? (
-                paginatedCourses.map((course) => (
-                  <article key={course.value} className="lp-grad-carousel__item">
-                    <div className="lp-grad-carousel__content">
-                      <div className="lp-grad-carousel__meta">
-                        <span>
-                          <GraduationLabelIcon />
-                          RECONHECIDO MEC
-                        </span>
-                        <span>
-                          <VideoLabelIcon />
-                          COM VIDEOAULAS
-                        </span>
-                      </div>
+            {paginatedCourses.length ? (
+              <div className="lp-grad-carousel__sections">
+                <section className="lp-grad-carousel__area-section">
+                  <div className="lp-grad-carousel__scope-row">
+                    <p className="lp-grad-carousel__scope">{scopeLabel}</p>
 
-                      <h3>{course.label}</h3>
-
-                      <div className="lp-grad-carousel__price">
-                        <strong>{course.currentInstallmentPrice}/MÊS</strong>
-                        <span>{course.oldInstallmentPrice}</span>
-                      </div>
-                    </div>
-
-                    <a
-                      href="#inscricao"
-                      className="lp-grad-carousel__cta"
-                      onClick={(event) => {
-                        event.preventDefault()
-                        openCourseLeadModal({
-                          courseType: 'pos',
-                          courseValue: course.value,
-                          courseLabel: course.label,
-                          courseId: course.courseId,
-                        })
-                      }}
+                    <button
+                      type="button"
+                      className="lp-grad-carousel__sort"
+                      aria-label={
+                        sortOrder === 'asc'
+                          ? 'Ordenar cursos de Z a A'
+                          : 'Ordenar cursos de A a Z'
+                      }
+                      onClick={() =>
+                        setSortOrder((previous) => (previous === 'asc' ? 'desc' : 'asc'))
+                      }
                     >
-                      SAIBA MAIS
-                    </a>
-                  </article>
-                ))
-              ) : (
-                <div className="lp-grad-carousel__state">Nenhum curso encontrado para esta área.</div>
-              )}
-            </div>
+                      <SortFilterIcon />
+                      <span>{sortOrder === 'asc' ? 'AZ' : 'ZA'}</span>
+                    </button>
+                  </div>
+
+                  <div className="lp-grad-carousel__list" ref={listRef}>
+                    {paginatedCourses.map((course) => (
+                      <article key={course.value} className="lp-grad-carousel__item">
+                        <div className="lp-grad-carousel__content">
+                          <div className="lp-grad-carousel__meta">
+                            <span>
+                              <GraduationLabelIcon />
+                              PÓS-GRADUAÇÃO EAD
+                            </span>
+                            <span>
+                              <VideoLabelIcon />
+                              COM VIDEOAULAS
+                            </span>
+                          </div>
+
+                          <h3>{course.label}</h3>
+
+                          <div className="lp-grad-carousel__price">
+                            <strong>{course.currentInstallmentPrice}/MÊS</strong>
+                            <span>{course.oldInstallmentPrice}</span>
+                          </div>
+                        </div>
+
+                        <a
+                          href="#inscricao"
+                          className="lp-grad-carousel__cta"
+                          onClick={(event) => {
+                            event.preventDefault()
+                            openCourseLeadModal({
+                              courseType: 'pos',
+                              courseValue: course.value,
+                              courseLabel: course.label,
+                              courseId: course.courseId,
+                            })
+                          }}
+                        >
+                          INSCREVA-SE
+                        </a>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            ) : (
+              <div className="lp-grad-carousel__state">Nenhum curso encontrado para esta área.</div>
+            )}
 
             {totalCoursesCount > 0 ? (
               <div className="lp-grad-carousel__footer">
-                <div className="lp-grad-carousel__note">
-                  <span className="lp-grad-carousel__note-icon" aria-hidden="true">
-                    <svg
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <circle cx="12" cy="12" r="9.5" stroke="currentColor" strokeWidth="2" />
-                      <line x1="12" y1="11" x2="12" y2="17" stroke="currentColor" strokeWidth="2" />
-                      <circle cx="12" cy="7.5" r="1.2" fill="currentColor" />
-                    </svg>
-                  </span>
-                  <p>
-                    Os cursos atendem às normativas e exigências estabelecidas pelo COREN,
-                    assegurando conformidade com a legislação profissional vigente.
-                  </p>
-                </div>
+                <div className="lp-grad-carousel__footer-divider" aria-hidden="true" />
 
                 <div className="lp-grad-carousel__pagination" aria-label="Paginação dos cursos">
                   <div className="lp-grad-carousel__pagination-controls">
@@ -513,6 +542,26 @@ export function GraduationCarouselSection() {
 
                   <p className="lp-grad-carousel__pagination-count">
                     {shownCoursesCount} de {totalCoursesCount} cursos
+                  </p>
+                </div>
+
+                <div className="lp-grad-carousel__note">
+                  <span className="lp-grad-carousel__note-icon" aria-hidden="true">
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <circle cx="12" cy="12" r="9.5" stroke="currentColor" strokeWidth="2" />
+                      <line x1="12" y1="11" x2="12" y2="17" stroke="currentColor" strokeWidth="2" />
+                      <circle cx="12" cy="7.5" r="1.2" fill="currentColor" />
+                    </svg>
+                  </span>
+                  <p>
+                    Os cursos atendem às normativas e exigências estabelecidas pelo COREN,
+                    assegurando conformidade com a legislação profissional vigente.
                   </p>
                 </div>
               </div>

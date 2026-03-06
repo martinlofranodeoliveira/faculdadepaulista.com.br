@@ -13,7 +13,7 @@
   --lp-section-title-size: clamp(32px, 3.2vw, 42px);
   --lp-section-title-line-height: 1.08;
   --lp-section-title-letter-spacing: -0.03em;
-  --lp-section-title-size-mobile: clamp(26px, 8vw, 32px);
+  --lp-section-title-size-mobile: clamp(25px, 8vw, 25px);
 }
 
 .lp-page {
@@ -1893,7 +1893,7 @@ section[id] {
 
 .lp-presential {
   background: #ffffff;
-  padding: clamp(34px, 3.8vw, 48px) 0 clamp(30px, 3.3vw, 44px);
+  padding: clamp(34px, 3.8vw, 48px) 0 clamp(34px, 3.6vw, 46px);
 }
 
 .lp-presential .lp-shell {
@@ -1903,17 +1903,17 @@ section[id] {
 .lp-presential__head {
   align-items: center;
   display: flex;
-  gap: 16px;
+  gap: 24px;
   justify-content: space-between;
-  min-height: 63px;
+  min-height: 53px;
 }
 
 .lp-presential h1 {
   color: #070707;
-  font-size: clamp(34px, 3.1vw, 42px);
-  font-weight: bold;
-  letter-spacing: -0.022em;
-  line-height: 0.96;
+  font-size: clamp(34px, 3.5vw, 46px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.88;
   margin: 0;
   text-align: left;
   text-transform: uppercase;
@@ -1921,14 +1921,12 @@ section[id] {
 
 .lp-presential__location {
   align-items: center;
-  border: 1px solid #001b2d;
-  border-radius: 38px;
   color: #001b2d;
   display: inline-flex;
-  gap: 10px;
+  gap: 15px;
   min-height: 62px;
-  min-width: 452px;
-  padding: 9px 18px 9px 14px;
+  min-width: 0;
+  width: min(100%, 380px);
 }
 
 .lp-presential__location-icon {
@@ -1942,9 +1940,10 @@ section[id] {
 
 .lp-presential__location p {
   color: #4d5b70;
-  font-size: 18px;
-  line-height: 1.2;
+  font-size: 16px;
+  line-height: 1.32;
   margin: 0;
+  max-width: 344px;
 }
 
 .lp-presential__location p strong {
@@ -1954,23 +1953,24 @@ section[id] {
 
 .lp-presential__grid {
   display: grid;
-  gap: 14px;
-  grid-template-columns: minmax(0, 627px) minmax(0, 598px);
-  justify-content: center;
-  margin-top: 24px;
+  column-gap: clamp(24px, 4vw, 42px);
+  grid-template-columns: minmax(0, 595px) minmax(0, 565px);
+  justify-content: space-between;
+  margin-top: 40px;
+  row-gap: 20px;
 }
 
 .lp-presential-card {
   align-items: stretch;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.25);
-  border-radius: 18px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   display: grid;
   gap: 16px;
   grid-template-columns: minmax(0, 252px) minmax(0, 1fr);
-  height: 423px;
-  overflow: clip;
-  padding: 16px;
+  min-height: 423px;
+  overflow: visible;
+  padding: 0;
 }
 
 .lp-presential-card--compact-image {
@@ -1979,7 +1979,7 @@ section[id] {
 
 .lp-presential-card__image {
   border-radius: 18px;
-  height: 100%;
+  height: 423px;
   overflow: hidden;
 }
 
@@ -1991,110 +1991,108 @@ section[id] {
 }
 
 .lp-presential-card__image.is-wide img {
-  object-position: center;
+  object-position: center top;
 }
 
 .lp-presential-card__image.is-compact {
   border-radius: 16px;
+  height: 423px;
   max-width: 222px;
 }
 
 .lp-presential-card__content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  height: 100%;
+  gap: 24px;
+  min-height: 423px;
   justify-content: space-between;
   min-height: 0;
   min-width: 0;
 }
 
-.lp-presential-card__head {
+.lp-presential-card__overview {
   align-items: flex-start;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
 
 .lp-presential-card__start {
   align-items: center;
-  background: rgba(246, 16, 16, 0.13);
+  background: #f61010;
   border-radius: 8px;
-  color: #c50002;
+  color: #fff;
   display: inline-flex;
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.01em;
   line-height: 1;
-  min-height: 28px;
+  min-height: 20px;
   padding: 0 10px;
+  text-transform: uppercase;
 }
 
 .lp-presential-card__mode {
   align-items: center;
   color: #0f1722;
   display: inline-flex;
+  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
   font-size: 16px;
   gap: 9px;
-  line-height: 1.1;
+  line-height: 1.2;
 }
 
 .lp-presential-card__mode svg {
   flex-shrink: 0;
 }
 
-.lp-presential-card__head h3 {
+.lp-presential-card__overview h3 {
   color: #0f172a;
-  font-size: clamp(30px, 2.7vw, 35px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.12;
+  font-size: clamp(28px, 2.5vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
   margin: 0;
-}
-
-.lp-presential-card__location {
-  color: #222b38;
-  font-size: 18px;
-  line-height: 1.05;
-  margin: 0;
-}
-
-.lp-presential-card__location strong {
-  font-weight: 700;
+  text-transform: uppercase;
 }
 
 .lp-presential-card__benefits {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   list-style: none;
   margin: 0;
+  max-width: 327px;
   padding: 0;
-}
-
-.lp-presential-card__benefits li:nth-child(3) {
-  grid-column: 1 / -1;
+  width: 100%;
 }
 
 .lp-presential-card__benefits li {
   align-items: center;
-  background: #e8e9ea;
-  border-radius: 7px;
+  background: transparent;
+  border-bottom: 1px solid #e2e2e2;
+  border-radius: 0;
   color: #222b38;
   display: flex;
-  font-size: 13px;
+  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+  font-size: 16px;
   gap: 12px;
-  height: 42px;
-  line-height: 1.1;
-  max-width: 100%;
-  padding: 5px 10px;
+  line-height: 1.28;
+  min-height: 0;
+  padding: 6px 0;
   width: 100%;
 }
 
+.lp-presential-card__benefits li:last-child {
+  border-bottom: 0;
+}
+
 .lp-presential-card__benefits li span {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  min-width: 0;
+}
+
+.lp-presential-card__benefits li strong {
+  font-weight: 700;
 }
 
 .lp-presential-card__benefits li svg {
@@ -2103,42 +2101,39 @@ section[id] {
 
 @media (min-width: 721px) {
   .lp-presential-card__benefits li {
-    align-items: center;
-    padding-bottom: 6px;
-    padding-top: 6px;
+    white-space: nowrap;
   }
+}
 
-  .lp-presential-card__benefits li span {
-    -webkit-line-clamp: unset;
-    -webkit-box-orient: initial;
-    display: block;
-    line-height: 1.18;
-    overflow: visible;
-    white-space: normal;
-  }
+.lp-presential-card__footer {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .lp-presential-card__price {
-  align-items: center;
+  align-items: flex-start;
   color: #0f1722;
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
-.lp-presential-card__price strong {
-  font-size: clamp(19px, 1.6vw, 20px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+.lp-presential-card__price-from {
+  color: rgba(15, 23, 34, 0.65);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
   white-space: nowrap;
 }
 
-.lp-presential-card__price span {
-  color: rgba(15, 23, 34, 0.65);
-  font-size: clamp(18px, 1.5vw, 20px);
-  line-height: 1.2;
-  text-decoration: line-through;
+.lp-presential-card__price-current {
+  color: #0f1722;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
   white-space: nowrap;
 }
 
@@ -2149,19 +2144,25 @@ section[id] {
   color: #fff;
   display: inline-flex;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 800;
   gap: 9px;
   height: 47px;
   justify-content: center;
-  margin-top: 2px;
+  letter-spacing: -0.01em;
+  margin-top: 0;
   text-decoration: none;
   text-transform: uppercase;
   width: min(100%, 327px);
 }
 
+.lp-presential-card__cta svg {
+  flex-shrink: 0;
+}
+
 .lp-pos-banner {
   background: #ffffff;
-  padding: 0 0 clamp(22px, 2.6vw, 30px);
+  padding: 0;
+  margin-bottom: 40px;
 }
 
 .lp-pos-banner picture {
@@ -2175,47 +2176,36 @@ section[id] {
 }
 
 .lp-grad-carousel {
-  background: #f3f4f6;
-  padding: clamp(34px, 4vw, 52px) 0;
+  background: #cf0004;
+  border-top-left-radius: clamp(72px, 10vw, 150px);
+  border-top-right-radius: clamp(72px, 10vw, 150px);
+  overflow: clip;
+  padding: clamp(56px, 7vw, 85px) 0 clamp(46px, 6vw, 85px);
 }
 
 .lp-grad-carousel__head {
-  align-items: center;
   display: flex;
-  gap: 18px;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 .lp-grad-carousel__head h2 {
-  color: #0f172a;
-  font-size: clamp(31px, 3.8vw, 42px);
-  letter-spacing: -0.02em;
-  line-height: 1;
+  color: #fff;
+  font-size: clamp(32px, 3.6vw, 42px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
   margin: 0;
   text-transform: uppercase;
-}
-
-.lp-grad-carousel__head p {
-  color: #0f0c0a;
-  font-size: clamp(16px, 1.8vw, 22px);
-  line-height: 1.36;
-  text-transform: uppercase;
-  margin: 0;
-  max-width: 420px;
-}
-
-.lp-grad-carousel__head p strong {
-  font-weight: 800;
 }
 
 .lp-grad-carousel__filters {
   display: flex;
   flex-wrap: nowrap;
-  gap: 12px;
-  margin-top: 18px;
+  gap: 10px;
+  margin-top: 25px;
   overflow-x: auto;
   overflow-y: hidden;
-  padding-right: 16px;
+  padding-bottom: 6px;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -2226,10 +2216,10 @@ section[id] {
 
 .lp-grad-carousel__filter {
   align-items: center;
-  background: rgba(197, 0, 2, 0.1);
+  background: rgba(140, 0, 0, 0.3);
   border: 0;
   border-radius: 12px;
-  color: #3f0000;
+  color: #fff;
   cursor: pointer;
   display: inline-flex;
   flex: 0 0 auto;
@@ -2245,52 +2235,57 @@ section[id] {
 }
 
 .lp-grad-carousel__filter.is-active {
-  background: linear-gradient(180deg, #fe0000 0%, #c50002 100%);
-  color: #fff;
+  background: #fff;
+  color: #4b0101;
 }
 
-.lp-grad-carousel__toolbar {
-  align-items: center;
-  display: flex;
-  justify-content: flex-start;
+.lp-grad-carousel__divider {
+  background: rgba(255, 255, 255, 0.18);
+  height: 1px;
   margin-top: 14px;
+  width: 100%;
 }
 
 .lp-grad-carousel__scope {
-  color: #000;
-  font-size: clamp(14px, 1.48vw, 20px);
-  font-weight: 400;
-  line-height: 1.4;
+  color: #fff;
+  font-size: clamp(16px, 1.55vw, 20px);
+  font-weight: 500;
+  line-height: 1.42;
   margin: 0;
   text-transform: uppercase;
 }
 
-.lp-grad-carousel__sort {
+.lp-grad-carousel__scope-row {
   align-items: center;
-  background: #dadada;
-  border: 0;
-  border-radius: 6px;
-  color: #000;
-  cursor: pointer;
-  display: inline-flex;
-  font-family: inherit;
-  font-size: clamp(12px, 1.2vw, 15px);
-  font-weight: 700;
-  gap: 7px;
-  height: 38px;
-  justify-content: center;
-  padding: 0 10px;
-  text-transform: uppercase;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.lp-grad-carousel__sort {
   display: none;
+}
+
+.lp-grad-carousel__sections {
+  display: grid;
+  gap: 25px;
+  margin-top: 25px;
+}
+
+.lp-grad-carousel__area-section {
+  display: grid;
+  gap: 14px;
 }
 
 .lp-grad-carousel__list {
   display: grid;
   gap: 14px;
-  margin-top: 14px;
-  max-height: 516px;
+  max-height: 570px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding-right: 6px;
+  scrollbar-color: rgba(255, 255, 255, 0.42) transparent;
+  scrollbar-width: thin;
 }
 
 .lp-grad-carousel__list::-webkit-scrollbar {
@@ -2298,40 +2293,24 @@ section[id] {
 }
 
 .lp-grad-carousel__list::-webkit-scrollbar-thumb {
-  background: #9e9e9e;
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.42);
+  border-radius: 999px;
 }
 
 .lp-grad-carousel__item {
   align-items: center;
-  background: rgba(16, 16, 16, 0.05);
-  border-radius: 16px;
+  background: #fff;
+  border-radius: 22px;
   display: grid;
-  gap: 24px;
+  gap: 28px;
   grid-template-columns: minmax(0, 1fr) auto;
-  min-height: 152px;
-  padding: 20px 28px 20px 24px;
-}
-
-.lp-grad-carousel__image-wrap {
-  background: #111;
-  border-radius: 15px;
-  height: 169px;
-  overflow: hidden;
-  width: 180px;
-}
-
-.lp-grad-carousel__image-wrap img {
-  display: block;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  width: 100%;
+  min-height: 177px;
+  padding: 34px 51px 34px 34px;
 }
 
 .lp-grad-carousel__content {
   display: grid;
-  gap: 9px;
+  gap: 10px;
   min-width: 0;
 }
 
@@ -2346,24 +2325,24 @@ section[id] {
   align-items: center;
   color: #111111;
   display: inline-flex;
-  font-size: clamp(11px, 1.2vw, 15px);
+  font-size: clamp(13px, 1.25vw, 15px);
   font-weight: 500;
   gap: 6px;
-  line-height: 1.3;
+  line-height: 1.45;
   text-transform: uppercase;
 }
 
 .lp-grad-carousel__meta span svg {
-  color: #000;
+  color: #c50002;
   flex-shrink: 0;
 }
 
 .lp-grad-carousel__content h3 {
   color: #000;
-  font-size: 18px;
+  font-size: clamp(18px, 1.65vw, 21px);
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1.2;
+  line-height: 1.14;
   margin: 0;
   text-transform: uppercase;
 }
@@ -2372,12 +2351,12 @@ section[id] {
   align-items: baseline;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 }
 
 .lp-grad-carousel__price strong {
   color: #101010;
-  font-size: clamp(15px, 1.9vw, 21px);
+  font-size: clamp(18px, 1.65vw, 21px);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.14;
@@ -2410,7 +2389,7 @@ section[id] {
 }
 
 .lp-grad-carousel__state {
-  color: #3f3f3f;
+  color: #fff;
   font-size: 16px;
   line-height: 1.45;
   margin-top: 16px;
@@ -2418,7 +2397,7 @@ section[id] {
 
 .lp-grad-carousel__state--error {
   align-items: flex-start;
-  color: #7a0f0f;
+  color: #fff;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -2426,10 +2405,10 @@ section[id] {
 
 .lp-grad-carousel__retry {
   align-items: center;
-  background: #c50002;
+  background: #fff;
   border: 0;
   border-radius: 999px;
-  color: #fff;
+  color: #c50002;
   cursor: pointer;
   display: inline-flex;
   font-family: inherit;
@@ -2442,42 +2421,39 @@ section[id] {
 }
 
 .lp-grad-carousel__footer {
-  margin-top: 18px;
+  display: grid;
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.lp-grad-carousel__footer-divider {
+  background: rgba(255, 255, 255, 0.18);
+  height: 1px;
+  width: 100%;
 }
 
 .lp-grad-carousel__note {
   align-items: center;
-  background: rgba(86, 86, 86, 0.14);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 18px;
   display: flex;
   gap: 15px;
   margin-top: 0;
   padding: 15px 25px;
-  position: relative;
-}
-
-.lp-grad-carousel__note::before {
-  background: #d5d6d7;
-  content: '';
-  height: 1px;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: -16px;
 }
 
 .lp-grad-carousel__note-icon {
   align-items: center;
-  color: #111;
+  color: #fff;
   display: inline-flex;
   flex-shrink: 0;
   justify-content: center;
 }
 
 .lp-grad-carousel__note p {
-  color: #111;
-  font-size: clamp(16px, 1.42vw, 20px);
-  font-weight: 400;
+  color: #fff;
+  font-size: clamp(15px, 1.25vw, 20px);
+  font-weight: 500;
   line-height: 1.4;
   margin: 0;
 }
@@ -2493,7 +2469,7 @@ section[id] {
 .lp-grad-carousel__pagination-controls {
   align-items: center;
   display: flex;
-  gap: 24px;
+  gap: 18px;
   justify-content: center;
 }
 
@@ -2502,7 +2478,7 @@ section[id] {
   background: transparent;
   border: 0;
   border-radius: 999px;
-  color: #111;
+  color: #fff;
   cursor: pointer;
   display: inline-flex;
   height: 52px;
@@ -2515,8 +2491,7 @@ section[id] {
 }
 
 .lp-grad-carousel__page-nav--next {
-  background: rgba(197, 0, 2, 0.22);
-  color: #c50002;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .lp-grad-carousel__page-nav:disabled {
@@ -2535,7 +2510,7 @@ section[id] {
   background: transparent;
   border: 0;
   border-radius: 999px;
-  color: #111;
+  color: #fff;
   cursor: pointer;
   display: inline-flex;
   font-family: inherit;
@@ -2547,38 +2522,50 @@ section[id] {
 }
 
 .lp-grad-carousel__page-number.is-active {
-  background: #c50002;
-  color: #fff;
+  background: #fff;
+  color: #c50002;
 }
 
 .lp-grad-carousel__pagination-count {
-  color: #111;
-  font-size: clamp(16px, 1.2vw, 20px);
+  color: #fff;
+  font-size: clamp(16px, 1.1vw, 20px);
   font-weight: 500;
   line-height: 1.15;
   margin: 0;
 }
 
+.lp-all-grad-shell {
+  background: #cf0004;
+}
+
 .lp-all-grad {
-  background: linear-gradient(90deg, #241e1a 0%, #1f1713 100%);
-  padding: clamp(36px, 4.2vw, 52px) 0;
+  background: #010101;
+  border-top-left-radius: clamp(72px, 10vw, 150px);
+  border-top-right-radius: clamp(72px, 10vw, 150px);
+  overflow: clip;
+  padding: clamp(48px, 5.8vw, 60px) 0 clamp(40px, 4.8vw, 52px);
+}
+
+.lp-all-grad__head {
+  max-width: 688px;
 }
 
 .lp-all-grad__head h2 {
   color: #fff;
-  font-size: clamp(32px, 3.1vw, 54px);
+  font-size: clamp(32px, 3.6vw, 42px);
+  font-weight: 900;
   letter-spacing: -0.03em;
-  line-height: 1.04;
+  line-height: 0.95;
   margin: 0;
   text-transform: uppercase;
 }
 
 .lp-all-grad__head p {
   color: #fff;
-  font-size: clamp(14px, 1.2vw, 18px);
-  line-height: 1.45;
-  margin: 6px 0 0;
-  max-width: 620px;
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.55;
+  margin: 8px 0 0;
+  max-width: 688px;
 }
 
 .lp-all-grad__slider {
@@ -2586,25 +2573,26 @@ section[id] {
   display: grid;
   gap: 20px;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  margin-top: 22px;
+  margin-top: 34px;
 }
 
 .lp-all-grad__control {
   align-items: center;
   background: transparent;
   border: 0;
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.88);
   cursor: pointer;
   display: inline-flex;
   height: 40px;
   justify-content: center;
+  padding: 0;
   width: 40px;
 }
 
 .lp-all-grad__track {
   cursor: default;
   display: flex;
-  gap: 18px;
+  gap: 20px;
   overflow-x: hidden;
   scroll-snap-type: x mandatory;
   -ms-overflow-style: none;
@@ -2630,6 +2618,7 @@ section[id] {
   display: flex;
   flex: 0 0 306px;
   flex-direction: column;
+  gap: 16px;
   min-height: 384px;
   padding: 12px;
   scroll-snap-stop: always;
@@ -2652,33 +2641,34 @@ section[id] {
 .lp-all-grad-card__badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 10px;
-  margin-top: 20px;
+  gap: 7px;
+  margin: 0;
 }
 
 .lp-all-grad-card__mode {
   align-items: center;
-  border: 1px solid #c50002;
-  border-radius: 4.317px;
-  color: #c50002;
+  background: #f50001;
+  border: 0;
+  border-radius: 3px;
+  color: #fff;
   display: inline-flex;
   font-size: 10.12px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1;
+  line-height: 1.13;
   margin: 0;
   min-height: 18px;
-  padding: 0 10px;
+  padding: 0 8px;
   text-transform: uppercase;
   width: fit-content;
 }
 
 .lp-all-grad-card__mec {
   align-items: center;
-  border: 1px solid #c50002;
-  border-radius: 4.317px;
-  color: #c50002;
+  background: #f50001;
+  border: 0;
+  border-radius: 3px;
+  color: #fff;
   display: inline-flex;
   font-size: 10.12px;
   font-weight: 700;
@@ -2693,14 +2683,16 @@ section[id] {
 .lp-all-grad-card h3 {
   color: #010101;
   font-size: 18px;
-  letter-spacing: -0.005em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   line-height: 1.2;
   margin: 0;
+  text-transform: uppercase;
 }
 
 .lp-all-grad-card__prices {
   margin-top: auto;
-  padding-top: 8px;
+  padding-top: 0;
 }
 
 .lp-all-grad-card__price-old,
@@ -2710,14 +2702,15 @@ section[id] {
   display: flex;
   font-size: 16px;
   font-weight: 700;
-  gap: 8px;
+  gap: 4px;
   line-height: 1.1;
   margin: 0;
 }
 
 .lp-all-grad-card__price-old {
   color: rgba(1, 1, 1, 0.2);
-  margin-bottom: 7px;
+  font-size: 14px;
+  margin-bottom: 0;
 }
 
 .lp-all-grad-card__price-current-row {
@@ -2727,7 +2720,14 @@ section[id] {
   gap: 8px;
 }
 
-.lp-all-grad-card__price-old span,
+.lp-all-grad-card__price-old span {
+  color: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-decoration: none;
+}
+
 .lp-all-grad-card__price-current span {
   color: #010101;
   font-size: 16px;
@@ -2767,7 +2767,7 @@ section[id] {
   justify-content: center;
   letter-spacing: 0;
   line-height: 1.5;
-  margin-top: 14px;
+  margin-top: 0;
   text-decoration: none;
   text-transform: uppercase;
   width: 100%;
@@ -3247,8 +3247,10 @@ section[id] {
   }
 
   .lp-presential-card {
+    align-items: start;
     gap: 14px;
     grid-template-columns: minmax(0, 210px) minmax(0, 1fr);
+    min-height: 380px;
   }
 
   .lp-presential-card__image.is-compact {
@@ -3415,42 +3417,48 @@ section[id] {
   }
 
   .lp-grad-carousel__head {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .lp-grad-carousel__head p {
-    max-width: 100%;
+    justify-content: flex-start;
   }
 
   .lp-grad-carousel__filters {
     gap: 10px;
+    margin-top: 20px;
   }
 
   .lp-grad-carousel__filter {
     font-size: 14px;
     height: 40px;
-    padding: 0 14px;
+    padding: 0 18px;
+  }
+
+  .lp-grad-carousel__sections {
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .lp-grad-carousel__list {
+    max-height: 540px;
   }
 
   .lp-grad-carousel__scope {
     font-size: 14px;
   }
 
-  .lp-grad-carousel__sort {
-    font-size: 14px;
-    height: 40px;
-  }
-
   .lp-grad-carousel__item {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-rows: auto;
-    padding: 12px;
+    gap: 18px;
+    padding: 22px 24px;
   }
 
   .lp-grad-carousel__cta {
     grid-column: auto;
     justify-self: end;
+    min-width: 170px;
+  }
+
+  .lp-grad-carousel__footer {
+    gap: 16px;
   }
 
   .lp-all-grad__slider {
@@ -3694,35 +3702,29 @@ section[id] {
   }
 
   .lp-grad-carousel {
-    padding: 16px 0 22px;
+    border-top-left-radius: 32px;
+    border-top-right-radius: 32px;
+    padding: 35px 0 32px;
   }
 
   .lp-grad-carousel__head {
-    align-items: center;
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
+    justify-content: flex-start;
+    text-align: left;
   }
 
   .lp-grad-carousel__head h2 {
-    font-size: 25px;
-    line-height: 1.28;
-  }
-
-  .lp-grad-carousel__head p {
-    font-size: 14px;
-    line-height: 1.42;
-    margin: 0 auto;
-    max-width: 282px;
+    font-size: 24px;
+    line-height: 1;
+    white-space: nowrap;
   }
 
   .lp-grad-carousel__filters {
     flex-wrap: nowrap;
-    gap: 12px;
+    gap: 10px;
     margin-top: 14px;
     overflow-x: auto;
     overflow-y: hidden;
-    padding-right: 28px;
+    padding-bottom: 0;
     scroll-snap-type: x mandatory;
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -3734,173 +3736,337 @@ section[id] {
   }
 
   .lp-grad-carousel__filter {
-    border-radius: 6px;
+    border-radius: 7px;
     flex: 0 0 auto;
     font-size: 12px;
-    height: 35px;
+    height: 34.497px;
     min-width: max-content;
-    padding: 0 18px;
+    padding: 0 24px;
     scroll-snap-align: start;
     white-space: nowrap;
   }
 
-  .lp-grad-carousel__toolbar {
-    align-items: center;
-    flex-direction: row;
-    gap: 10px;
-    justify-content: space-between;
-    margin-top: 12px;
+  .lp-grad-carousel__divider {
+    display: none;
   }
 
-  .lp-grad-carousel__scope {
-    font-size: 14.5px;
+  .lp-grad-carousel__sections {
+    gap: 14px;
+    margin-top: 14px;
   }
 
-  .lp-grad-carousel__sort {
-    border-radius: 6px;
-    display: inline-flex;
-    font-size: 14px;
-    height: 38px;
-    padding: 0 10px;
+  .lp-grad-carousel__area-section {
+    gap: 14px;
   }
 
   .lp-grad-carousel__list {
-    max-height: 915px;
-    overflow-y: auto;
-    padding-right: 4px;
+    height: 280px;
+    max-height: 280px;
+    padding-right: 0;
+    scrollbar-color: #8c0000 transparent;
+    scrollbar-width: thin;
+  }
+
+  .lp-grad-carousel__list::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .lp-grad-carousel__list::-webkit-scrollbar-thumb {
+    background: #8c0000;
+    border-radius: 999px;
+  }
+
+  .lp-grad-carousel__scope {
+    flex: 1 1 auto;
+    font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+    font-size: 14.889px;
+    line-height: 1.445;
+  }
+
+  .lp-grad-carousel__scope-row {
+    min-height: 38.049px;
+  }
+
+  .lp-grad-carousel__sort {
+    align-items: center;
+    background: transparent;
+    border: 1px solid #ffffff;
+    border-radius: 6px;
+    color: #ffffff;
+    cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+    font-size: 14.889px;
+    font-weight: 700;
+    gap: 5.79px;
+    height: 38.049px;
+    justify-content: center;
+    padding: 0 10px;
+  }
+
+  .lp-grad-carousel__sort svg {
+    flex: 0 0 auto;
+    height: 19.852px;
+    width: 19.852px;
   }
 
   .lp-grad-carousel__item {
+    border-radius: 15px;
+    gap: 14px;
     grid-template-columns: 1fr;
     grid-template-rows: auto;
-    border-radius: 6px;
-    gap: 14px;
-    min-height: 0;
+    min-height: 171.57px;
     padding: 14px;
   }
 
+  .lp-grad-carousel__content {
+    gap: 11px;
+    width: 100%;
+  }
+
+  .lp-grad-carousel__meta {
+    gap: 12px;
+    justify-content: space-between;
+    width: 100%;
+  }
+
   .lp-grad-carousel__meta span {
-    font-size: 10.95px;
+    font-size: 10.952px;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  .lp-grad-carousel__meta span:first-child svg {
+    height: 20.536px;
+    width: 20.536px;
+  }
+
+  .lp-grad-carousel__meta span:last-child svg {
+    height: 16.607px;
+    width: 16.607px;
   }
 
   .lp-grad-carousel__content h3,
   .lp-all-grad-card h3 {
-    font-size: 18px;
-    line-height: 1.2;
+    font-size: 15.06px;
+    line-height: 1.14;
   }
 
   .lp-grad-carousel__price strong {
-    font-size: 15px;
+    font-size: 15.06px;
   }
 
   .lp-grad-carousel__price span {
-    font-size: 15px;
+    font-size: 15.06px;
   }
 
   .lp-grad-carousel__cta {
     align-self: flex-start;
-    border-radius: 21px;
-    font-size: 11.5px;
-    height: 35px;
+    border-radius: 20.929px;
+    font-size: 11.547px;
+    height: 35.362px;
     min-width: 0;
-    width: 139px;
+    width: 138.563px;
   }
 
   .lp-grad-carousel__footer {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-top: 16px;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .lp-grad-carousel__footer-divider {
+    display: none;
   }
 
   .lp-grad-carousel__pagination {
-    gap: 9px;
+    gap: 8px;
     margin-top: 0;
-    order: 1;
   }
 
   .lp-grad-carousel__pagination-controls {
-    gap: 16px;
+    gap: 12px;
   }
 
   .lp-grad-carousel__page-nav,
   .lp-grad-carousel__page-number {
-    height: 43px;
-    width: 43px;
+    height: 40px;
+    width: 40px;
   }
 
   .lp-grad-carousel__page-number {
-    font-size: 16px;
+    font-size: 14px;
   }
 
   .lp-grad-carousel__pagination-count {
-    font-size: 16px;
+    font-size: 14px;
     line-height: 1.2;
   }
 
   .lp-grad-carousel__note {
-    border-radius: 18px;
-    gap: 10px;
-    margin-top: 0;
-    order: 2;
-    padding: 15px 16px;
-  }
-
-  .lp-grad-carousel__note::before {
     display: none;
   }
 
-  .lp-grad-carousel__note-icon svg {
-    height: 28px;
-    width: 28px;
-  }
-
-  .lp-grad-carousel__note p {
-    font-size: 16px;
-    line-height: 1.4;
-  }
-
   .lp-all-grad {
-    padding: 30px 0;
+    border-top-left-radius: 42px;
+    border-top-right-radius: 42px;
+    padding: 28px 0 32px;
   }
 
   .lp-pos-banner {
-    padding-bottom: 20px;
+    padding-bottom: 0;
+  }
+
+  .lp-all-grad__head {
+    margin: 0 auto;
+    max-width: 362px;
+    text-align: center;
   }
 
   .lp-all-grad__head h2 {
-    font-size: clamp(30px, 8vw, 38px);
+    font-size: 25px;
+    letter-spacing: -0.03em;
+    line-height: 1.6;
   }
 
   .lp-all-grad__head p {
-    font-size: 15px;
+    font-size: clamp(16px, 4.2vw, 18px);
+    line-height: 1.12;
+    margin-top: 6px;
+    max-width: 362px;
+  }
+
+  .lp-all-grad__slider {
+    align-items: center;
+    column-gap: 12px;
+    grid-template-columns: 30px minmax(0, 1fr) 30px;
+    margin-top: 20px;
+  }
+
+  .lp-all-grad__control {
+    align-self: center;
+    color: rgba(255, 255, 255, 0.76);
+    display: inline-flex;
+    height: 30px;
+    width: 30px;
+  }
+
+  .lp-all-grad__control svg {
+    height: 20px;
+    width: 20px;
+  }
+
+  .lp-all-grad__track {
+    cursor: default;
+    gap: 15px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .lp-all-grad__track.is-dragging {
+    cursor: default;
   }
 
   .lp-all-grad-card {
-    flex-basis: min(86vw, 300px);
-    min-height: 340px;
+    border-radius: 6px;
+    box-shadow: none;
+    flex-basis: 233.285px;
+    gap: 12.198px;
+    min-height: 282.096px;
+    padding: 9.148px;
+  }
+
+  .lp-all-grad-card__image-wrap {
+    border-radius: 6px;
+    height: 100.633px;
+  }
+
+  .lp-all-grad-card h3 {
+    font-size: 13.723px;
+    line-height: 1.2;
+    text-transform: none;
+  }
+
+  .lp-all-grad-card__badges {
+    gap: 4px;
+  }
+
+  .lp-all-grad-card__mec {
+    display: none;
+  }
+
+  .lp-all-grad-card__mode {
+    background: transparent;
+    border: 0.762px solid #c50002;
+    border-radius: 3.291px;
+    color: #c50002;
+    font-size: 7.715px;
+    min-height: 13.723px;
+    padding: 0 5px;
+  }
+
+  .lp-all-grad-card__prices {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
   .lp-all-grad-card__price-old,
   .lp-all-grad-card__price-current {
-    font-size: 15px;
+    gap: 5.337px;
+  }
+
+  .lp-all-grad-card__price-old,
+  .lp-all-grad-card__price-old span {
+    font-size: 12.198px;
+  }
+
+  .lp-all-grad-card__price-current,
+  .lp-all-grad-card__price-current span {
+    font-size: 12.198px;
+  }
+
+  .lp-all-grad-card__price-current-row {
+    gap: 5.337px;
+  }
+
+  .lp-all-grad-card__fixed {
+    border-radius: 3.291px;
+    font-size: 7.715px;
+    font-weight: 700;
+    height: 13.723px;
+    padding: 0 5px;
+    text-transform: lowercase;
+  }
+
+  .lp-all-grad-card__cta {
+    border-radius: 6px;
+    font-size: 12.198px;
+    height: 35.831px;
   }
 
   .lp-journey {
     padding: 38px 0;
   }
 
+  .lp-presential {
+    padding: 0 0 30px;
+  }
+
   .lp-presential h1 {
-    font-size: clamp(25px, 7.4vw, 31px);
+    font-size: clamp(22px, 6vw, 24px);
     letter-spacing: -0.02em;
-    line-height: 1.08;
+    line-height: 1.6;
     text-align: center;
   }
 
   .lp-presential__head {
     align-items: center;
     flex-direction: column;
-    gap: 10px;
+    gap: 0;
+    margin-top: 30px;
   }
 
   .lp-presential__location {
@@ -3909,15 +4075,19 @@ section[id] {
 
   .lp-presential__grid {
     gap: 14px;
-    margin-top: 16px;
+    margin-top: 14px;
   }
 
   .lp-presential-card {
     align-items: center;
+    background: #ffffff;
+    border: 0.604px solid rgba(0, 0, 0, 0.25);
     border-radius: 14px;
     gap: 10px;
     grid-template-columns: minmax(118px, 134px) minmax(0, 1fr);
     height: auto;
+    min-height: 0;
+    overflow: clip;
     padding: 10px;
   }
 
@@ -3930,81 +4100,100 @@ section[id] {
   }
 
   .lp-presential-card__content {
+    align-self: stretch;
     gap: 10px;
-    min-height: 248px;
+    height: auto;
+    justify-content: flex-start;
+    min-height: 254px;
   }
 
-  .lp-presential-card__head {
-    gap: 6px;
+  .lp-presential-card__overview {
+    gap: 20px;
   }
 
   .lp-presential-card__start {
-    border-radius: 4.8px;
+    background: rgba(197, 0, 2, 0.13);
+    border-radius: 4.829px;
+    color: #c50002;
     font-size: 12px;
     line-height: 1;
     min-height: 21px;
+    order: 1;
     padding: 0 6px;
   }
 
-  .lp-presential-card__head h3 {
-    font-size: 21px;
-    line-height: 1.12;
+  .lp-presential-card__overview h3 {
+    font-size: 21.129px;
+    line-height: 1.118;
+    order: 2;
   }
 
   .lp-presential-card__mode {
     font-size: 12px;
-    gap: 6px;
+    gap: 5.433px;
+    order: 3;
   }
 
   .lp-presential-card__mode svg {
     height: 13px;
-    width: 16px;
+    width: 19px;
   }
 
   .lp-presential-card__benefits {
-    gap: 5px;
-    grid-template-columns: 1fr;
+    gap: 4.829px;
   }
 
   .lp-presential-card__benefits li {
-    border-radius: 4px;
+    background: #f2f2f2;
+    border-bottom: 0;
+    border-radius: 4.226px;
     font-size: 12px;
     gap: 5px;
-    height: 22px;
     line-height: 1;
+    min-height: 22px;
     padding: 3px 6px;
-    width: fit-content;
+    width: auto;
   }
 
   .lp-presential-card__benefits li svg {
-    height: 14px;
-    width: 14px;
+    height: 14.488px;
+    width: 14.488px;
   }
 
-  .lp-presential-card__benefits li:nth-child(4) {
-    display: none;
+  .lp-presential-card__footer {
+    align-self: stretch;
+    margin-top: auto;
+    gap: 7.244px;
   }
 
   .lp-presential-card__price {
+    align-items: center;
+    flex-direction: row;
     gap: 8px;
-    flex-wrap: nowrap;
+    justify-content: space-between;
+    width: 100%;
   }
 
-  .lp-presential-card__price strong {
+  .lp-presential-card__price-current {
     font-size: 12px;
+    line-height: 1.5;
+    order: 1;
   }
 
-  .lp-presential-card__price span {
+  .lp-presential-card__price-from {
     font-size: 12px;
+    line-height: 1.5;
+    margin-left: auto;
+    order: 2;
   }
 
   .lp-presential-card__cta {
-    align-self: flex-start;
+    align-self: stretch;
     border-radius: 10px;
     font-size: 12px;
-    gap: 6px;
+    gap: 5.433px;
     height: 35px;
-    width: min(100%, 197px);
+    width: 100%;
   }
 
   .lp-presential-card__cta svg {
@@ -4301,7 +4490,6 @@ section[id] {
   .lp-stories__head h2,
   .lp-presential h1,
   .lp-grad-carousel__head h2,
-  .lp-all-grad__head h2,
   .lp-courses__head h2,
   .lp-faq__inner h2 {
     font-size: var(--lp-section-title-size-mobile);
@@ -4321,6 +4509,34 @@ section[id] {
     padding: 16px 12px;
   }
 
+  .lp-grad-carousel__head h2 {
+    font-size: clamp(22px, 6.1vw, 24px);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .lp-grad-carousel__filter {
+    padding: 0 22px;
+  }
+
+  .lp-grad-carousel__scope {
+    font-size: 14px;
+  }
+
+  .lp-grad-carousel__sort {
+    font-size: 14px;
+    gap: 5px;
+    padding: 0 9px;
+  }
+
+  .lp-grad-carousel__meta {
+    gap: 10px;
+  }
+
+  .lp-grad-carousel__meta span {
+    font-size: 10.5px;
+  }
+
   .lp-presential-card__image,
   .lp-presential-card__image.is-compact {
     height: 254px;
@@ -4330,12 +4546,14 @@ section[id] {
   .lp-presential-card {
     gap: 10px;
     grid-template-columns: minmax(118px, 134px) minmax(0, 1fr);
+    min-height: 0;
     padding: 10px;
   }
 
   .lp-presential-card__content {
     gap: 10px;
-    min-height: 248px;
+    height: auto;
+    min-height: 254px;
   }
 
   .lp-presential-card__start {
@@ -4344,7 +4562,7 @@ section[id] {
     padding: 0 6px;
   }
 
-  .lp-presential-card__head h3 {
+  .lp-presential-card__overview h3 {
     font-size: 21px;
   }
 
@@ -4355,18 +4573,18 @@ section[id] {
   .lp-presential-card__benefits li {
     font-size: 12px;
     gap: 5px;
-    height: 22px;
+    min-height: 22px;
     line-height: 1;
     padding: 3px 6px;
   }
 
   .lp-presential-card__benefits li svg {
-    height: 14px;
-    width: 14px;
+    height: 14.488px;
+    width: 14.488px;
   }
 
-  .lp-presential-card__price strong,
-  .lp-presential-card__price span {
+  .lp-presential-card__price-current,
+  .lp-presential-card__price-from {
     font-size: 12px;
   }
 
@@ -4375,8 +4593,23 @@ section[id] {
     height: 35px;
   }
 
+  .lp-all-grad__slider {
+    column-gap: 8px;
+    grid-template-columns: 24px minmax(0, 1fr) 24px;
+  }
+
+  .lp-all-grad__control {
+    height: 24px;
+    width: 24px;
+  }
+
+  .lp-all-grad__control svg {
+    height: 16px;
+    width: 16px;
+  }
+
   .lp-all-grad-card {
-    flex-basis: min(90vw, 300px);
+    flex-basis: min(233.285px, calc(100vw - 92px));
   }
 
   .lp-field {

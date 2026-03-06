@@ -42,7 +42,9 @@ export function LandingPage() {
         <PresentialGraduationSection />
         <PostGraduationBannerSection />
         <GraduationCarouselSection />
-        <AllGraduationsCarouselSection />
+        <div className="lp-all-grad-shell">
+          <AllGraduationsCarouselSection />
+        </div>
         <FutureSection />
         <TestimonialsSection />
         <FaqSection />

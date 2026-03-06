@@ -14,9 +14,9 @@ type PresentialCourseHighlight = {
   imageClassName?: string
   imagePosition?: string
   startDate: string
-  benefits: [string, string, string]
+  benefits: ReactNode[]
   currentPrice: string
-  originalPrice: string
+  originalPriceLabel: string
 }
 
 const presentialCourses: PresentialCourseHighlight[] = [
@@ -31,12 +31,15 @@ const presentialCourses: PresentialCourseHighlight[] = [
     imageClassName: 'is-wide',
     startDate: 'Início das aulas: 01/07/26',
     benefits: [
-      'Estágio no 1 Semestre',
-      'Ganhe Grátis +3 Pós EAD',
-      'Laboratório Moderno',
+      <>
+        Estágio no <strong>1º Semestre</strong>
+      </>,
+      <>
+        <strong>Ganhe +1</strong> Graduação EAD
+      </>,
     ],
-    currentPrice: 'R$ 449,00',
-    originalPrice: 'R$ 1.890,00',
+    currentPrice: 'R$ 449,00 /Mês',
+    originalPriceLabel: 'De R$ 1.890,00',
   },
   {
     id: 'psicologia',
@@ -50,27 +53,30 @@ const presentialCourses: PresentialCourseHighlight[] = [
     imageClassName: 'is-compact',
     startDate: 'Início das aulas: 01/07/26',
     benefits: [
-      'Estágio no 1 Semestre',
-      'Ganhe Grátis Curso EAD',
-      'Laboratório Moderno',
+      <>
+        Estágio no <strong>1º Semestre</strong>
+      </>,
+      <>
+        <strong>Ganhe +1</strong> Graduação EAD
+      </>,
     ],
-    currentPrice: 'R$ 549,00',
-    originalPrice: 'R$ 1.890,00',
+    currentPrice: 'R$ 549,00 /Mês',
+    originalPriceLabel: 'De R$ 1.890,00',
   },
 ]
 
 function PresentialModeIcon() {
   return (
     <svg
-      width="18"
+      width="19"
       height="15"
-      viewBox="0 0 27 22"
+      viewBox="0 0 19 15"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
       <path
-        d="M23.7129 16.5991V8.4181L13.0421 14.2278L0 7.11388L13.0421 0L26.0842 7.11388V16.5991H23.7129ZM13.0421 21.3417L4.74259 16.8362V10.908L13.0421 15.4134L21.3417 10.908V16.8362L13.0421 21.3417Z"
+        d="M9.16667 15L3.33333 11.8333V6.83333L0 5L9.16667 0L18.3333 5V11.6667H16.6667V5.91667L15 6.83333V11.8333L9.16667 15ZM9.16667 8.08333L14.875 5L9.16667 1.91667L3.45833 5L9.16667 8.08333ZM9.16667 13.1042L13.3333 10.8542V7.70833L9.16667 10L5 7.70833V10.8542L9.16667 13.1042Z"
         fill="#C50002"
       />
     </svg>
@@ -155,9 +161,8 @@ export function PresentialGraduationSection() {
               <PresentialLocationIcon />
             </span>
             <p>
-              <strong>Local:</strong> R. Júlio de Castilhos, 777 - Metrô Belém,
-              <br />
-              São Paulo - SP, 03059-005
+              <strong>Local:</strong> Rua Dr. Diogo de Faria, 66 - Vila Mariana, São Paulo - SP,
+              CEP: 04037-000
             </p>
           </div>
         </div>
@@ -177,41 +182,43 @@ export function PresentialGraduationSection() {
               </div>
 
               <div className="lp-presential-card__content">
-                <div className="lp-presential-card__head">
-                  <span className="lp-presential-card__start">{course.startDate}</span>
-                  <h3>{course.title}</h3>
+                <div className="lp-presential-card__overview">
                   <span className="lp-presential-card__mode">
                     <PresentialModeIcon />
                     {course.mode}
                   </span>
+                  <h3>{course.title}</h3>
+                  <span className="lp-presential-card__start">{course.startDate}</span>
                 </div>
 
                 <ul className="lp-presential-card__benefits">
-                  {course.benefits.map((benefit) => (
-                    <BenefitItem key={benefit}>{benefit}</BenefitItem>
+                  {course.benefits.map((benefit, index) => (
+                    <BenefitItem key={`${course.id}-${index}`}>{benefit}</BenefitItem>
                   ))}
                 </ul>
 
-                <div className="lp-presential-card__price">
-                  <strong>{course.currentPrice}</strong>
-                  <span>de {course.originalPrice}</span>
-                </div>
+                <div className="lp-presential-card__footer">
+                  <div className="lp-presential-card__price">
+                    <span className="lp-presential-card__price-from">{course.originalPriceLabel}</span>
+                    <strong className="lp-presential-card__price-current">{course.currentPrice}</strong>
+                  </div>
 
-                <a
-                  href="#inscricao"
-                  className="lp-presential-card__cta"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    openCourseLeadModal({
-                      courseType: 'graduacao',
-                      courseValue: course.courseValue,
-                      courseLabel: course.courseLabel,
-                    })
-                  }}
-                >
-                  SAIBA MAIS
-                  <ArrowForwardIcon />
-                </a>
+                  <a
+                    href="#inscricao"
+                    className="lp-presential-card__cta"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      openCourseLeadModal({
+                        courseType: 'graduacao',
+                        courseValue: course.courseValue,
+                        courseLabel: course.courseLabel,
+                      })
+                    }}
+                  >
+                    SAIBA MAIS
+                    <ArrowForwardIcon />
+                  </a>
+                </div>
               </div>
             </article>
           ))}

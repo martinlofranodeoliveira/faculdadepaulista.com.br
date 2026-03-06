@@ -81,6 +81,7 @@ export function AllGraduationsCarouselSection() {
 
     const metrics = getTrackMetrics(track)
     if (!metrics) return
+
     const currentIndex = clampIndex(Math.round(track.scrollLeft / metrics.step), metrics.maxIndex)
     const targetIndex = clampIndex(currentIndex + direction, metrics.maxIndex)
 
@@ -178,10 +179,7 @@ export function AllGraduationsCarouselSection() {
   }
 
   const handleClickCapture: React.MouseEventHandler<HTMLDivElement> = (event) => {
-    if (
-      event.target instanceof Element &&
-      event.target.closest('.lp-all-grad-card__cta')
-    ) {
+    if (event.target instanceof Element && event.target.closest('.lp-all-grad-card__cta')) {
       dragStateRef.current.moved = false
       return
     }
@@ -233,12 +231,12 @@ export function AllGraduationsCarouselSection() {
                   />
                 </div>
 
+                <h3>{course.title}</h3>
+
                 <div className="lp-all-grad-card__badges">
                   <span className="lp-all-grad-card__mec">RECONHECIDO MEC</span>
                   <span className="lp-all-grad-card__mode">{inferGraduationMode(course.title)}</span>
                 </div>
-
-                <h3>{course.title}</h3>
 
                 <div className="lp-all-grad-card__prices">
                   <p className="lp-all-grad-card__price-old">
@@ -266,7 +264,7 @@ export function AllGraduationsCarouselSection() {
                     })
                   }}
                 >
-                  SAIBA MAIS
+                  INSCREVA-SE
                 </a>
               </article>
             ))}

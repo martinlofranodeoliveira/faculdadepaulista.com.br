@@ -1,68 +1,70 @@
 .lp-thanks-page {
   align-items: center;
-  background: #ffffff;
+  background-color: #fe0000;
+  background-image:
+    linear-gradient(rgba(168, 0, 0, 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 0, 0, 0.22) 1px, transparent 1px),
+    url('/landing/obrigado-bg.webp');
+  background-position: center, center, center;
+  background-repeat: repeat, repeat, no-repeat;
+  background-size: 162px 162px, 162px 162px, cover;
   display: flex;
   justify-content: center;
   min-height: 100vh;
-  padding: 40px 20px;
+  min-height: 100svh;
+  padding: 40px 20px 48px;
 }
 
 .lp-thanks-page__inner {
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
   width: min(100%, 693px);
 }
 
-.lp-thanks-page__logo {
-  display: block;
-  height: auto;
-  width: 154px;
-}
-
 .lp-thanks-card {
-  background: #d50000 url('/landing/obrigado-bg.webp') center / cover no-repeat;
+  align-items: center;
+  background: #ffffff;
   border-radius: 18px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-  overflow: hidden;
-  padding: 104px 20px 106px;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 38px;
+  justify-content: center;
+  min-height: 333px;
+  padding: 56px 32px 58px;
   text-align: center;
   width: 100%;
 }
 
+.lp-thanks-card__logo {
+  display: block;
+  height: auto;
+  width: min(100%, 154px);
+}
+
+.lp-thanks-card__content {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .lp-thanks-title {
-  display: inline-grid;
-  font-size: clamp(48px, 5.2vw, 75px);
-  font-weight: 800;
+  color: #0f0c0a;
+  font-size: clamp(48px, 7vw, 74.855px);
+  font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 0.92;
+  line-height: 0.923;
   margin: 0;
-  place-items: center;
-  position: relative;
-}
-
-.lp-thanks-title__main,
-.lp-thanks-title__shadow {
-  grid-area: 1 / 1;
-}
-
-.lp-thanks-title__shadow {
-  color: #000;
-  transform: translate(5px, 6px);
-}
-
-.lp-thanks-title__main {
-  color: #fff;
 }
 
 .lp-thanks-card p {
-  color: #fff;
-  font-size: clamp(14px, 1.2vw, 18px);
-  margin: 30px 0 0;
-  position: relative;
-  z-index: 1;
+  color: #0f0c0a;
+  font-size: clamp(16px, 2vw, 22.631px);
+  line-height: 1.556;
+  margin: 0;
+  max-width: 540px;
 }
 
 .lp-thanks-button {
@@ -74,8 +76,9 @@
   gap: 10px;
   justify-content: center;
   min-height: 50px;
-  padding: 0 32px;
+  padding: 0 20px;
   text-decoration: none;
+  width: min(100%, 304px);
 }
 
 .lp-thanks-button span {
@@ -84,26 +87,44 @@
   line-height: 1;
 }
 
+.lp-thanks-button svg {
+  flex: 0 0 auto;
+}
+
 @media (max-width: 720px) {
-  .lp-thanks-page__inner {
-    gap: 16px;
+  .lp-thanks-page {
+    padding: 24px 16px 32px;
   }
 
-  .lp-thanks-page__logo {
-    width: 132px;
+  .lp-thanks-page__inner {
+    gap: 22px;
   }
 
   .lp-thanks-card {
     border-radius: 16px;
-    padding: 74px 18px 78px;
+    gap: 28px;
+    min-height: auto;
+    padding: 40px 20px 42px;
   }
 
-  .lp-thanks-button {
-    min-height: 46px;
-    padding: 0 20px;
+  .lp-thanks-card__logo {
+    width: min(100%, 138px);
+  }
+
+  .lp-thanks-card__content {
+    gap: 8px;
+  }
+
+  .lp-thanks-title {
+    font-size: clamp(42px, 14vw, 58px);
+  }
+
+  .lp-thanks-card p {
+    font-size: 16px;
+    line-height: 1.45;
   }
 
   .lp-thanks-button span {
-    font-size: 17px;
+    font-size: 18px;
   }
 }

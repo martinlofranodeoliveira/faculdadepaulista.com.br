@@ -25,18 +25,19 @@ export function ThankYouPage() {
   return (
     <main className="lp-thanks-page">
       <div className="lp-thanks-page__inner">
-        <img
-          className="lp-thanks-page__logo"
-          src="/landing/logo-faculdade-paulista-v2.webp"
-          alt="Faculdade Paulista"
-        />
-
         <section className="lp-thanks-card" aria-labelledby="lp-thanks-title">
-          <h1 id="lp-thanks-title" className="lp-thanks-title">
-            <span className="lp-thanks-title__shadow">Obrigado</span>
-            <span className="lp-thanks-title__main">Obrigado</span>
-          </h1>
-          <p>Nossos consultores entrarão em contato em breve!</p>
+          <img
+            className="lp-thanks-card__logo"
+            src="/landing/logo-faculdade-paulista-v2.webp"
+            alt="Faculdade Paulista"
+          />
+
+          <div className="lp-thanks-card__content">
+            <h1 id="lp-thanks-title" className="lp-thanks-title">
+              Obrigado
+            </h1>
+            <p>Nossos Consultores entrarão em contato em breve!</p>
+          </div>
         </section>
 
         <a className="lp-thanks-button" href="/">
@@ -47,4 +48,3 @@ export function ThankYouPage() {
     </main>
   )
 }
-

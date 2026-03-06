@@ -179,6 +179,10 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
   }, [])
 
   const courseLabel = selection?.courseLabel ?? ''
+  const isPostGraduation = selection?.courseType === 'pos'
+  const modalHeaderImage = isPostGraduation
+    ? '/landing/bgmodal-pos.webp'
+    : '/landing/bgmodal.webp'
 
   const firstErrorMessage = useMemo(() => {
     return errors.fullName ?? errors.email ?? errors.phone ?? ''
@@ -210,7 +214,6 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
       const storedTrackingParams = readStoredUtmParams()
       const trackingParams = { ...storedTrackingParams, ...trackedFromUrl }
       const phoneDigits = normalizePhone(phone)
-      const isPostGraduation = selection.courseType === 'pos'
       const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 9)
       const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 50)
       const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 5)
@@ -319,7 +322,7 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
     >
       <article className="lp-course-modal__panel" onMouseDown={(event) => event.stopPropagation()}>
         <header className="lp-course-modal__header">
-          <img src="/landing/bgmodal.webp" alt="" aria-hidden="true" />
+          <img src={modalHeaderImage} alt="" aria-hidden="true" />
         </header>
 
         <div className="lp-course-modal__body">

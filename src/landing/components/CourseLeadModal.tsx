@@ -215,9 +215,10 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
       const trackingParams = { ...storedTrackingParams, ...trackedFromUrl }
       const phoneDigits = normalizePhone(phone)
       const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 9)
-      const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 50)
-      const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 5)
-      const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 5)
+      const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 78)
+      const etapaPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_POS, 78)
+      const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 6)
+      const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 6)
       const statusLead = parseEnvInteger(import.meta.env.VITE_CRM_STATUS_LEAD, 1)
       const poloId = parseEnvInteger(import.meta.env.VITE_CRM_POLO, 4658)
       const gradCourseId = getGraduationCourseId(selection.courseValue)
@@ -232,7 +233,7 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
         matricula: '',
         idCurso: isPostGraduation ? postCourseId : gradCourseId,
         curso: courseLabel,
-        etapa: isPostGraduation ? 50 : etapaGrad,
+        etapa: isPostGraduation ? etapaPos : etapaGrad,
         cpf: '',
         valor: '',
         funil: isPostGraduation ? funilPos : funilGrad,

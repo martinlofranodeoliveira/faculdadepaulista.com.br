@@ -608,9 +608,10 @@ export function HeroSection() {
       const courseLabel = (courseLookup.get(course) ?? courseSearch.trim()) || course
       const isPostGraduation = courseType === 'pos' || isPostGraduationCourse(course)
       const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 9)
-      const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 50)
-      const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 5)
-      const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 5)
+      const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 78)
+      const etapaPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_POS, 78)
+      const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 6)
+      const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 6)
       const statusLead = parseEnvInteger(import.meta.env.VITE_CRM_STATUS_LEAD, 1)
       const poloId = parseEnvInteger(import.meta.env.VITE_CRM_POLO, 4658)
       const gradCourseId = getGraduationCourseId(course)
@@ -625,7 +626,7 @@ export function HeroSection() {
         matricula: '',
         idCurso: isPostGraduation ? postCourseId : gradCourseId,
         curso: courseLabel,
-        etapa: isPostGraduation ? 50 : etapaGrad,
+        etapa: isPostGraduation ? etapaPos : etapaGrad,
         cpf: '',
         valor: '',
         funil: isPostGraduation ? funilPos : funilGrad,

@@ -3657,7 +3657,7 @@ section[id] {
     font-size: 10px;
     line-height: 16px;
     padding: 6px 13px;
-    width: auto;
+    width: 100%;
   }
 
   .lp-brand__icon {

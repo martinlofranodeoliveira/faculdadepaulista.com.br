@@ -4062,13 +4062,13 @@ section[id] {
   }
 
   .lp-presential {
-    padding: 0 0 30px;
+    padding: 30px 0 30px;
   }
 
   .lp-presential h1 {
-    font-size: clamp(22px, 6vw, 24px);
-    letter-spacing: -0.02em;
-    line-height: 1.6;
+    font-size: 25px;
+    letter-spacing: -0.03em;
+    line-height: 40px;
     text-align: center;
   }
 
@@ -4076,7 +4076,7 @@ section[id] {
     align-items: center;
     flex-direction: column;
     gap: 0;
-    margin-top: 30px;
+    margin-top: 0;
   }
 
   .lp-presential__location {
@@ -4090,15 +4090,15 @@ section[id] {
 
   .lp-presential-card {
     align-items: center;
-    background: #ffffff;
-    border: 0.604px solid rgba(0, 0, 0, 0.25);
-    border-radius: 14px;
-    gap: 10px;
-    grid-template-columns: minmax(118px, 134px) minmax(0, 1fr);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    gap: 10.263px;
+    grid-template-columns: 134px minmax(0, 1fr);
     height: auto;
-    min-height: 0;
-    overflow: clip;
-    padding: 10px;
+    min-height: 254px;
+    overflow: visible;
+    padding: 0;
   }
 
   .lp-presential-card__image,
@@ -4111,37 +4111,37 @@ section[id] {
 
   .lp-presential-card__content {
     align-self: stretch;
-    gap: 10px;
-    height: auto;
-    justify-content: flex-start;
-    min-height: 254px;
+    gap: 0;
+    height: 248.112px;
+    justify-content: space-between;
+    min-height: 248.112px;
   }
 
   .lp-presential-card__overview {
-    gap: 20px;
+    gap: 6px;
   }
 
   .lp-presential-card__start {
-    background: rgba(197, 0, 2, 0.13);
-    border-radius: 4.829px;
-    color: #c50002;
+    background: #f61010;
+    border-radius: 4px;
+    color: #ffffff;
     font-size: 12px;
     line-height: 1;
-    min-height: 21px;
-    order: 1;
-    padding: 0 6px;
+    min-height: 24px;
+    order: 3;
+    padding: 0 8px;
   }
 
   .lp-presential-card__overview h3 {
-    font-size: 21.129px;
-    line-height: 1.118;
+    font-size: 22px;
+    line-height: 1.08;
     order: 2;
   }
 
   .lp-presential-card__mode {
     font-size: 12px;
     gap: 5.433px;
-    order: 3;
+    order: 1;
   }
 
   .lp-presential-card__mode svg {
@@ -4150,19 +4150,19 @@ section[id] {
   }
 
   .lp-presential-card__benefits {
-    gap: 4.829px;
+    gap: 0;
   }
 
   .lp-presential-card__benefits li {
-    background: #f2f2f2;
-    border-bottom: 0;
-    border-radius: 4.226px;
+    background: transparent;
+    border-bottom: 0.25px solid rgba(15, 23, 34, 0.35);
+    border-radius: 0;
     font-size: 12px;
     gap: 5px;
     line-height: 1;
-    min-height: 22px;
-    padding: 3px 6px;
-    width: auto;
+    min-height: 26px;
+    padding: 6px 0;
+    width: 100%;
   }
 
   .lp-presential-card__benefits li svg {
@@ -4172,34 +4172,34 @@ section[id] {
 
   .lp-presential-card__footer {
     align-self: stretch;
-    margin-top: auto;
+    margin-top: 0;
     gap: 7.244px;
   }
 
   .lp-presential-card__price {
-    align-items: center;
-    flex-direction: row;
-    gap: 8px;
-    justify-content: space-between;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+    justify-content: flex-start;
     width: 100%;
   }
 
   .lp-presential-card__price-current {
-    font-size: 12px;
-    line-height: 1.5;
-    order: 1;
+    font-size: 16px;
+    line-height: 1.35;
+    order: 2;
   }
 
   .lp-presential-card__price-from {
     font-size: 12px;
     line-height: 1.5;
-    margin-left: auto;
-    order: 2;
+    margin-left: 0;
+    order: 1;
   }
 
   .lp-presential-card__cta {
     align-self: stretch;
-    border-radius: 10px;
+    border-radius: 7px;
     font-size: 12px;
     gap: 5.433px;
     height: 35px;
@@ -4555,25 +4555,25 @@ section[id] {
 
   .lp-presential-card {
     gap: 10px;
-    grid-template-columns: minmax(118px, 134px) minmax(0, 1fr);
-    min-height: 0;
-    padding: 10px;
+    grid-template-columns: 134px minmax(0, 1fr);
+    min-height: 254px;
+    padding: 0;
   }
 
   .lp-presential-card__content {
-    gap: 10px;
-    height: auto;
-    min-height: 254px;
+    gap: 0;
+    height: 248.112px;
+    min-height: 248.112px;
   }
 
   .lp-presential-card__start {
     font-size: 12px;
-    min-height: 21px;
-    padding: 0 6px;
+    min-height: 24px;
+    padding: 0 8px;
   }
 
   .lp-presential-card__overview h3 {
-    font-size: 21px;
+    font-size: 20px;
   }
 
   .lp-presential-card__mode {
@@ -4583,9 +4583,9 @@ section[id] {
   .lp-presential-card__benefits li {
     font-size: 12px;
     gap: 5px;
-    min-height: 22px;
+    min-height: 26px;
     line-height: 1;
-    padding: 3px 6px;
+    padding: 6px 0;
   }
 
   .lp-presential-card__benefits li svg {

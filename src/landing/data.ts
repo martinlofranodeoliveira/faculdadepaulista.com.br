@@ -153,6 +153,13 @@ function inferGraduationModalityLabel(courseTitle: string): string {
   return 'GRADUAÇÃO EAD'
 }
 
+function getGraduationCarouselOrderPriority(title: string): number {
+  const normalized = title.toUpperCase()
+  if (normalized.includes('SEMIPRESENCIAL')) return 1
+  if (normalized.includes('PRESENCIAL')) return 0
+  return 2
+}
+
 export const graduationCarouselCourseConfigs: GraduationCarouselCourseConfig[] = [
   {
     courseValue: 'graduacao-analise-desenvolvimento-sistemas',
@@ -278,7 +285,14 @@ export const graduationCarouselCourses: GraduationCarouselCourse[] = graduationC
       },
     ]
   },
-)
+).sort((a, b) => {
+  const priorityDiff =
+    getGraduationCarouselOrderPriority(a.title) - getGraduationCarouselOrderPriority(b.title)
+
+  if (priorityDiff !== 0) return priorityDiff
+
+  return a.title.localeCompare(b.title, 'pt-BR')
+})
 
 export const journeySteps: JourneyStep[] = [
   { number: '1', title: 'Escolha seu curso', subtitle: 'Defina sua carreira' },
@@ -419,6 +433,5 @@ export const faqItems: FaqItem[] = [
 ]
 
 export const partners = ['MEC', 'Reclame Aqui', 'Google for Education']
-
 
 

@@ -2023,7 +2023,7 @@ section[id] {
   border-radius: 8px;
   color: #fff;
   display: inline-flex;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.01em;
   line-height: 1;
@@ -2163,6 +2163,12 @@ section[id] {
   background: #ffffff;
   padding: 0;
   margin-bottom: 40px;
+}
+
+.lp-pos-banner__inner {
+  margin: 0 auto;
+  max-width: 1240px;
+  width: 100%;
 }
 
 .lp-pos-banner picture {
@@ -3224,6 +3230,10 @@ section[id] {
 
 @media (max-width: 1200px) {
   .lp-shell {
+    max-width: 1100px;
+  }
+
+  .lp-pos-banner__inner {
     max-width: 1100px;
   }
 

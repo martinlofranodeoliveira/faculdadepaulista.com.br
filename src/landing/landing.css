@@ -3614,6 +3614,10 @@ section[id] {
 }
 
 @media (max-width: 720px) {
+  .lp-future-logo img {
+    max-height: 38px;
+  }
+
   .lp-header__inner {
     align-items: flex-end;
     flex-direction: column;

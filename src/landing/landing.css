@@ -3667,10 +3667,10 @@ section[id] {
 
   .lp-header__cta {
     align-self: flex-end;
-    border-radius: 6px;
-    font-size: 10px;
+    border-radius: 51px;
+    font-size: 12px;
     line-height: 16px;
-    padding: 6px 13px;
+    padding: 12px 12px;
     width: 100%;
   }
 

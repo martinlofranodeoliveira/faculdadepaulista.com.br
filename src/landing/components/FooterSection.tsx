@@ -1,4 +1,27 @@
-﻿export function FooterSection() {
+const footerPartnerLogos = [
+  {
+    src: '/landing/logo-rodape-fasul.webp',
+    alt: 'FASUL Educacional',
+    modifier: 'fasul',
+  },
+  {
+    src: '/landing/logo-rodape-unicesp.webp',
+    alt: 'UNICESP',
+    modifier: 'unicesp',
+  },
+  {
+    src: '/landing/logo-rodape-enfermagem.webp',
+    alt: 'Faculdade de Enfermagem',
+    modifier: 'enfermagem',
+  },
+  {
+    src: '/landing/logo-rodape-psicologia.webp',
+    alt: 'Faculdade de Psicologia',
+    modifier: 'psicologia',
+  },
+] as const
+
+export function FooterSection() {
   const currentYear = new Date().getFullYear()
 
   return (
@@ -75,6 +98,20 @@
             </div>
           </article>
         </div>
+
+        <section className="lp-footer__group" aria-label="Instituições do Grupo FASUL Educacional">
+          <p className="lp-footer__group-title">Grupo FASUL Educacional</p>
+          <div className="lp-footer__group-logos">
+            {footerPartnerLogos.map((logo) => (
+              <div
+                key={logo.src}
+                className={`lp-footer__group-card lp-footer__group-card--${logo.modifier}`}
+              >
+                <img src={logo.src} alt={logo.alt} loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </section>
 
         <div className="lp-footer__bottom">
           <span>{`\u00A9 ${currentYear} Faculdade Paulista. Todos os direitos reservados.`}</span>

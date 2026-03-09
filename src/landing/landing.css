@@ -3110,6 +3110,60 @@ section[id] {
   width: 26px;
 }
 
+.lp-footer__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lp-footer__group-title {
+  color: #7e7f82;
+  font-size: 14px;
+  line-height: 20px;
+  margin: 0;
+}
+
+.lp-footer__group-logos {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.lp-footer__group-card {
+  align-items: center;
+  background: #fff;
+  border-radius: 7px;
+  display: flex;
+  height: 44px;
+  justify-content: center;
+  padding: 11px 15px;
+}
+
+.lp-footer__group-card img {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  object-fit: contain;
+  width: auto;
+}
+
+.lp-footer__group-card--fasul img {
+  width: auto;
+}
+
+.lp-footer__group-card--unicesp img {
+  width: auto;
+}
+
+.lp-footer__group-card--enfermagem img {
+  width: auto;
+}
+
+.lp-footer__group-card--psicologia img {
+  width: auto;
+}
+
 .lp-footer__contact,
 .lp-footer__location {
   display: flex;
@@ -3603,6 +3657,10 @@ section[id] {
 
   .lp-footer__location {
     grid-column: 1 / -1;
+  }
+
+  .lp-footer__group-logos {
+    gap: 10px;
   }
 
   .lp-footer__bottom {
@@ -4489,6 +4547,11 @@ section[id] {
 
   .lp-footer__logo {
     height: 38px;
+  }
+
+  .lp-footer__group-card {
+    height: 45px;
+    padding: 10px 14px;
   }
 
   .lp-footer__bottom div {

@@ -65,7 +65,7 @@ export function FutureSection() {
               </p>
             </div>
             <img
-              src="/landing/future/selo-nota-maxima-mec.png"
+              src="/landing/future/selo-nota-maxima-mec.webp"
               alt="Selo Nota Máxima no MEC"
               className="lp-future__mec-badge"
               loading="lazy"
@@ -74,13 +74,13 @@ export function FutureSection() {
 
           <article className="lp-future__reclame">
             <img
-              src="/landing/future/reclame-face.png"
+              src="/landing/future/reclame-face.webp"
               alt=""
               aria-hidden="true"
               className="lp-future__reclame-face"
             />
             <img
-              src="/landing/future/reclame-aqui-logo.png"
+              src="/landing/future/reclame-aqui-logo.webp"
               alt="Reclame AQUI"
               className="lp-future__reclame-logo"
             />
@@ -101,7 +101,7 @@ export function FutureSection() {
               className="lp-future__history-star lp-future__history-star--bottom"
             />
             <div className="lp-future__history-mark" aria-hidden="true">
-              <img src="/landing/future/history-laurel-mask.png" alt="" />
+              <img src="/landing/future/history-laurel-mask.webp" alt="" />
               <strong>27</strong>
             </div>
             <strong className="lp-future__history-title">27 ANOS DE HISTÓRIA</strong>

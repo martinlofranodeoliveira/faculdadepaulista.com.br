@@ -3,21 +3,29 @@ const footerPartnerLogos = [
     src: '/landing/logo-rodape-fasul.webp',
     alt: 'FASUL Educacional',
     modifier: 'fasul',
+    width: 70,
+    height: 22,
   },
   {
     src: '/landing/logo-rodape-unicesp.webp',
     alt: 'UNICESP',
     modifier: 'unicesp',
+    width: 76,
+    height: 14,
   },
   {
     src: '/landing/logo-rodape-enfermagem.webp',
     alt: 'Faculdade de Enfermagem',
     modifier: 'enfermagem',
+    width: 83,
+    height: 24,
   },
   {
     src: '/landing/logo-rodape-psicologia.webp',
     alt: 'Faculdade de Psicologia',
     modifier: 'psicologia',
+    width: 85,
+    height: 21,
   },
 ] as const
 
@@ -33,7 +41,10 @@ export function FooterSection() {
               className="lp-footer__logo"
               src="/landing/logo-white-faculdade-paulista.webp"
               alt="Faculdade Paulista"
+              width="145"
+              height="46"
               loading="lazy"
+              decoding="async"
             />
             <p>
               Excelência no ensino superior com foco na inovação e na empregabilidade dos
@@ -46,6 +57,8 @@ export function FooterSection() {
                   alt=""
                   aria-hidden="true"
                   className="lp-footer__social-icon lp-footer__social-icon--facebook"
+                  width="24"
+                  height="24"
                 />
               </a>
               <a href="#" aria-label="Instagram">
@@ -54,6 +67,8 @@ export function FooterSection() {
                   alt=""
                   aria-hidden="true"
                   className="lp-footer__social-icon lp-footer__social-icon--instagram"
+                  width="26"
+                  height="27"
                 />
               </a>
             </div>
@@ -63,7 +78,7 @@ export function FooterSection() {
             <h3>Contato</h3>
             <ul>
               <li className="is-map">
-                <img src="/landing/footer/icon-map.svg" alt="" aria-hidden="true" />
+                <img src="/landing/footer/icon-map.svg" alt="" aria-hidden="true" width="14" height="20" />
                 <span>
                   Rua Dr. Diogo de Faria, 66 - Vila Mariana,
                   <br />
@@ -71,11 +86,17 @@ export function FooterSection() {
                 </span>
               </li>
               <li className="is-phone">
-                <img src="/landing/footer/icon-phone.svg" alt="" aria-hidden="true" />
+                <img
+                  src="/landing/footer/icon-phone.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width="16"
+                  height="16"
+                />
                 <a href="tel:+553598060604">(35) 9806-0604</a>
               </li>
               <li className="is-mail">
-                <img src="/landing/footer/icon-mail.svg" alt="" aria-hidden="true" />
+                <img src="/landing/footer/icon-mail.svg" alt="" aria-hidden="true" width="16" height="12" />
                 <a href="mailto:contato@faculdadepaulista.com.br">
                   contato@faculdadepaulista.com.br
                 </a>
@@ -86,13 +107,26 @@ export function FooterSection() {
           <article className="lp-footer__location">
             <h3>Localização</h3>
             <div className="lp-footer__map">
-              <img src="/landing/footer/map.png" alt="Mapa da localização da Faculdade Paulista" />
+              <img
+                src="/landing/footer/map.webp"
+                alt="Mapa da localização da Faculdade Paulista"
+                width="365"
+                height="160"
+                loading="lazy"
+                decoding="async"
+              />
               <a
                 href="https://www.google.com/maps/search/?api=1&query=Rua+Dr.+Diogo+de+Faria,+66+-+Vila+Mariana,+S%C3%A3o+Paulo+-+SP,+04037-000"
                 target="_blank"
                 rel="noreferrer"
               >
-                <img src="/landing/footer/icon-map-button.svg" alt="" aria-hidden="true" />
+                <img
+                  src="/landing/footer/icon-map-button.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width="11"
+                  height="11"
+                />
                 Ver no Maps
               </a>
             </div>
@@ -107,7 +141,14 @@ export function FooterSection() {
                 key={logo.src}
                 className={`lp-footer__group-card lp-footer__group-card--${logo.modifier}`}
               >
-                <img src={logo.src} alt={logo.alt} loading="lazy" />
+                <img
+                  src={logo.src}
+                  alt={logo.alt}
+                  width={logo.width}
+                  height={logo.height}
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
             ))}
           </div>

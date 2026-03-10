@@ -40,6 +40,8 @@ export function FaqSection() {
                   alt=""
                   aria-hidden="true"
                   className="lp-faq__chevron"
+                  width="12"
+                  height="8"
                 />
               </summary>
               <p className="lp-faq__answer">{renderAnswerWithHighlights(item.answer)}</p>

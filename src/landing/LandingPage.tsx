@@ -37,6 +37,10 @@ export function LandingPage() {
   return (
     <>
       <main className="lp-page">
+        <h1 className="lp-visually-hidden">
+          Faculdade Paulista: Graduação Presencial, Semipresencial e EAD com Nota Máxima
+          no MEC
+        </h1>
         <Header />
         <HeroSection />
         <PresentialGraduationSection />

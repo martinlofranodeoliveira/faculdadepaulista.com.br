@@ -30,6 +30,8 @@ export function ThankYouPage() {
             className="lp-thanks-card__logo"
             src="/landing/logo-faculdade-paulista-v2.webp"
             alt="Faculdade Paulista"
+            width="165"
+            height="55"
           />
 
           <div className="lp-thanks-card__content">

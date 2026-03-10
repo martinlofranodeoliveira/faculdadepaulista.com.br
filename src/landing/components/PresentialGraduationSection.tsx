@@ -155,7 +155,7 @@ export function PresentialGraduationSection() {
     <section className="lp-presential">
       <div className="lp-shell">
         <div className="lp-presential__head">
-          <h1>GRADUAÇÃO PRESENCIAL</h1>
+          <h2>GRADUAÇÃO PRESENCIAL</h2>
           <div className="lp-presential__location">
             <span className="lp-presential__location-icon">
               <PresentialLocationIcon />
@@ -177,6 +177,10 @@ export function PresentialGraduationSection() {
                 <img
                   src={course.image}
                   alt={course.imageAlt}
+                  width="222"
+                  height="423"
+                  loading="lazy"
+                  decoding="async"
                   style={course.imagePosition ? { objectPosition: course.imagePosition } : undefined}
                 />
               </div>

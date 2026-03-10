@@ -26,7 +26,12 @@ export function LegalPage({ kind }: LegalPageProps) {
     <main className="legal-page">
       <header className="legal-header">
         <a className="legal-header__brand" href="/">
-          <img src="/landing/logo-faculdade-paulista-v2.webp" alt="Faculdade Paulista" />
+          <img
+            src="/landing/logo-faculdade-paulista-v2.webp"
+            alt="Faculdade Paulista"
+            width="165"
+            height="55"
+          />
         </a>
         <a className="legal-header__back" href="/">
           Voltar para a página inicial

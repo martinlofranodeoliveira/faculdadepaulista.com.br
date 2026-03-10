@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { openCourseLeadModal } from '../coursePrefill'
-
-const POS_COURSES_ENDPOINT =
-  import.meta.env.VITE_POS_COURSES_ENDPOINT ??
-  '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025-unicesp.php'
+import { fetchPostCoursesRaw } from '../postCourses'
 
 const ALL_AREAS = '__all_areas__'
 const COURSES_PER_PAGE = 5
@@ -19,7 +16,7 @@ type PostCourse = {
   currentInstallmentPrice: string
 }
 
-type LoadStatus = 'loading' | 'success' | 'error'
+type LoadStatus = 'idle' | 'loading' | 'success' | 'error'
 type SortOrder = 'asc' | 'desc'
 
 function normalizeComparableText(value: string): string {
@@ -248,32 +245,23 @@ function SortFilterIcon() {
 
 export function GraduationCarouselSection() {
   const [courses, setCourses] = useState<PostCourse[]>([])
-  const [status, setStatus] = useState<LoadStatus>('loading')
+  const [status, setStatus] = useState<LoadStatus>('idle')
+  const [shouldLoadCourses, setShouldLoadCourses] = useState(false)
   const [errorMessage, setErrorMessage] = useState(
     'Não foi possível carregar os cursos de pós-graduação.',
   )
   const [activeArea, setActiveArea] = useState(ALL_AREAS)
   const [currentPage, setCurrentPage] = useState(1)
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
+  const sectionRef = useRef<HTMLElement | null>(null)
   const listRef = useRef<HTMLDivElement | null>(null)
 
-  const loadPostCourses = useCallback(async () => {
+  const loadPostCourses = useCallback(async (force = false) => {
     setStatus('loading')
     setErrorMessage('Não foi possível carregar os cursos de pós-graduação.')
 
     try {
-      const response = await fetch(POS_COURSES_ENDPOINT, {
-        method: 'GET',
-        headers: {
-          Accept: 'text/plain, */*',
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error(`Post courses request failed with status ${response.status}`)
-      }
-
-      const rawText = await response.text()
+      const rawText = await fetchPostCoursesRaw(force)
       const parsedCourses = parsePostGraduationCourses(rawText)
 
       if (!parsedCourses.length) {
@@ -290,8 +278,31 @@ export function GraduationCarouselSection() {
   }, [])
 
   useEffect(() => {
+    const section = sectionRef.current
+    if (!section) return
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setShouldLoadCourses(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return
+        setShouldLoadCourses(true)
+        observer.disconnect()
+      },
+      { rootMargin: '320px 0px' },
+    )
+
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!shouldLoadCourses || status !== 'idle') return
     void loadPostCourses()
-  }, [loadPostCourses])
+  }, [loadPostCourses, shouldLoadCourses, status])
 
   const areaOptions = useMemo(() => {
     const uniqueAreas = [...new Set(courses.map((course) => course.area))]
@@ -354,7 +365,7 @@ export function GraduationCarouselSection() {
   }, [activeArea, safeCurrentPage, sortOrder])
 
   return (
-    <section className="lp-grad-carousel" id="pos-graduacao">
+    <section className="lp-grad-carousel" id="pos-graduacao" ref={sectionRef}>
       <div className="lp-shell">
         <header className="lp-grad-carousel__head">
           <h2>PÓS-GRADUAÇÕES EAD</h2>
@@ -387,7 +398,7 @@ export function GraduationCarouselSection() {
             <button
               type="button"
               className="lp-grad-carousel__retry"
-              onClick={() => void loadPostCourses()}
+              onClick={() => void loadPostCourses(true)}
             >
               Tentar novamente
             </button>

@@ -226,7 +226,10 @@ export function AllGraduationsCarouselSection() {
                   <img
                     src={course.image}
                     alt={course.title}
+                    width="280"
+                    height="132"
                     loading="lazy"
+                    decoding="async"
                     style={course.imagePosition ? { objectPosition: course.imagePosition } : undefined}
                   />
                 </div>

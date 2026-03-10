@@ -21,7 +21,8 @@ export function TestimonialsSection() {
         <div className="lp-stories__grid">
           {testimonials.map((item) => (
             <article key={item.name} className="lp-story-card">
-              <div className="lp-story-card__stars" aria-label="5 de 5 estrelas">
+              <span className="lp-visually-hidden">5 de 5 estrelas</span>
+              <div className="lp-story-card__stars" aria-hidden="true">
                 {Array.from({ length: 5 }).map((_, index) => (
                   <img
                     key={`${item.name}-star-${index}`}
@@ -33,7 +34,14 @@ export function TestimonialsSection() {
               </div>
               <p>{item.text}</p>
               <div className="lp-story-card__person">
-                <img src={item.avatar} alt={item.name} />
+                <img
+                  src={item.avatar}
+                  alt={item.name}
+                  width="64"
+                  height="64"
+                  loading="lazy"
+                  decoding="async"
+                />
                 <div>
                   <strong>{item.name}</strong>
                   <span>{item.role}</span>

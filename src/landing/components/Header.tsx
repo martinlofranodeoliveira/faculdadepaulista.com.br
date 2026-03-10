@@ -8,6 +8,8 @@ export function Header() {
               className="lp-brand__logo lp-brand__logo--header"
               src="/landing/logo-faculdade-paulista-v2.webp"
               alt="Faculdade Paulista"
+              width="165"
+              height="55"
             />
           </a>
 
@@ -17,6 +19,8 @@ export function Header() {
             className="lp-header__partner-logo lp-header__partner-logo--unicesp"
             src="/landing/unicesp-logo.webp"
             alt="UNICESP"
+            width="108"
+            height="55"
           />
 
           <span className="lp-header__divider" aria-hidden="true" />
@@ -25,6 +29,8 @@ export function Header() {
             className="lp-header__partner-logo lp-header__partner-logo--fasul"
             src="/landing/fasul-logo.webp"
             alt="FASUL"
+            width="108"
+            height="55"
           />
         </div>
 

@@ -7,6 +7,8 @@ export function PostGraduationBannerSection() {
           <img
             src="/landing/pos-graduacao-banner.webp"
             alt="Pós-graduação EAD"
+            width="1240"
+            height="234"
             loading="lazy"
             decoding="async"
           />

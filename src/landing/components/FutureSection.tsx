@@ -3,12 +3,12 @@ type PartnerMarqueeRowProps = {
 }
 
 const partnerLogos = [
-  { src: '/landing/future/faculdadepaulista.webp', alt: 'Faculdade Paulista' },
-  { src: '/landing/future/fasuleducacional.webp', alt: 'FASUL Faculdade EAD' },
-  { src: '/landing/future/faculdadedeenfermagem.webp', alt: 'Faculdade de Enfermagem' },
-  { src: '/landing/future/unicesp.webp', alt: 'UNICESP' },
-  { src: '/landing/future/faculdadedepsicologia.webp', alt: 'Faculdade de Psicologia' },
-  { src: '/landing/future/cursosgratisonline.webp', alt: 'Cursos Grátis Online' },
+  { src: '/landing/future/faculdadepaulista.webp', alt: 'Faculdade Paulista', width: 276, height: 72 },
+  { src: '/landing/future/fasuleducacional.webp', alt: 'FASUL Faculdade EAD', width: 282, height: 104 },
+  { src: '/landing/future/faculdadedeenfermagem.webp', alt: 'Faculdade de Enfermagem', width: 380, height: 108 },
+  { src: '/landing/future/unicesp.webp', alt: 'UNICESP', width: 320, height: 59 },
+  { src: '/landing/future/faculdadedepsicologia.webp', alt: 'Faculdade de Psicologia', width: 392, height: 93 },
+  { src: '/landing/future/cursosgratisonline.webp', alt: 'Cursos Grátis Online', width: 190, height: 86 },
 ]
 
 function PartnerMarqueeRow({ decorative = false }: PartnerMarqueeRowProps) {
@@ -16,7 +16,14 @@ function PartnerMarqueeRow({ decorative = false }: PartnerMarqueeRowProps) {
     <div className="lp-future__partners-row" aria-hidden={decorative}>
       {partnerLogos.map((logo) => (
         <span key={`${logo.src}-${decorative ? 'copy' : 'base'}`} className="lp-future-logo">
-          <img src={logo.src} alt={decorative ? '' : logo.alt} loading="lazy" />
+          <img
+            src={logo.src}
+            alt={decorative ? '' : logo.alt}
+            width={logo.width}
+            height={logo.height}
+            loading="lazy"
+            decoding="async"
+          />
         </span>
       ))}
     </div>
@@ -38,7 +45,14 @@ export function FutureSection() {
 
         <div className="lp-future__grid">
           <article className="lp-future__location">
-            <img src="/landing/future/metro-belem-card.webp" alt="Estrutura moderna do campus" />
+            <img
+              src="/landing/future/metro-belem-card.webp"
+              alt="Estrutura moderna do campus"
+              width="466"
+              height="548"
+              loading="lazy"
+              decoding="async"
+            />
             <div className="lp-future__location-content">
               <span className="lp-future__location-pin" aria-hidden="true">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -68,7 +82,10 @@ export function FutureSection() {
               src="/landing/future/selo-nota-maxima-mec.webp"
               alt="Selo Nota Máxima no MEC"
               className="lp-future__mec-badge"
+              width="168"
+              height="160"
               loading="lazy"
+              decoding="async"
             />
           </article>
 
@@ -78,11 +95,19 @@ export function FutureSection() {
               alt=""
               aria-hidden="true"
               className="lp-future__reclame-face"
+              width="56"
+              height="56"
+              loading="lazy"
+              decoding="async"
             />
             <img
               src="/landing/future/reclame-aqui-logo.webp"
               alt="Reclame AQUI"
               className="lp-future__reclame-logo"
+              width="271"
+              height="47"
+              loading="lazy"
+              decoding="async"
             />
             <p>Corpo docente formado por mestres e doutores atuantes no mercado.</p>
           </article>
@@ -93,15 +118,30 @@ export function FutureSection() {
               alt=""
               aria-hidden="true"
               className="lp-future__history-star lp-future__history-star--top"
+              width="46"
+              height="52"
+              loading="lazy"
+              decoding="async"
             />
             <img
               src="/landing/future/history-star-bottom.png"
               alt=""
               aria-hidden="true"
               className="lp-future__history-star lp-future__history-star--bottom"
+              width="56"
+              height="63"
+              loading="lazy"
+              decoding="async"
             />
             <div className="lp-future__history-mark" aria-hidden="true">
-              <img src="/landing/future/history-laurel-mask.webp" alt="" />
+              <img
+                src="/landing/future/history-laurel-mask.webp"
+                alt=""
+                width="173"
+                height="137"
+                loading="lazy"
+                decoding="async"
+              />
               <strong>27</strong>
             </div>
             <strong className="lp-future__history-title">27 ANOS DE HISTÓRIA</strong>

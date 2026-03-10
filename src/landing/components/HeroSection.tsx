@@ -20,13 +20,11 @@ import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
 
 import { COURSE_PREFILL_EVENT, type CoursePrefillDetail } from '../coursePrefill'
 import { formCourseGroups } from '../data'
+import { fetchPostCoursesRaw } from '../postCourses'
 
 const CRM_LEAD_ENDPOINT =
   import.meta.env.VITE_CRM_LEAD_ENDPOINT ??
   '/crm-api/administrativo/leads/adicionar'
-const POS_COURSES_ENDPOINT =
-  import.meta.env.VITE_POS_COURSES_ENDPOINT ??
-  '/fasul-courses-api/rotinas/cursos-ia-format-texto-2025-unicesp.php'
 const THANK_YOU_PATH = '/obrigado'
 const CRM_NOT_IDENTIFIED = 'Não identificado'
 
@@ -322,20 +320,12 @@ export function HeroSection() {
     }
   }, [])
 
-  const loadPostCourses = useCallback(async () => {
+  const loadPostCourses = useCallback(async (force = false) => {
     setPostCourseStatus('loading')
     setPostCourseErrorMessage('')
 
     try {
-      const response = await fetch(POS_COURSES_ENDPOINT, {
-        method: 'GET',
-      })
-
-      if (!response.ok) {
-        throw new Error(`Post courses request failed with status ${response.status}`)
-      }
-
-      const rawText = await response.text()
+      const rawText = await fetchPostCoursesRaw(force)
       const parsedCourses = parsePostGraduationCourses(rawText)
 
       if (!parsedCourses.length) {
@@ -355,8 +345,9 @@ export function HeroSection() {
   }, [])
 
   useEffect(() => {
+    if (courseType !== 'pos' || postCourseStatus !== 'idle') return
     void loadPostCourses()
-  }, [loadPostCourses])
+  }, [courseType, loadPostCourses, postCourseStatus])
 
   const allCourseOptions = useMemo<CourseOption[]>(() => {
     return formCourseGroups.flatMap((group) => group.options)
@@ -465,8 +456,12 @@ export function HeroSection() {
         courseType: false,
         course: false,
       }))
+
+      if (detail.courseType === 'pos' && postCourseStatus === 'idle') {
+        void loadPostCourses()
+      }
     },
-    [allCourseOptions, postCourseOptions],
+    [allCourseOptions, loadPostCourses, postCourseOptions, postCourseStatus],
   )
 
   useEffect(() => {
@@ -733,6 +728,8 @@ export function HeroSection() {
             src="/landing/bg-hero-estudante-faculdade-paulista.webp"
             alt=""
             aria-hidden="true"
+            width="1905"
+            height="620"
             decoding="async"
             fetchPriority="high"
           />
@@ -901,7 +898,7 @@ export function HeroSection() {
                             event.preventDefault()
                           }}
                           onClick={() => {
-                            void loadPostCourses()
+                            void loadPostCourses(true)
                           }}
                         >
                           Tentar novamente

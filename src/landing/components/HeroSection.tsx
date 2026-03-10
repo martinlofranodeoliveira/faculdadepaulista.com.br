@@ -9,13 +9,6 @@
 } from 'react'
 import { Search } from 'lucide-react'
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
 
 import { COURSE_PREFILL_EVENT, type CoursePrefillDetail } from '../coursePrefill'
@@ -755,9 +748,18 @@ export function HeroSection() {
                     <FormChevronDownIcon />
                   </span>
                   <div className="lp-select-wrapper">
-                    <Select
+                    <select
+                      className={`lp-native-select ${!courseType ? 'is-placeholder' : ''}`}
                       value={courseType}
-                      onValueChange={(value) => {
+                      aria-label="Selecione o tipo de curso"
+                      aria-invalid={courseTypeInvalid}
+                      aria-describedby={courseTypeInvalid ? 'hero-course-type-error' : undefined}
+                      onBlur={() => {
+                        markTouched('courseType')
+                        applyFieldValidation('courseType', courseType)
+                      }}
+                      onChange={(event) => {
+                        const value = event.target.value as CourseType | ''
                         const nextType = value as CourseType
                         setCourseType(nextType)
                         setCourse('')
@@ -773,26 +775,13 @@ export function HeroSection() {
                         }
                       }}
                     >
-                      <SelectTrigger
-                        className="lp-select-trigger"
-                        aria-label="Selecione o tipo de curso"
-                        aria-invalid={courseTypeInvalid}
-                        aria-describedby={courseTypeInvalid ? 'hero-course-type-error' : undefined}
-                        onBlur={() => {
-                          markTouched('courseType')
-                          applyFieldValidation('courseType', courseType)
-                        }}
-                      >
-                        <SelectValue className="lp-select-value" placeholder="Modalidade" />
-                      </SelectTrigger>
-                      <SelectContent className="lp-select-content" position="popper" sideOffset={6}>
-                        {COURSE_TYPE_OPTIONS.map((item) => (
-                          <SelectItem key={item.value} value={item.value}>
-                            {item.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      <option value="">Modalidade</option>
+                      {COURSE_TYPE_OPTIONS.map((item) => (
+                        <option key={item.value} value={item.value}>
+                          {item.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 {courseTypeInvalid ? (

@@ -283,6 +283,7 @@ function FormBackIcon() {
 export function HeroSection() {
   const [step, setStep] = useState<FormStep>(1)
   const [courseType, setCourseType] = useState<CourseType | ''>('')
+  const [isCourseTypeOpen, setIsCourseTypeOpen] = useState(false)
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -299,6 +300,7 @@ export function HeroSection() {
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
   const [submitMessage, setSubmitMessage] = useState('')
   const [stepTransition, setStepTransition] = useState<StepTransition | null>(null)
+  const courseTypeMenuRef = useRef<HTMLDivElement | null>(null)
   const stepTransitionTimerRef = useRef<number | null>(null)
 
   useEffect(() => {
@@ -312,6 +314,28 @@ export function HeroSection() {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (!isCourseTypeOpen) return
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (courseTypeMenuRef.current?.contains(event.target as Node)) return
+      setIsCourseTypeOpen(false)
+    }
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setIsCourseTypeOpen(false)
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    window.addEventListener('keydown', handleEscape)
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      window.removeEventListener('keydown', handleEscape)
+    }
+  }, [isCourseTypeOpen])
 
   const loadPostCourses = useCallback(async (force = false) => {
     setPostCourseStatus('loading')
@@ -433,6 +457,7 @@ export function HeroSection() {
       setCourseType(detail.courseType)
       setCourse(nextCourseValue)
       setCourseSearch(nextCourseLabel)
+      setIsCourseTypeOpen(false)
       setStep(1)
       setIsCourseSearchOpen(false)
       setSubmitStatus('idle')
@@ -473,6 +498,22 @@ export function HeroSection() {
   const applyFieldValidation = (field: FieldName, value: string) => {
     const error = validateField(field, value)
     setFieldErrors((previous) => ({ ...previous, [field]: error }))
+  }
+
+  const handleCourseTypeChange = (nextType: CourseType | '') => {
+    setCourseType(nextType)
+    setCourse('')
+    setCourseSearch('')
+    setIsCourseSearchOpen(false)
+    setIsCourseTypeOpen(false)
+
+    if (touched.courseType) {
+      applyFieldValidation('courseType', nextType)
+    }
+
+    if (touched.course) {
+      applyFieldValidation('course', '')
+    }
   }
 
   const markTouched = (field: FieldName) => {
@@ -708,6 +749,8 @@ export function HeroSection() {
   const showStepOneInlineError =
     step === 1 && submitStatus === 'error' && (courseTypeInvalid || courseInvalid)
   const stepOneInlineErrorMessage = fieldErrors.courseType ?? fieldErrors.course ?? ''
+  const selectedCourseTypeLabel =
+    COURSE_TYPE_OPTIONS.find((item) => item.value === courseType)?.label ?? 'Modalidade'
 
   return (
     <section className="lp-hero" id="inicio">
@@ -743,45 +786,63 @@ export function HeroSection() {
             {step === 1 ? (
               <div className="lp-hero-form__row lp-hero-form__row--wizard lp-hero-form__row--step-1">
                 <div className="lp-field-wrap lp-hero-form__field-cell--modality">
-                <div className={`lp-field lp-field--select ${courseTypeInvalid ? 'is-invalid' : ''}`}>
-                  <span className="lp-field__icon" aria-hidden="true">
-                    <FormChevronDownIcon />
-                  </span>
-                  <div className="lp-select-wrapper">
-                    <select
-                      className={`lp-native-select ${!courseType ? 'is-placeholder' : ''}`}
-                      value={courseType}
+                <div
+                  className={`lp-field lp-field--select ${courseTypeInvalid ? 'is-invalid' : ''}`}
+                  ref={courseTypeMenuRef}
+                  onBlur={(event) => {
+                    if (event.currentTarget.contains(event.relatedTarget as Node | null)) return
+                    setIsCourseTypeOpen(false)
+                    markTouched('courseType')
+                    applyFieldValidation('courseType', courseType)
+                  }}
+                >
+                  <div className="lp-select-wrapper lp-select-wrapper--course-type">
+                    <button
+                      type="button"
+                      className={`lp-native-select-trigger ${!courseType ? 'is-placeholder' : ''}`}
                       aria-label="Selecione o tipo de curso"
+                      aria-haspopup="listbox"
+                      aria-expanded={isCourseTypeOpen}
                       aria-invalid={courseTypeInvalid}
                       aria-describedby={courseTypeInvalid ? 'hero-course-type-error' : undefined}
-                      onBlur={() => {
-                        markTouched('courseType')
-                        applyFieldValidation('courseType', courseType)
-                      }}
-                      onChange={(event) => {
-                        const value = event.target.value as CourseType | ''
-                        const nextType = value as CourseType
-                        setCourseType(nextType)
-                        setCourse('')
-                        setCourseSearch('')
-                        setIsCourseSearchOpen(false)
-
-                        if (touched.courseType) {
-                          applyFieldValidation('courseType', nextType)
-                        }
-
-                        if (touched.course) {
-                          applyFieldValidation('course', '')
+                      onClick={() => setIsCourseTypeOpen((current) => !current)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault()
+                          setIsCourseTypeOpen(true)
                         }
                       }}
                     >
-                      <option value="">Modalidade</option>
-                      {COURSE_TYPE_OPTIONS.map((item) => (
-                        <option key={item.value} value={item.value}>
-                          {item.label}
-                        </option>
-                      ))}
-                    </select>
+                      <span className="lp-native-select-trigger__text">
+                        {selectedCourseTypeLabel}
+                      </span>
+                      <span className="lp-native-select-trigger__icon" aria-hidden="true">
+                        <FormChevronDownIcon />
+                      </span>
+                    </button>
+
+                    {isCourseTypeOpen ? (
+                      <div className="lp-native-select-content" role="listbox" aria-label="Modalidade">
+                        {COURSE_TYPE_OPTIONS.map((item) => (
+                          <button
+                            key={item.value}
+                            type="button"
+                            role="option"
+                            aria-selected={courseType === item.value}
+                            className={`lp-native-select-option ${
+                              courseType === item.value ? 'is-selected' : ''
+                            }`}
+                            onMouseDown={(event) => event.preventDefault()}
+                            onClick={() => {
+                              handleCourseTypeChange(item.value)
+                              markTouched('courseType')
+                            }}
+                          >
+                            {item.label}
+                          </button>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
                 {courseTypeInvalid ? (

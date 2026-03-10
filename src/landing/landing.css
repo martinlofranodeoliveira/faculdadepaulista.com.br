@@ -587,6 +587,10 @@ section[id] {
   min-width: 0;
 }
 
+.lp-select-wrapper--course-type {
+  position: relative;
+}
+
 .lp-course-search-wrap {
   position: relative;
 }
@@ -662,15 +666,16 @@ section[id] {
   padding: 8px 10px;
 }
 
-.lp-native-select {
+.lp-native-select-trigger {
   align-items: center;
   background: transparent;
   border: 0;
   color: #191919;
   cursor: pointer;
-  display: block;
+  display: flex;
   font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
   font-size: 14px;
+  gap: 10px;
   height: 100%;
   line-height: 20px;
   min-width: 0;
@@ -679,22 +684,91 @@ section[id] {
   padding: 0;
   text-align: left;
   width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
 }
 
-.lp-native-select.is-placeholder {
+.lp-native-select-trigger.is-placeholder {
   color: #707070;
 }
 
-.lp-field.is-invalid .lp-native-select,
-.lp-field.is-invalid .lp-native-select.is-placeholder {
+.lp-field.is-invalid .lp-native-select-trigger,
+.lp-field.is-invalid .lp-native-select-trigger.is-placeholder {
   color: #b64c4c;
 }
 
-.lp-native-select:focus {
+.lp-native-select-trigger:focus {
   outline: none;
+}
+
+.lp-native-select-trigger__text {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lp-native-select-trigger__icon {
+  align-items: center;
+  color: #1f1f1f;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 14px;
+  justify-content: center;
+  transition: transform 0.18s ease;
+  width: 14px;
+}
+
+.lp-native-select-trigger[aria-expanded='true'] .lp-native-select-trigger__icon {
+  transform: rotate(180deg);
+}
+
+.lp-native-select-content {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow:
+    0 10px 15px -3px rgba(15, 23, 42, 0.12),
+    0 4px 6px -4px rgba(15, 23, 42, 0.12);
+  display: grid;
+  gap: 2px;
+  left: 0;
+  margin-top: 6px;
+  overflow: hidden;
+  padding: 4px;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 450;
+}
+
+.lp-native-select-option {
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  color: #0f172a;
+  cursor: pointer;
+  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  min-height: 38px;
+  padding: 9px 12px;
+  text-align: left;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  width: 100%;
+}
+
+.lp-native-select-option:hover,
+.lp-native-select-option:focus-visible {
+  background: #f8fafc;
+  color: #0f172a;
+  outline: none;
+}
+
+.lp-native-select-option.is-selected {
+  background: rgba(197, 0, 2, 0.08);
+  color: #c50002;
 }
 
 .lp-hero-form__submit {

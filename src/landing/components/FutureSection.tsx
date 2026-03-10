@@ -32,8 +32,7 @@ export function FutureSection() {
             A ESCOLHA CERTA PARA <span>SEU FUTURO</span>
           </h2>
           <p>
-            Descubra por que milhares de alunos confiam na nossa metodologia para
-            alcançar seus objetivos profissionais.
+          Escolha entre Cursos Presenciais, Semipresenciais ou EAD e acelere sua Carreira com ensino focado na prática e Especializações inclusas.
           </p>
         </header>
 
@@ -50,11 +49,9 @@ export function FutureSection() {
                   <circle cx="12" cy="10" r="3" fill="#C50002" />
                 </svg>
               </span>
-              <h3>METRO BELÉM</h3>
+              <h3>METRO SAÚDE</h3>
               <p>
-              Estamos no coração da cidade, com fácil acesso por transporte público e
-                perto dos principais centros empresariais, facilitando sua rotina de estudos
-                e trabalho.
+              Estude ao lado do Metrô Saúde, com fácil acesso para todas as regiões de São Paulo.
               </p>
             </div>
           </article>

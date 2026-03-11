@@ -188,7 +188,11 @@ export function AllGraduationsCarouselSection() {
   }
 
   return (
-    <section className="lp-all-grad" aria-labelledby="graduacoes-online-title">
+    <section
+      className="lp-all-grad"
+      id="graduacao-online"
+      aria-labelledby="graduacoes-online-title"
+    >
       <div className="lp-shell">
         <header className="lp-all-grad__head">
           <h2 id="graduacoes-online-title">GRADUAÇÕES SEMIPRESENCIAIS / EAD</h2>

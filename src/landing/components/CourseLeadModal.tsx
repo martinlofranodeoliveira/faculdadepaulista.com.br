@@ -180,6 +180,7 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
 
   const courseLabel = selection?.courseLabel ?? ''
   const isPostGraduation = selection?.courseType === 'pos'
+  const courseHeadingPrefix = isPostGraduation ? 'PÓS EM' : 'GRADUAÇÃO EM'
   const modalHeaderImage = isPostGraduation
     ? '/landing/bgmodal-pos.webp'
     : '/landing/bgmodal.webp'
@@ -328,7 +329,9 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
 
         <div className="lp-course-modal__body">
           <div className="lp-course-modal__head">
-            <h3 id="lp-course-modal-title">Curso: {courseLabel}</h3>
+            <h3 id="lp-course-modal-title">
+              {courseHeadingPrefix} {courseLabel}
+            </h3>
             <p>Preencha o formulário para receber mais informações</p>
           </div>
 

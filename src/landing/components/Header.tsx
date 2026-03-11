@@ -12,28 +12,28 @@ const headerPartnerLogos = [
     className: 'lp-header__partner-logo--fasul-group',
     src: '/landing/logo-grupo-fasul-educacional.webp',
     alt: 'Grupo FASUL Educacional',
-    width: 148,
+    width: 206,
     height: 44,
   },
   {
     className: 'lp-header__partner-logo--unicesp',
     src: '/landing/logo-faculdade-unicesp.webp',
     alt: 'Faculdade UNICESP',
-    width: 96,
+    width: 126,
     height: 44,
   },
   {
     className: 'lp-header__partner-logo--enfermagem',
     src: '/landing/logo-faculdade-de-enfermagem.webp',
     alt: 'Faculdade de Enfermagem',
-    width: 96,
+    width: 155,
     height: 44,
   },
   {
     className: 'lp-header__partner-logo--psicologia',
     src: '/landing/logo-faculdade-de-psicologia.webp',
     alt: 'Faculdade de Psicologia',
-    width: 96,
+    width: 185,
     height: 44,
   },
 ]
@@ -48,8 +48,8 @@ export function Header() {
               className="lp-brand__logo lp-brand__logo--header"
               src="/landing/logo-faculdade-paulista-v2.webp"
               alt="Faculdade Paulista"
-              width="165"
-              height="55"
+              width="144"
+              height="46"
             />
           </a>
 

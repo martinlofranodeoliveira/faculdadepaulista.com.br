@@ -83,24 +83,6 @@ function PresentialModeIcon() {
   )
 }
 
-function PresentialLocationIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M12 2C8.13 2 5 5.13 5 9C5 13.92 10.26 19.55 11.33 20.66C11.7 21.04 12.3 21.04 12.67 20.66C13.74 19.55 19 13.92 19 9C19 5.13 15.87 2 12 2ZM12 12C10.34 12 9 10.66 9 9C9 7.34 10.34 6 12 6C13.66 6 15 7.34 15 9C15 10.66 13.66 12 12 12Z"
-        fill="#C50002"
-      />
-    </svg>
-  )
-}
-
 function BenefitCheckIcon() {
   return (
     <svg
@@ -152,18 +134,12 @@ function BenefitItem({ children }: { children: ReactNode }) {
 
 export function PresentialGraduationSection() {
   return (
-    <section className="lp-presential">
+    <section className="lp-presential" id="graduacao">
       <div className="lp-shell">
         <div className="lp-presential__head">
           <h2>GRADUAÇÃO PRESENCIAL</h2>
           <div className="lp-presential__location">
-            <span className="lp-presential__location-icon">
-              <PresentialLocationIcon />
-            </span>
-            <p>
-              <strong>Local:</strong> Rua Dr. Diogo de Faria, 66 - Vila Mariana, São Paulo - SP,
-              CEP: 04037-000
-            </p>
+            <p>Rua Dr. Diogo de Faria, 66 - Vila Mariana, São Paulo - SP, CEP: 04037-000</p>
           </div>
         </div>
 

@@ -44,11 +44,11 @@ export function LandingPage() {
         <Header />
         <HeroSection />
         <PresentialGraduationSection />
-        <PostGraduationBannerSection />
-        <GraduationCarouselSection />
         <div className="lp-all-grad-shell">
           <AllGraduationsCarouselSection />
         </div>
+        <PostGraduationBannerSection />
+        <GraduationCarouselSection />
         <FutureSection />
         <TestimonialsSection />
         <FaqSection />

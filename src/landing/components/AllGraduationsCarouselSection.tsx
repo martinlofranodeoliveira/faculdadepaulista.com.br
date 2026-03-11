@@ -6,20 +6,16 @@ import { graduationCarouselCourses } from '../data'
 
 const coursesWithoutFixedBadge = new Set(['graduacao-enfermagem', 'graduacao-psicologia'])
 
-function normalizeComparableText(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
+function getDisplayTitle(title: string): string {
+  return title
+    .replace(/\s*\((Semipresencial|Presencial|EAD)\)\s*$/i, '')
+    .replace(/\s+(Semipresencial|Presencial|EAD)\s*$/i, '')
     .trim()
 }
 
-function inferGraduationMode(courseTitle: string): string {
-  const normalized = normalizeComparableText(courseTitle)
-  if (normalized.includes('semipresencial')) return 'SEMIPRESENCIAL'
-  if (normalized.includes('presencial')) return 'PRESENCIAL'
-  return 'EAD'
-}
+const onlineGraduationCourses = graduationCarouselCourses.filter(
+  (course) => course.modalityLabel !== 'GRADUAÇÃO PRESENCIAL',
+)
 
 export function AllGraduationsCarouselSection() {
   const trackRef = useRef<HTMLDivElement | null>(null)
@@ -192,13 +188,14 @@ export function AllGraduationsCarouselSection() {
   }
 
   return (
-    <section className="lp-all-grad" id="graduacao">
+    <section className="lp-all-grad" aria-labelledby="graduacoes-online-title">
       <div className="lp-shell">
         <header className="lp-all-grad__head">
-          <div>
-            <h2>TODAS AS GRADUAÇÕES</h2>
-            <p>Explore nossos cursos e encontre o caminho ideal para sua carreira.</p>
-          </div>
+          <h2 id="graduacoes-online-title">GRADUAÇÕES SEMIPRESENCIAIS / EAD</h2>
+          <p>
+            Explore nosso Catálogo de Cursos e encontre a Formação ideal para o seu
+            sucesso.
+          </p>
         </header>
 
         <div className="lp-all-grad__slider">
@@ -220,7 +217,7 @@ export function AllGraduationsCarouselSection() {
             onPointerCancel={handlePointerCancel}
             onClickCapture={handleClickCapture}
           >
-            {graduationCarouselCourses.map((course) => (
+            {onlineGraduationCourses.map((course) => (
               <article key={course.courseValue} className="lp-all-grad-card">
                 <div className="lp-all-grad-card__image-wrap">
                   <img
@@ -234,11 +231,11 @@ export function AllGraduationsCarouselSection() {
                   />
                 </div>
 
-                <h3>{course.title}</h3>
+                <h3>{getDisplayTitle(course.title)}</h3>
 
                 <div className="lp-all-grad-card__badges">
                   <span className="lp-all-grad-card__mec">RECONHECIDO MEC</span>
-                  <span className="lp-all-grad-card__mode">{inferGraduationMode(course.title)}</span>
+                  <span className="lp-all-grad-card__mode">{course.modalityLabel}</span>
                 </div>
 
                 <div className="lp-all-grad-card__prices">

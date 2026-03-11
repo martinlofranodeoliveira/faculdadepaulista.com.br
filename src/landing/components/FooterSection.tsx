@@ -1,34 +1,3 @@
-const footerPartnerLogos = [
-  {
-    src: '/landing/logo-rodape-fasul.webp',
-    alt: 'FASUL Educacional',
-    modifier: 'fasul',
-    width: 70,
-    height: 22,
-  },
-  {
-    src: '/landing/logo-rodape-unicesp.webp',
-    alt: 'UNICESP',
-    modifier: 'unicesp',
-    width: 76,
-    height: 14,
-  },
-  {
-    src: '/landing/logo-rodape-enfermagem.webp',
-    alt: 'Faculdade de Enfermagem',
-    modifier: 'enfermagem',
-    width: 83,
-    height: 24,
-  },
-  {
-    src: '/landing/logo-rodape-psicologia.webp',
-    alt: 'Faculdade de Psicologia',
-    modifier: 'psicologia',
-    width: 85,
-    height: 21,
-  },
-] as const
-
 export function FooterSection() {
   const currentYear = new Date().getFullYear()
 
@@ -134,24 +103,15 @@ export function FooterSection() {
         </div>
 
         <section className="lp-footer__group" aria-label="Instituições do Grupo FASUL Educacional">
-          <p className="lp-footer__group-title">Grupo FASUL Educacional</p>
-          <div className="lp-footer__group-logos">
-            {footerPartnerLogos.map((logo) => (
-              <div
-                key={logo.src}
-                className={`lp-footer__group-card lp-footer__group-card--${logo.modifier}`}
-              >
-                <img
-                  src={logo.src}
-                  alt={logo.alt}
-                  width={logo.width}
-                  height={logo.height}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            ))}
-          </div>
+          <img
+            className="lp-footer__group-banner"
+            src="/landing/rodape-grupo-fasul-educacional-logos.webp"
+            alt="Banner do Grupo FASUL Educacional com as marcas Fasul Educacional, UNICESP, Faculdade de Enfermagem e Faculdade de Psicologia."
+            width="1192"
+            height="105"
+            loading="lazy"
+            decoding="async"
+          />
         </section>
 
         <div className="lp-footer__bottom">

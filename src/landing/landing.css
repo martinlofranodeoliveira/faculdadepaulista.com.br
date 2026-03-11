@@ -99,7 +99,7 @@ section[id] {
   flex-wrap: nowrap;
   min-width: 0;
   justify-content: space-between;
-  gap: 45px;
+  gap: 35px;
 }
 
 .lp-header__partner-entry {
@@ -160,21 +160,6 @@ section[id] {
   width: auto;
 }
 
-.lp-header__partner-logo--fasul-group {
-  max-width: 126px;
-}
-
-.lp-header__partner-logo--enfermagem {
-  max-width: 114px;
-}
-
-.lp-header__partner-logo--psicologia {
-  max-width: 112px;
-}
-
-.lp-header__partner-logo--unicesp {
-  max-width: 79px;
-}
 
 .lp-brand__icon {
   align-items: center;

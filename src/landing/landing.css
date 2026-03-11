@@ -2963,6 +2963,59 @@ section[id] {
   }
 }
 
+@media (max-width: 1200px) and (min-width: 1024px) {
+  .lp-header__inner {
+    gap: 12px;
+    min-height: 54px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+
+  .lp-header__brands {
+    gap: 20px;
+  }
+
+  .lp-header__partners {
+    gap: 20px;
+  }
+
+  .lp-brand__logo.lp-brand__logo--header {
+    height: 38px;
+    max-width: 118px;
+  }
+
+  .lp-header__divider {
+    height: 32px;
+  }
+
+  .lp-header__partner-logo {
+    height: 25px;
+  }
+
+  .lp-header__partner-logo--fasul-group {
+    max-width: 98px;
+  }
+
+  .lp-header__partner-logo--unicesp {
+    max-width: 64px;
+  }
+
+  .lp-header__partner-logo--enfermagem {
+    max-width: 90px;
+  }
+
+  .lp-header__partner-logo--psicologia {
+    max-width: 88px;
+  }
+
+  .lp-header__cta {
+    font-size: 13px;
+    line-height: 18px;
+    min-height: 40px;
+    padding: 8px 14px;
+  }
+}
+
 @media (max-width: 980px) {
   .lp-shell {
     padding-left: 16px;

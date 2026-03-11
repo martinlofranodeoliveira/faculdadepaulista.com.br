@@ -130,6 +130,14 @@ function getGraduationCourseId(courseValue: string | undefined): number {
   return GRADUATION_CRM_COURSE_IDS[courseValue] ?? 0
 }
 
+function stripCourseModality(label: string): string {
+  return label
+    .replace(/\s*\((?:semipresencial|presencial|ead)\)\s*/gi, ' ')
+    .replace(/\b(?:semipresencial|presencial|ead)\b/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -181,6 +189,7 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
   const courseLabel = selection?.courseLabel ?? ''
   const isPostGraduation = selection?.courseType === 'pos'
   const courseHeadingPrefix = isPostGraduation ? 'PÓS EM' : 'GRADUAÇÃO EM'
+  const displayCourseLabel = isPostGraduation ? courseLabel : stripCourseModality(courseLabel)
   const modalHeaderImage = isPostGraduation
     ? '/landing/bgmodal-pos.webp'
     : '/landing/bgmodal.webp'
@@ -330,7 +339,7 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
         <div className="lp-course-modal__body">
           <div className="lp-course-modal__head">
             <h3 id="lp-course-modal-title">
-              {courseHeadingPrefix} {courseLabel}
+              {courseHeadingPrefix} {displayCourseLabel}
             </h3>
             <p>Preencha o formulário para receber mais informações</p>
           </div>

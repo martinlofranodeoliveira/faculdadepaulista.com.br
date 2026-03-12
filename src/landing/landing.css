@@ -510,6 +510,31 @@ section[id] {
   width: calc(100% + (var(--lp-header-modal-padding) * 2));
 }
 
+.lp-header__group-modal-link {
+  align-items: center;
+  align-self: end;
+  background: rgba(126, 120, 120, 0.15);
+  border-radius: 24px;
+  color: #151515;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 500;
+  height: 34px;
+  justify-content: center;
+  justify-self: end;
+  line-height: 22px;
+  min-width: 104px;
+  padding: 0 16px;
+  text-decoration: none;
+  transition: background-color 0.18s ease, transform 0.18s ease;
+  width: fit-content;
+}
+
+.lp-header__group-modal-link:hover {
+  background: rgba(126, 120, 120, 0.22);
+  transform: translateY(-1px);
+}
+
 .lp-header__group-modal-track {
   align-items: center;
   display: flex;

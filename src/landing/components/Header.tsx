@@ -430,6 +430,15 @@ export function Header() {
                   })}
                 </div>
               </div>
+
+              <a
+                className="lp-header__group-modal-link"
+                href="https://grupofasuleducacional.com.br"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Saiba Mais
+              </a>
             </div>
           </div>
         </div>

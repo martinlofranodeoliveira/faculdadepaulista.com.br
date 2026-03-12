@@ -57,6 +57,7 @@ const STEP_FIELDS: Record<FormStep, FieldName[]> = {
 
 const STEP_TRANSITION_MS = 320
 const STEP_TRANSITION_PHASE_MS = STEP_TRANSITION_MS / 2
+const FIELD_ATTENTION_MS = 460
 
 const GRADUATION_CRM_COURSE_IDS: Record<string, number> = {
   'graduacao-administracao': 1,
@@ -203,7 +204,7 @@ function validatePhone(value: string): string | undefined {
 }
 
 function validateCourseType(value: string): string | undefined {
-  if (!value) return 'Selecione para continuar'
+  if (!value) return 'Selecione a modalidade.'
   return undefined
 }
 
@@ -300,8 +301,11 @@ export function HeroSection() {
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
   const [submitMessage, setSubmitMessage] = useState('')
   const [stepTransition, setStepTransition] = useState<StepTransition | null>(null)
+  const [attentionField, setAttentionField] = useState<FieldName | null>(null)
   const courseTypeMenuRef = useRef<HTMLDivElement | null>(null)
   const stepTransitionTimerRef = useRef<number | null>(null)
+  const fieldAttentionFrameRef = useRef<number | null>(null)
+  const fieldAttentionTimerRef = useRef<number | null>(null)
 
   useEffect(() => {
     syncUtmParamsFromUrl(window.location.search)
@@ -311,6 +315,12 @@ export function HeroSection() {
     return () => {
       if (stepTransitionTimerRef.current) {
         window.clearTimeout(stepTransitionTimerRef.current)
+      }
+      if (fieldAttentionFrameRef.current) {
+        window.cancelAnimationFrame(fieldAttentionFrameRef.current)
+      }
+      if (fieldAttentionTimerRef.current) {
+        window.clearTimeout(fieldAttentionTimerRef.current)
       }
     }
   }, [])
@@ -500,6 +510,28 @@ export function HeroSection() {
     setFieldErrors((previous) => ({ ...previous, [field]: error }))
   }
 
+  const triggerFieldAttention = useCallback((field: FieldName) => {
+    if (fieldAttentionFrameRef.current) {
+      window.cancelAnimationFrame(fieldAttentionFrameRef.current)
+    }
+
+    if (fieldAttentionTimerRef.current) {
+      window.clearTimeout(fieldAttentionTimerRef.current)
+    }
+
+    setAttentionField(null)
+
+    fieldAttentionFrameRef.current = window.requestAnimationFrame(() => {
+      setAttentionField(field)
+      fieldAttentionFrameRef.current = null
+
+      fieldAttentionTimerRef.current = window.setTimeout(() => {
+        setAttentionField((current) => (current === field ? null : current))
+        fieldAttentionTimerRef.current = null
+      }, FIELD_ATTENTION_MS)
+    })
+  }, [])
+
   const handleCourseTypeChange = (nextType: CourseType | '') => {
     setCourseType(nextType)
     setCourse('')
@@ -528,11 +560,16 @@ export function HeroSection() {
     return phone
   }
 
-  const validateFields = (fields: FieldName[]): boolean => {
+  const validateFields = (fields: FieldName[]): FieldName | null => {
     const nextErrors: FieldErrors = {}
+    let firstInvalidField: FieldName | null = null
 
     fields.forEach((field) => {
-      nextErrors[field] = validateField(field, getFieldValue(field))
+      const error = validateField(field, getFieldValue(field))
+      nextErrors[field] = error
+      if (!firstInvalidField && error) {
+        firstInvalidField = field
+      }
     })
 
     setFieldErrors((previous) => ({ ...previous, ...nextErrors }))
@@ -544,7 +581,7 @@ export function HeroSection() {
       return merged
     })
 
-    return fields.every((field) => !nextErrors[field])
+    return firstInvalidField
   }
 
   const runStepTransition = (nextStep: FormStep, direction: StepTransitionDirection) => {
@@ -568,9 +605,10 @@ export function HeroSection() {
   }
 
   const handleStepAdvance = (from: FormStep) => {
-    const isValid = validateFields(STEP_FIELDS[from])
-    if (!isValid) {
-      setSubmitStatus('error')
+    const firstInvalidField = validateFields(STEP_FIELDS[from])
+    if (firstInvalidField) {
+      triggerFieldAttention(firstInvalidField)
+      setSubmitStatus('idle')
       setSubmitMessage('')
       return
     }
@@ -620,7 +658,14 @@ export function HeroSection() {
 
     const hasErrors = Object.values(errors).some(Boolean)
     if (hasErrors) {
-      setSubmitStatus('error')
+      const firstInvalidField =
+        [...STEP_FIELDS[1], ...STEP_FIELDS[2]].find((field) => Boolean(errors[field])) ?? null
+
+      if (firstInvalidField) {
+        triggerFieldAttention(firstInvalidField)
+      }
+
+      setSubmitStatus('idle')
       setSubmitMessage('')
       return
     }
@@ -746,11 +791,24 @@ export function HeroSection() {
     ? `is-${stepTransition.direction}-${stepTransition.phase}`
     : ''
   const formLeadTitle = step === 1 ? 'Encontre seu curso' : 'Informe os dados'
-  const showStepOneInlineError =
-    step === 1 && submitStatus === 'error' && (courseTypeInvalid || courseInvalid)
-  const stepOneInlineErrorMessage = fieldErrors.courseType ?? fieldErrors.course ?? ''
   const selectedCourseTypeLabel =
     COURSE_TYPE_OPTIONS.find((item) => item.value === courseType)?.label ?? 'Modalidade'
+
+  const handleCourseSearchBlockedInteraction = () => {
+    if (courseType || isPostCoursesLoading) return false
+
+    setTouched((previous) => ({ ...previous, courseType: true }))
+    setFieldErrors((previous) => ({
+      ...previous,
+      courseType: validateCourseType(''),
+    }))
+    setIsCourseSearchOpen(false)
+    setSubmitStatus('idle')
+    setSubmitMessage('')
+    triggerFieldAttention('courseType')
+
+    return true
+  }
 
   return (
     <section className="lp-hero" id="inicio">
@@ -785,7 +843,11 @@ export function HeroSection() {
             >
             {step === 1 ? (
               <div className="lp-hero-form__row lp-hero-form__row--wizard lp-hero-form__row--step-1">
-                <div className="lp-field-wrap lp-hero-form__field-cell--modality">
+                <div
+                  className={`lp-field-wrap lp-hero-form__field-cell--modality ${
+                    attentionField === 'courseType' ? 'is-attention' : ''
+                  }`}
+                >
                 <div
                   className={`lp-field lp-field--select ${courseTypeInvalid ? 'is-invalid' : ''}`}
                   ref={courseTypeMenuRef}
@@ -852,11 +914,19 @@ export function HeroSection() {
                 ) : null}
               </div>
 
-              <div className="lp-field-wrap lp-course-search-wrap">
+              <div
+                className={`lp-field-wrap lp-course-search-wrap ${
+                  attentionField === 'course' ? 'is-attention' : ''
+                }`}
+              >
                 <label
                   className={`lp-field ${courseInvalid ? 'is-invalid' : ''} ${
                     isCourseSearchDisabled ? 'is-disabled' : ''
                   }`}
+                  onPointerDown={(event) => {
+                    if (!handleCourseSearchBlockedInteraction()) return
+                    event.preventDefault()
+                  }}
                 >
                   <span className="lp-field__icon" aria-hidden="true">
                     <Search size={14} />
@@ -1016,7 +1086,11 @@ export function HeroSection() {
                   Voltar
                 </button>
 
-                <div className="lp-field-wrap lp-hero-form__field-wrap--name">
+                <div
+                  className={`lp-field-wrap lp-hero-form__field-wrap--name ${
+                    attentionField === 'fullName' ? 'is-attention' : ''
+                  }`}
+                >
                   <label className={`lp-field lp-field--plain ${fullNameInvalid ? 'is-invalid' : ''}`}>
                     <input
                       type="text"
@@ -1046,7 +1120,11 @@ export function HeroSection() {
                   ) : null}
                 </div>
 
-                <div className="lp-field-wrap lp-hero-form__field-wrap--email">
+                <div
+                  className={`lp-field-wrap lp-hero-form__field-wrap--email ${
+                    attentionField === 'email' ? 'is-attention' : ''
+                  }`}
+                >
                 <label className={`lp-field lp-field--plain ${emailInvalid ? 'is-invalid' : ''}`}>
                   <input
                     type="email"
@@ -1076,7 +1154,11 @@ export function HeroSection() {
                 ) : null}
               </div>
 
-              <div className="lp-field-wrap lp-hero-form__field-wrap--phone">
+              <div
+                className={`lp-field-wrap lp-hero-form__field-wrap--phone ${
+                  attentionField === 'phone' ? 'is-attention' : ''
+                }`}
+              >
                 <label className={`lp-field lp-field--plain ${phoneInvalid ? 'is-invalid' : ''}`}>
                   <input
                     type="tel"
@@ -1119,11 +1201,7 @@ export function HeroSection() {
             </div>
           </form>
 
-          {showStepOneInlineError && stepOneInlineErrorMessage ? (
-            <small className="lp-hero-form__status is-error">{stepOneInlineErrorMessage}</small>
-          ) : null}
-
-          {submitMessage && !showStepOneInlineError ? (
+          {submitMessage ? (
             <small
               className={`lp-hero-form__status ${submitStatus === 'error' ? 'is-error' : ''}`}
             >

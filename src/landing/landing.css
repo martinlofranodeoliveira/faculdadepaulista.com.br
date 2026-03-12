@@ -878,6 +878,10 @@ section[id] {
     opacity: 1;
     transform: none;
   }
+
+  .lp-field-wrap.is-attention .lp-field {
+    animation: none;
+  }
 }
 
 .lp-hero-form__field-cell--modality {
@@ -922,6 +926,31 @@ section[id] {
   gap: 1px;
   min-width: 0;
   position: relative;
+}
+
+.lp-field-wrap.is-attention .lp-field {
+  animation: lpFieldAttentionShake 460ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  border-color: #fe7676;
+  box-shadow: 0 0 0 3px rgba(254, 0, 0, 0.14);
+}
+
+@keyframes lpFieldAttentionShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  18% {
+    transform: translateX(-5px);
+  }
+  36% {
+    transform: translateX(5px);
+  }
+  54% {
+    transform: translateX(-4px);
+  }
+  72% {
+    transform: translateX(4px);
+  }
 }
 
 .lp-field {
@@ -988,6 +1017,10 @@ section[id] {
   margin-top: 1px;
   min-height: 20px;
   position: static;
+}
+
+.lp-field-wrap.is-attention .lp-field__error {
+  color: #ffcfcf;
 }
 
 .lp-field--plain {

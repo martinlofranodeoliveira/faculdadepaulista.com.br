@@ -2361,8 +2361,7 @@ section[id] {
     radial-gradient(circle at left top, rgba(255, 255, 255, 0.18), transparent 34%),
     radial-gradient(circle at 88% 8%, rgba(255, 255, 255, 0.12), transparent 24%),
     linear-gradient(135deg, #ff1510 0%, #fb0103 52%, #c50002 100%);
-  border-top-left-radius: clamp(52px, 8vw, 85px);
-  border-top-right-radius: clamp(52px, 8vw, 85px);
+  border-radius: clamp(52px, 6vw, 65px);
   overflow: clip;
   padding: clamp(34px, 4vw, 38px) 0 clamp(40px, 4.8vw, 48px);
   position: relative;
@@ -3825,8 +3824,7 @@ section[id] {
   }
 
   .lp-all-grad {
-    border-top-left-radius: 42px;
-    border-top-right-radius: 42px;
+    border-radius: 42px;
     padding: 28px 0 32px;
   }
 

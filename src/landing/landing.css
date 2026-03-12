@@ -256,18 +256,164 @@ section[id] {
   flex: 0 0 auto;
 }
 
-.lp-header__menu {
-  background: transparent;
-  border: 0;
-  color: #fff;
-  cursor: pointer;
-  display: none;
-  margin-left: auto;
-  padding: 0;
+.lp-header__desktop {
+  display: block;
 }
 
-.lp-header__mobile {
+.lp-header__mobile-shell,
+.lp-header__mobile-top,
+.lp-header__mobile-menu {
   display: none;
+}
+
+.lp-header__mobile-brand {
+  display: inline-flex;
+  flex: 0 0 auto;
+  line-height: 0;
+  text-decoration: none;
+}
+
+.lp-header__mobile-logo {
+  display: block;
+  height: auto;
+  object-fit: contain;
+  width: 92px;
+}
+
+.lp-header__mobile-cta {
+  align-items: center;
+  background: linear-gradient(180deg, #fe0000 0%, #c50002 100%);
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 10px;
+  font-weight: 800;
+  justify-content: center;
+  letter-spacing: -0.01em;
+  line-height: 10.974px;
+  min-height: 28px;
+  padding: 8px 14px;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.lp-header__menu-button {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 24px;
+  justify-content: center;
+  padding: 0;
+  width: 24px;
+}
+
+.lp-header__menu-icon {
+  display: grid;
+  gap: 4px;
+  width: 20px;
+}
+
+.lp-header__menu-icon span {
+  background: #111111;
+  border-radius: 999px;
+  display: block;
+  height: 2px;
+  margin: 0 auto;
+  transform-origin: center;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  width: 20px;
+}
+
+.lp-header.is-menu-open .lp-header__menu-icon span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.lp-header.is-menu-open .lp-header__menu-icon span:nth-child(2) {
+  opacity: 0;
+}
+
+.lp-header.is-menu-open .lp-header__menu-icon span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+.lp-header__mobile-menu {
+  border-top: 1px solid transparent;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.28s ease,
+    opacity 0.18s ease,
+    padding 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.lp-header__mobile-menu.is-open {
+  border-top-color: #ececec;
+  max-height: 560px;
+  opacity: 1;
+}
+
+.lp-header__mobile-nav {
+  display: grid;
+}
+
+.lp-header__mobile-link {
+  align-items: center;
+  color: #111111;
+  display: flex;
+  font-size: 15px;
+  font-weight: 700;
+  justify-content: space-between;
+  letter-spacing: -0.01em;
+  line-height: 20px;
+  padding: 14px 0;
+  text-decoration: none;
+}
+
+.lp-header__mobile-link + .lp-header__mobile-link {
+  border-top: 1px solid #f1f1f1;
+}
+
+.lp-header__mobile-link-chevron {
+  color: #c50002;
+  flex: 0 0 auto;
+  transform: rotate(-90deg);
+}
+
+.lp-header__mobile-partners {
+  border-top: 1px solid #ececec;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 10px;
+  padding-top: 14px;
+}
+
+.lp-header__mobile-partner-card {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ededed;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  min-height: 52px;
+  padding: 10px 12px;
+}
+
+.lp-header__mobile-partner-logo {
+  display: block;
+  height: auto;
+  max-height: 24px;
+  max-width: 100%;
+  object-fit: contain;
+  width: auto;
 }
 
 .lp-hero {
@@ -3065,58 +3211,6 @@ section[id] {
     min-height: 50px;
   }
 
-  .lp-header__mobile {
-    border-top: 1px solid #4a3e3d;
-    display: grid;
-    gap: 10px;
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    padding-bottom: 0;
-    transition: max-height 0.25s ease, opacity 0.2s ease, padding 0.2s ease;
-  }
-
-  .lp-header__mobile.is-open {
-    max-height: 300px;
-    opacity: 1;
-    padding-bottom: 14px;
-    padding-top: 12px;
-  }
-
-  .lp-header__mobile-nav {
-    display: grid;
-    gap: 6px;
-  }
-
-  .lp-header__mobile-nav a {
-    border-radius: 8px;
-    color: #e8e8e8;
-    display: block;
-    font-size: 14px;
-    padding: 10px 12px;
-    text-decoration: none;
-  }
-
-  .lp-header__mobile-nav a:active {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .lp-header__cta-mobile {
-    align-items: center;
-    background: #C50002;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(254, 0, 0, 0.3);
-    color: #fff;
-    display: inline-flex;
-    font-size: 14px;
-    font-weight: 500;
-    justify-content: center;
-    line-height: 20px;
-    padding: 10px 20px;
-    text-decoration: none;
-    width: 100%;
-  }
-
   .lp-hero__content {
     max-width: 500px;
     padding: 52px 0 162px;
@@ -4539,5 +4633,106 @@ section[id] {
 
   .lp-footer__map {
     height: 128px;
+  }
+}
+
+
+@media (max-width: 720px) {
+  .lp-page {
+    padding-top: 51px;
+  }
+
+  .lp-header {
+    left: 0;
+    position: fixed;
+    right: 0;
+    top: 0;
+    transition: box-shadow 0.18s ease;
+    width: 100%;
+    z-index: 80;
+  }
+
+  .lp-header.is-menu-open {
+    box-shadow: 0 18px 48px rgba(17, 17, 17, 0.08);
+  }
+
+  .lp-header__desktop {
+    display: none;
+  }
+
+  .lp-header__mobile-shell {
+    display: block;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .lp-header__mobile-top {
+    align-items: center;
+    column-gap: 10px;
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr) 24px;
+    min-height: 49px;
+    padding: 10px 0;
+  }
+
+  .lp-header__mobile-brand {
+    justify-self: start;
+  }
+
+  .lp-header__mobile-logo {
+    width: 92px;
+  }
+
+  .lp-header__mobile-cta {
+    justify-self: center;
+    padding-left: 12px;
+    padding-right: 12px;
+    width: min(149px, 100%);
+  }
+
+  .lp-header__menu-button {
+    justify-self: end;
+  }
+
+  .lp-header__mobile-menu {
+    display: block;
+  }
+
+  .lp-header__mobile-menu.is-open {
+    padding-bottom: 16px;
+    padding-top: 12px;
+  }
+}
+
+@media (max-width: 389px) {
+  .lp-header__mobile-top {
+    column-gap: 8px;
+    grid-template-columns: 84px minmax(0, 1fr) 24px;
+  }
+
+  .lp-header__mobile-logo {
+    width: 84px;
+  }
+
+  .lp-header__mobile-cta {
+    font-size: 9px;
+    min-height: 27px;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: min(140px, 100%);
+  }
+
+  .lp-header__mobile-link {
+    font-size: 14px;
+    padding: 13px 0;
+  }
+
+  .lp-header__mobile-partners {
+    gap: 8px;
+  }
+
+  .lp-header__mobile-partner-card {
+    min-height: 48px;
+    padding: 8px 10px;
   }
 }

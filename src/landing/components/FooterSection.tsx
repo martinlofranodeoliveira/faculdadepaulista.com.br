@@ -103,15 +103,20 @@ export function FooterSection() {
         </div>
 
         <section className="lp-footer__group" aria-label="Instituições do Grupo FASUL Educacional">
-          <img
-            className="lp-footer__group-banner"
-            src="/landing/rodape-grupo-fasul-educacional-logos.webp"
-            alt="Banner do Grupo FASUL Educacional com as marcas Fasul Educacional, UNICESP, Faculdade de Enfermagem e Faculdade de Psicologia."
-            width="1192"
-            height="105"
-            loading="lazy"
-            decoding="async"
-          />
+          <picture className="lp-footer__group-banner">
+            <source
+              media="(max-width: 720px)"
+              srcSet="/landing/rodape-grupo-fasul-educacional-logos-mobile.webp"
+            />
+            <img
+              src="/landing/rodape-grupo-fasul-educacional-logos.webp"
+              alt="Banner do Grupo FASUL Educacional com as marcas Fasul Educacional, UNICESP, Faculdade de Enfermagem e Faculdade de Psicologia."
+              width="1192"
+              height="88"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
         </section>
 
         <div className="lp-footer__bottom">

@@ -3096,7 +3096,15 @@ section[id] {
 .lp-footer__group-banner {
   border-radius: 12px;
   display: block;
-  height: auto;
+  overflow: hidden;
+  aspect-ratio: 1192 / 88;
+  width: 100%;
+}
+
+.lp-footer__group-banner img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
   width: 100%;
 }
 
@@ -4590,6 +4598,7 @@ section[id] {
   }
 
   .lp-footer__group-banner {
+    aspect-ratio: 726 / 498;
     border-radius: 10px;
   }
 

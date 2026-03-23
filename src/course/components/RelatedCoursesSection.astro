@@ -1,0 +1,80 @@
+---
+type RelatedCourse = {
+  path: string
+  title: string
+  description: string
+  image: string
+  courseType: 'graduacao' | 'pos'
+}
+
+interface Props {
+  courses: RelatedCourse[]
+}
+
+const { courses } = Astro.props
+
+const mockHoursLabel = '360 a 720 horas'
+const mockPriceLabel = 'R$ 129,00 por mês'
+---
+
+<section class="course-page__related course-page__related--post" aria-labelledby="course-related-title">
+  <div class="course-page__shell">
+    <p class="course-page__related-eyebrow">Não encontrou o que procurava?</p>
+    <h2 id="course-related-title">
+      <span>Cursos</span>
+      <span>Relacionados</span>
+    </h2>
+
+    <div class="course-page__related-grid course-page__related-grid--post">
+      {courses.map((course) => (
+        <article class="course-page__related-card course-page__related-card--post">
+          <a
+            href={course.path}
+            class="course-page__related-media-link"
+            aria-label={`Abrir página do curso ${course.title}`}
+          >
+            <img
+              src={course.image}
+              alt={`Imagem do curso ${course.title}`}
+              width="282"
+              height="132"
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="course-page__related-video-badge">
+              <img
+                src="/course/related/video-dicas.svg"
+                alt=""
+                width="13"
+                height="13"
+                loading="lazy"
+                decoding="async"
+              />
+              <span>Com videodicas</span>
+            </span>
+          </a>
+
+          <div class="course-page__related-body course-page__related-body--post">
+            <div class="course-page__related-tags">
+              <span class="course-page__related-tag course-page__related-tag--outlined">
+                <strong>Reconhecido</strong> MEC
+              </span>
+              <span class="course-page__related-tag course-page__related-tag--plain">
+                {mockHoursLabel}
+              </span>
+            </div>
+
+            <h3>{course.title}</h3>
+
+            <div class="course-page__related-price">
+              <span>A partir de</span>
+              <strong>{mockPriceLabel}</strong>
+            </div>
+          </div>
+
+          <a href={course.path} class="course-page__related-cta">Inscreva-se</a>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

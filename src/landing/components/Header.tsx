@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+﻿import { useEffect, useRef, useState } from 'react'
+
+import '../landing.css'
 
 const headerNavItems = [
   { label: 'Graduação Presencial', href: '#graduacao', hasChevron: true },
@@ -10,6 +12,11 @@ const headerNavItems = [
   { label: 'Pós-graduação EAD', href: '#pos-graduacao', hasChevron: true },
   { label: 'Fale conosco', href: '#contato', hasChevron: false },
 ] as const
+
+type HeaderProps = {
+  isLandingPage?: boolean
+  homeHref?: string
+}
 
 const marqueeInstitutionLogos = [
   {
@@ -94,11 +101,18 @@ function HeaderCloseIcon() {
   )
 }
 
-export function Header() {
+export function Header({ isLandingPage = false, homeHref = '/' }: HeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isGroupModalOpen, setIsGroupModalOpen] = useState(false)
   const marqueeTrackRef = useRef<HTMLDivElement | null>(null)
   const marqueeSequenceRef = useRef<HTMLDivElement | null>(null)
+
+  const getSectionHref = (hash: string) => {
+    if (isLandingPage) return hash
+    return `${homeHref}${hash}`
+  }
+
+  const enrollmentHref = getSectionHref('#inscricao')
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(min-width: 721px)')
@@ -216,7 +230,7 @@ export function Header() {
         <div className="lp-header__desktop">
           <div className="lp-shell lp-header__inner">
             <div className="lp-header__brands" aria-label="Marcas da Faculdade Paulista">
-              <a className="lp-brand lp-brand--header" href="/" aria-label="Faculdade Paulista">
+              <a className="lp-brand lp-brand--header" href={homeHref} aria-label="Faculdade Paulista">
                 <img
                   className="lp-brand__logo lp-brand__logo--header"
                   src="/landing/logo-faculdade-paulista-v2.webp"
@@ -257,7 +271,7 @@ export function Header() {
               </div>
             </div>
 
-            <a className="lp-header__cta" href="#inscricao">
+            <a className="lp-header__cta" href={enrollmentHref}>
               Quero me matricular
             </a>
           </div>
@@ -266,7 +280,7 @@ export function Header() {
 
         <div className="lp-shell lp-header__mobile-shell">
           <div className="lp-header__mobile-top">
-            <a className="lp-header__mobile-brand" href="/" aria-label="Faculdade Paulista">
+            <a className="lp-header__mobile-brand" href={homeHref} aria-label="Faculdade Paulista">
               <img
                 className="lp-header__mobile-logo"
                 src="/landing/logo-faculdade-paulista-v2.webp"
@@ -276,7 +290,7 @@ export function Header() {
               />
             </a>
 
-            <a className="lp-header__mobile-cta" href="#inscricao" onClick={closeMobileMenu}>
+            <a className="lp-header__mobile-cta" href={enrollmentHref} onClick={closeMobileMenu}>
               Quero me matricular
             </a>
 
@@ -306,7 +320,7 @@ export function Header() {
                 <a
                   key={item.label}
                   className="lp-header__mobile-link"
-                  href={item.href}
+                  href={getSectionHref(item.href)}
                   onClick={closeMobileMenu}
                 >
                   <span>{item.label}</span>
@@ -446,3 +460,4 @@ export function Header() {
     </>
   )
 }
+

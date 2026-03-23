@@ -1,69 +1,11 @@
 ﻿import type { ReactNode } from 'react'
 
+import type { LandingPresentialCourse } from '../landingModels'
 import { openCourseLeadModal } from '../coursePrefill'
 
-type PresentialCourseHighlight = {
-  id: string
-  courseValue: string
-  courseLabel: string
-  title: string
-  mode: string
-  image: string
-  imageAlt: string
-  cardClassName?: string
-  imageClassName?: string
-  imagePosition?: string
-  startDate: string
-  benefits: ReactNode[]
-  currentPrice: string
-  originalPriceLabel: string
+type Props = {
+  courses: LandingPresentialCourse[]
 }
-
-const presentialCourses: PresentialCourseHighlight[] = [
-  {
-    id: 'enfermagem',
-    courseValue: 'graduacao-enfermagem',
-    courseLabel: 'Enfermagem Presencial',
-    title: 'Enfermagem',
-    mode: 'Bacharelado Presencial',
-    image: '/landing/presential-enfermagem-figma.webp',
-    imageAlt: 'Estudante de enfermagem em ambiente de prática',
-    imageClassName: 'is-wide',
-    startDate: 'Início das aulas: 01/07/26',
-    benefits: [
-      <>
-        Estágio no <strong>1º Semestre</strong>
-      </>,
-      <>
-        <strong>Ganhe +1</strong> Graduação EAD
-      </>,
-    ],
-    currentPrice: 'R$ 449,00 /Mês',
-    originalPriceLabel: 'De R$ 1.890,00',
-  },
-  {
-    id: 'psicologia',
-    courseValue: 'graduacao-psicologia',
-    courseLabel: 'Psicologia Presencial',
-    title: 'Psicologia',
-    mode: 'Bacharelado Presencial',
-    image: '/landing/presential-psicologia-figma.webp',
-    imageAlt: 'Estudante de psicologia em atividade acadêmica',
-    cardClassName: 'lp-presential-card--compact-image',
-    imageClassName: 'is-compact',
-    startDate: 'Início das aulas: 01/07/26',
-    benefits: [
-      <>
-        Estágio no <strong>1º Semestre</strong>
-      </>,
-      <>
-        <strong>Ganhe +1</strong> Graduação EAD
-      </>,
-    ],
-    currentPrice: 'R$ 549,00 /Mês',
-    originalPriceLabel: 'De R$ 1.890,00',
-  },
-]
 
 function PresentialModeIcon() {
   return (
@@ -132,7 +74,7 @@ function BenefitItem({ children }: { children: ReactNode }) {
   )
 }
 
-export function PresentialGraduationSection() {
+export function PresentialGraduationSection({ courses }: Props) {
   return (
     <section className="lp-presential" id="graduacao">
       <div className="lp-shell">
@@ -144,17 +86,14 @@ export function PresentialGraduationSection() {
         </div>
 
         <div className="lp-presential__grid">
-          {presentialCourses.map((course) => (
-            <article
-              key={course.id}
-              className={`lp-presential-card ${course.cardClassName ?? ''}`}
-            >
+          {courses.map((course) => (
+            <article key={course.id} className={`lp-presential-card ${course.cardClassName ?? ''}`}>
               <div className={`lp-presential-card__image ${course.imageClassName ?? ''}`}>
                 <img
                   src={course.image}
                   alt={course.imageAlt}
-                  width="222"
-                  height="423"
+                  width={course.imageWidth ?? 252}
+                  height={course.imageHeight ?? 423}
                   loading="lazy"
                   decoding="async"
                   style={course.imagePosition ? { objectPosition: course.imagePosition } : undefined}
@@ -172,14 +111,19 @@ export function PresentialGraduationSection() {
                 </div>
 
                 <ul className="lp-presential-card__benefits">
-                  {course.benefits.map((benefit, index) => (
-                    <BenefitItem key={`${course.id}-${index}`}>{benefit}</BenefitItem>
-                  ))}
+                  <BenefitItem>
+                    Estágio no <strong>1º semestre</strong>
+                  </BenefitItem>
+                  <BenefitItem>
+                    <strong>Ganhe +1</strong> graduação EAD
+                  </BenefitItem>
                 </ul>
 
                 <div className="lp-presential-card__footer">
                   <div className="lp-presential-card__price">
-                    <span className="lp-presential-card__price-from">{course.originalPriceLabel}</span>
+                    {course.originalPriceLabel ? (
+                      <span className="lp-presential-card__price-from">{course.originalPriceLabel}</span>
+                    ) : null}
                     <strong className="lp-presential-card__price-current">{course.currentPrice}</strong>
                   </div>
 
@@ -192,6 +136,7 @@ export function PresentialGraduationSection() {
                         courseType: 'graduacao',
                         courseValue: course.courseValue,
                         courseLabel: course.courseLabel,
+                        courseId: course.courseId,
                       })
                     }}
                   >
@@ -207,5 +152,3 @@ export function PresentialGraduationSection() {
     </section>
   )
 }
-
-

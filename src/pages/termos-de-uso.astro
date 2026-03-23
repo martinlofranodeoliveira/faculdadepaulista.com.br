@@ -1,0 +1,11 @@
+---
+import { LegalPage } from '@/legal/LegalPage'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+const title = 'Termos de Uso | Faculdade Paulista'
+const description = 'Leia os termos de uso da Faculdade Paulista.'
+---
+
+<BaseLayout title={title} description={description} canonicalPath="/termos-de-uso">
+  <LegalPage kind="terms" />
+</BaseLayout>

@@ -1,0 +1,38 @@
+---
+import type { CoursePresentation } from '../coursePageData'
+
+interface Props {
+  presentation: CoursePresentation
+}
+
+const { presentation } = Astro.props
+---
+
+<section
+  class="course-page__differentials course-page__differentials--post"
+  aria-labelledby="course-differentials-title"
+>
+  <div class="course-page__shell course-page__differentials-shell course-page__differentials-shell--post">
+    <h2 id="course-differentials-title">{presentation.differentials.title}</h2>
+
+    <div class="course-page__differentials-grid course-page__differentials-grid--post">
+      {presentation.differentials.items.map((item, index) => (
+        <article
+          class={`course-page__differential-card course-page__differential-card--post${item.wide ? ' is-wide' : ''}${index < 3 ? ' is-tall' : ''}`}
+        >
+          <img
+            src={item.icon}
+            alt=""
+            width="54"
+            height="54"
+            loading="lazy"
+            decoding="async"
+            class="course-page__differential-icon"
+          />
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

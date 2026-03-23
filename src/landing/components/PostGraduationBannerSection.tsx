@@ -1,4 +1,4 @@
-export function PostGraduationBannerSection() {
+﻿export function PostGraduationBannerSection() {
   return (
     <section className="lp-pos-banner" aria-label="Banner de Pós-graduação">
       <div className="lp-pos-banner__inner">
@@ -17,3 +17,4 @@ export function PostGraduationBannerSection() {
     </section>
   )
 }
+

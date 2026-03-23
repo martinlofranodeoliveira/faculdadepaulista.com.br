@@ -1,0 +1,13 @@
+---
+import NotFoundPage from '@/components/NotFoundPage.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+---
+
+<BaseLayout
+  title="Erro 404 | Faculdade Paulista"
+  description="A página solicitada não foi encontrada."
+  canonicalPath="/404"
+  noindex={true}
+>
+  <NotFoundPage />
+</BaseLayout>

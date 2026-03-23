@@ -1,0 +1,44 @@
+---
+import type { CoursePresentation } from '../coursePageData'
+
+interface Props {
+  courseType: 'graduacao' | 'pos'
+  presentation: CoursePresentation
+}
+
+const { courseType, presentation } = Astro.props
+---
+
+<section class="course-page__salary" aria-labelledby="course-salary-title">
+  <div class="course-page__shell">
+    <article class={`course-page__salary-card${courseType === 'pos' ? ' is-post' : ''}`}>
+      <div class="course-page__salary-copy">
+        <h2 id="course-salary-title">
+          <span>{presentation.salary.accentTitle}</span>
+          <span>{presentation.salary.darkTitle}</span>
+        </h2>
+        <p>{presentation.salary.subtitle}</p>
+        <small>{presentation.salary.note}</small>
+      </div>
+
+      <div class="course-page__salary-divider" aria-hidden="true"></div>
+
+      <div
+        class={`course-page__salary-chart${courseType === 'pos' ? ' is-post' : ''}`}
+        aria-label="Faixas salariais estimadas"
+      >
+        {presentation.salary.items.map((item) => (
+          <div
+            class="course-page__salary-item"
+            style={courseType === 'pos' ? `--post-salary-size:${item.height}px;` : undefined}
+          >
+            <span class="course-page__salary-item-label">{item.label}</span>
+            <strong>{item.value}</strong>
+            <div class="course-page__salary-bar" style={`--bar-height:${item.height}px;`}></div>
+            <span class="course-page__salary-caption">{item.caption}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  </div>
+</section>

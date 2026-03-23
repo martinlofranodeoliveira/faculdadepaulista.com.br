@@ -1,0 +1,57 @@
+﻿---
+import type { CoursePresentation } from '../coursePageData'
+
+interface Props {
+  presentation: CoursePresentation
+}
+
+const { presentation } = Astro.props as Props
+---
+
+<section class="course-page__labs" aria-labelledby="course-labs-title">
+  <div class="course-page__shell">
+    <article class="course-page__labs-card">
+      <div class="course-page__labs-copy">
+        <h2 id="course-labs-title">{presentation.labs.title}</h2>
+        <p>{presentation.labs.description}</p>
+
+        <div class="course-page__labs-badges">
+          {presentation.labs.badges.map((badge) => (
+            <span>{badge}</span>
+          ))}
+        </div>
+
+        <ul class="course-page__labs-list">
+          {presentation.labs.bullets.map((bullet) => (
+            <li>{bullet}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="course-page__labs-gallery">
+        <div class="course-page__labs-track">
+          <img
+            src={presentation.labs.primaryImage}
+            alt="Estrutura acadêmica da Faculdade Paulista"
+            width="531"
+            height="341"
+            loading="lazy"
+            decoding="async"
+          />
+          <img
+            src={presentation.labs.secondaryImage}
+            alt="Ambiente de aula e prática da Faculdade Paulista"
+            width="448"
+            height="341"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="course-page__labs-nav" aria-hidden="true">
+          <span class="is-disabled"></span>
+          <span></span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

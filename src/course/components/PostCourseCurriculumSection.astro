@@ -1,0 +1,147 @@
+﻿---
+import { formatHoursLabel, type CurriculumVariant } from '../coursePageShared'
+
+interface Props {
+  curriculumVariants: CurriculumVariant[]
+  activeCurriculumVariant: CurriculumVariant | null
+  curriculumDownloadHref: string
+  curriculumDownloadFilename: string
+}
+
+const {
+  curriculumVariants,
+  activeCurriculumVariant,
+  curriculumDownloadHref,
+  curriculumDownloadFilename,
+} = Astro.props
+---
+
+<section class="course-page__curriculum course-page__curriculum--post" aria-labelledby="course-curriculum-title">
+  <div class="course-page__shell course-page__curriculum-shell is-post" data-curriculum-switcher>
+    <div class="course-page__curriculum-toolbar">
+      <h2 id="course-curriculum-title">Grade curricular</h2>
+      <a
+        href={activeCurriculumVariant?.downloadHref ?? curriculumDownloadHref}
+        download={activeCurriculumVariant?.downloadFilename ?? curriculumDownloadFilename}
+        class="course-page__curriculum-download"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-curriculum-download
+      >
+        <span class="course-page__download-icon" aria-hidden="true"></span>
+        Baixar matriz completa
+      </a>
+    </div>
+
+    <div class="course-page__curriculum-pills" aria-label="Cargas horárias disponíveis">
+      {curriculumVariants.map((variant, index) => (
+        <button
+          type="button"
+          class={`course-page__curriculum-pill${index === 0 ? ' is-active' : ''}`}
+          data-curriculum-chip
+          data-workload-id={variant.id}
+          aria-pressed={index === 0 ? 'true' : 'false'}
+        >
+          {variant.chipLabel}
+        </button>
+      ))}
+    </div>
+
+    <div class="course-page__curriculum-panel">
+      <div class="course-page__curriculum-table-head">
+        <div class="course-page__curriculum-heading">
+          <span class="course-page__curriculum-heading-accent">Disciplinas</span>
+        </div>
+
+        <div class="course-page__curriculum-table-meta">
+          <span>Carga horária</span>
+          <span class="course-page__curriculum-panel-toggle" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      {curriculumVariants.map((variant, index) => (
+        <div
+          class="course-page__curriculum-panel-set"
+          data-curriculum-panel={variant.id}
+          data-download-href={variant.downloadHref}
+          data-download-filename={variant.downloadFilename}
+          hidden={index !== 0}
+        >
+          <div class="course-page__curriculum-rows">
+            {variant.curriculum.map((item) => (
+              <div class="course-page__curriculum-row">
+                <span class="course-page__curriculum-row-title">{item.title}</span>
+                <span class="course-page__curriculum-row-hours">
+                  {formatHoursLabel(item.hours)}
+                </span>
+              </div>
+            ))}
+
+            <div class="course-page__curriculum-row course-page__curriculum-row--total">
+              <span class="course-page__curriculum-row-title">TOTAL:</span>
+              <span class="course-page__curriculum-row-hours">
+                {formatHoursLabel(`${variant.totalHours}h`)}
+              </span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div class="course-page__curriculum-actions">
+      <a href="#course-form" class="course-page__section-cta">
+        <span class="course-page__section-cta-text">Inscreva-se já</span>
+      </a>
+      <a
+        href={activeCurriculumVariant?.downloadHref ?? curriculumDownloadHref}
+        download={activeCurriculumVariant?.downloadFilename ?? curriculumDownloadFilename}
+        class="course-page__curriculum-download course-page__curriculum-download--outline"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-curriculum-download
+      >
+        <span class="course-page__download-icon" aria-hidden="true"></span>
+        Baixar matriz completa
+      </a>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  document.querySelectorAll('[data-curriculum-switcher]').forEach((root) => {
+    const chips = Array.from(root.querySelectorAll('[data-curriculum-chip]'))
+    const panels = Array.from(root.querySelectorAll('[data-curriculum-panel]'))
+    const downloadLinks = Array.from(root.querySelectorAll('[data-curriculum-download]'))
+
+    const applyVariant = (workloadId) => {
+      chips.forEach((chip) => {
+        const isActive = chip.dataset.workloadId === workloadId
+        chip.classList.toggle('is-active', isActive)
+        chip.setAttribute('aria-pressed', isActive ? 'true' : 'false')
+      })
+
+      panels.forEach((panel) => {
+        const isActive = panel.dataset.curriculumPanel === workloadId
+        panel.hidden = !isActive
+
+        if (isActive) {
+          const href = panel.dataset.downloadHref || '#'
+          const filename = panel.dataset.downloadFilename || 'matriz-curricular.txt'
+
+          downloadLinks.forEach((link) => {
+            link.setAttribute('href', href)
+            link.setAttribute('download', filename)
+          })
+        }
+      })
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const workloadId = chip.dataset.workloadId
+        if (!workloadId) return
+        applyVariant(workloadId)
+      })
+    })
+  })
+</script>

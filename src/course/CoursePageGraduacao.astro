@@ -1,0 +1,64 @@
+---
+import { FooterSection } from '@/landing/components/FooterSection'
+import { Header } from '@/landing/components/Header'
+
+import CoursePageIntro from './components/CoursePageIntro.astro'
+import GraduationFaqSection from './components/GraduationFaqSection.astro'
+import GraduationCourseHeroSection from './components/GraduationCourseHeroSection.astro'
+import GraduationProfileSection from './components/GraduationProfileSection.astro'
+import GraduationSalarySection from './components/GraduationSalarySection.astro'
+import GraduationCourseCurriculumSection from './components/GraduationCourseCurriculumSection.astro'
+import GraduationCourseLabsSection from './components/GraduationCourseLabsSection.astro'
+import GraduationCareerSection from './components/GraduationCareerSection.astro'
+import GraduationRelatedCoursesSection from './components/GraduationRelatedCoursesSection.astro'
+import { getCoursePageViewModel, type CoursePageProps } from './coursePageShared'
+import './course.css'
+
+const props = Astro.props as CoursePageProps
+const viewModel = await getCoursePageViewModel(props)
+const normalizedTitle = props.title
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase()
+const showLabsSection =
+  props.courseData?.modality === 'presencial' &&
+  (normalizedTitle.includes('enfermagem') || normalizedTitle.includes('psicologia'))
+---
+
+<Header client:load />
+
+<main class="course-page">
+  <CoursePageIntro
+    categoryLabel={viewModel.categoryLabel}
+    categoryPath={viewModel.categoryPath}
+    pageHeading={viewModel.pageHeading}
+    breadcrumbCurrentLabel={viewModel.breadcrumbCurrentLabel}
+    description={props.description}
+    variant="graduation"
+  />
+
+  <GraduationCourseHeroSection
+    title={props.title}
+    leadSubmitted={props.leadSubmitted}
+    rawLabel={props.rawLabel}
+    courseValue={props.courseValue}
+    courseId={props.courseId}
+    presentation={viewModel.presentation}
+  >
+    <GraduationProfileSection presentation={viewModel.presentation} />
+  </GraduationCourseHeroSection>
+
+  <GraduationSalarySection presentation={viewModel.presentation} />
+  {showLabsSection ? <GraduationCourseLabsSection presentation={viewModel.presentation} /> : null}
+  <GraduationCareerSection presentation={viewModel.presentation} />
+
+  <GraduationCourseCurriculumSection
+    presentation={viewModel.presentation}
+    curriculumDownloadHref={viewModel.curriculumDownloadHref}
+    curriculumDownloadFilename={viewModel.curriculumDownloadFilename}
+  />
+  <GraduationRelatedCoursesSection courses={viewModel.relatedCourses} />
+  <GraduationFaqSection items={viewModel.courseFaqItems} whatsappHref={viewModel.whatsappHref} />
+</main>
+
+<FooterSection />

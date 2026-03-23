@@ -9,16 +9,15 @@
 } from 'react'
 import { Search } from 'lucide-react'
 
+import { getCoursePath } from '@/lib/courseRoutes'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
+import { saveCourseLeadDraft } from '@/course/courseLeadDraft'
 
 import { COURSE_PREFILL_EVENT, type CoursePrefillDetail } from '../coursePrefill'
-import { formCourseGroups } from '../data'
-import { fetchPostCoursesRaw } from '../postCourses'
 
 const CRM_LEAD_ENDPOINT =
   import.meta.env.VITE_CRM_LEAD_ENDPOINT ??
   '/crm-api/administrativo/leads/adicionar'
-const THANK_YOU_PATH = '/obrigado'
 const CRM_NOT_IDENTIFIED = 'Não identificado'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i
@@ -32,7 +31,12 @@ type StepTransition = {
   phase: 'out' | 'in'
   direction: StepTransitionDirection
 }
-type CourseOption = { value: string; label: string; url?: string; courseId?: number }
+type CourseOption = { value: string; label: string; courseId?: number }
+
+type HeroSectionProps = {
+  graduationOptions: CourseOption[]
+  postOptions: CourseOption[]
+}
 type FieldName = 'courseType' | 'course' | 'fullName' | 'email' | 'phone'
 type FieldErrors = Partial<Record<FieldName, string>>
 type Touched = Record<FieldName, boolean>
@@ -59,26 +63,6 @@ const STEP_TRANSITION_MS = 320
 const STEP_TRANSITION_PHASE_MS = STEP_TRANSITION_MS / 2
 const FIELD_ATTENTION_MS = 460
 
-const GRADUATION_CRM_COURSE_IDS: Record<string, number> = {
-  'graduacao-administracao': 1,
-  'graduacao-analise-desenvolvimento-sistemas': 6,
-  'graduacao-gestao-recursos-humanos': 5,
-  'graduacao-gestao-tecnologia-informacao': 4,
-  'graduacao-pedagogia': 2,
-  'graduacao-negocios-imobiliarios': 3,
-  'graduacao-logistica': 7,
-  'graduacao-processos-gerenciais': 8,
-  'graduacao-marketing': 9,
-  'graduacao-ciencias-contabeis': 11,
-  'graduacao-gestao-comercial': 12,
-  'graduacao-seguranca-publica': 15,
-  'graduacao-gestao-publica': 14,
-  'graduacao-servico-social': 16,
-  'graduacao-gestao-financeira': 13,
-  'graduacao-psicologia': 0,
-  'graduacao-enfermagem': 0,
-}
-
 function normalizeComparableText(value: string): string {
   return value
     .normalize('NFD')
@@ -86,78 +70,6 @@ function normalizeComparableText(value: string): string {
     .toLowerCase()
     .trim()
 }
-
-function toSlug(value: string): string {
-  return normalizeComparableText(value)
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
-
-function extractIntegerFromBlock(block: string, patterns: RegExp[]): number | undefined {
-  for (const pattern of patterns) {
-    const match = block.match(pattern)?.[1]?.trim()
-    if (!match) continue
-
-    const parsed = Number.parseInt(match, 10)
-    if (Number.isFinite(parsed)) return parsed
-  }
-  return undefined
-}
-
-function parsePostGraduationCourses(raw: string): CourseOption[] {
-  const blocks = raw.split(/\r?\n---\r?\n/g)
-  const unique = new Map<string, CourseOption>()
-
-  blocks.forEach((block) => {
-    const disponibilidade = block.match(/Disponibilidade:\s*(.+)/i)?.[1]?.trim()
-    const nivel = block.match(/N[ií]vel:\s*(.+)/i)?.[1]?.trim()
-    const nome = block.match(/Nome do Curso:\s*(.+)/i)?.[1]?.trim()
-    const url = block.match(/Url Curso:\s*(.+)/i)?.[1]?.trim()
-    const courseId = extractIntegerFromBlock(block, [
-      /ID\s*(?:do\s*)?Curso:\s*(\d+)/i,
-      /id\s*curso:\s*(\d+)/i,
-      /idcurso:\s*(\d+)/i,
-      /curso\s*id:\s*(\d+)/i,
-    ])
-
-    if (!disponibilidade || !nivel || !nome || !url) return
-
-    const disponibilidadeNormalizada = normalizeComparableText(disponibilidade)
-    const nivelNormalizado = normalizeComparableText(nivel)
-
-    if (!disponibilidadeNormalizada.includes('disponivel')) return
-    if (!nivelNormalizado.includes('pos-graduacao') && !nivelNormalizado.includes('pos graduacao')) {
-      return
-    }
-
-    const nomeLimpo = nome.replace(/\s+/g, ' ').trim()
-
-    let slug = ''
-    try {
-      const parsedUrl = new URL(url)
-      const segments = parsedUrl.pathname.split('/').filter(Boolean)
-      slug = segments[segments.length - 1] ?? ''
-    } catch {
-      slug = ''
-    }
-
-    if (!slug) slug = toSlug(nomeLimpo)
-    if (!slug) return
-
-    const value = `pos-${slug}`
-    if (!unique.has(value)) {
-      unique.set(value, {
-        value,
-        label: nomeLimpo,
-        url,
-        courseId,
-      })
-    }
-  })
-
-  return [...unique.values()].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'))
-}
-
 
 function normalizePhone(value: string): string {
   return value.replace(/\D/g, '').slice(0, 11)
@@ -261,10 +173,6 @@ function parseEnvInteger(value: string | undefined, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback
 }
 
-function getGraduationCourseId(courseValue: string): number {
-  return GRADUATION_CRM_COURSE_IDS[courseValue] ?? 0
-}
-
 function FormChevronDownIcon() {
   return (
     <svg width="9" height="5" viewBox="0 0 9 5" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -281,7 +189,7 @@ function FormBackIcon() {
   )
 }
 
-export function HeroSection() {
+export function HeroSection({ graduationOptions, postOptions }: HeroSectionProps) {
   const [step, setStep] = useState<FormStep>(1)
   const [courseType, setCourseType] = useState<CourseType | ''>('')
   const [isCourseTypeOpen, setIsCourseTypeOpen] = useState(false)
@@ -291,11 +199,6 @@ export function HeroSection() {
   const [course, setCourse] = useState('')
   const [courseSearch, setCourseSearch] = useState('')
   const [isCourseSearchOpen, setIsCourseSearchOpen] = useState(false)
-  const [postCourseOptions, setPostCourseOptions] = useState<CourseOption[]>([])
-  const [postCourseStatus, setPostCourseStatus] = useState<'idle' | 'loading' | 'success' | 'error'>(
-    'idle',
-  )
-  const [postCourseErrorMessage, setPostCourseErrorMessage] = useState('')
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [touched, setTouched] = useState<Touched>(EMPTY_TOUCHED)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
@@ -347,49 +250,20 @@ export function HeroSection() {
     }
   }, [isCourseTypeOpen])
 
-  const loadPostCourses = useCallback(async (force = false) => {
-    setPostCourseStatus('loading')
-    setPostCourseErrorMessage('')
-
-    try {
-      const rawText = await fetchPostCoursesRaw(force)
-      const parsedCourses = parsePostGraduationCourses(rawText)
-
-      if (!parsedCourses.length) {
-        throw new Error('No post-graduation courses were parsed from the API response')
-      }
-
-      setPostCourseOptions(parsedCourses)
-      setPostCourseStatus('success')
-    } catch (error) {
-      console.error('Erro ao carregar cursos de pós-graduação da API:', error)
-      setPostCourseOptions([])
-      setPostCourseStatus('error')
-      setPostCourseErrorMessage(
-        'Não foi possível carregar os cursos de Pós-graduação no momento.',
-      )
-    }
-  }, [])
-
-  useEffect(() => {
-    if (courseType !== 'pos' || postCourseStatus !== 'idle') return
-    void loadPostCourses()
-  }, [courseType, loadPostCourses, postCourseStatus])
-
   const allCourseOptions = useMemo<CourseOption[]>(() => {
-    return formCourseGroups.flatMap((group) => group.options)
-  }, [])
+    return graduationOptions
+  }, [graduationOptions])
 
   const courseOptionsLookup = useMemo(() => {
     const map = new Map<string, CourseOption>()
     allCourseOptions.forEach((item) => {
       map.set(item.value, item)
     })
-    postCourseOptions.forEach((item) => {
+    postOptions.forEach((item) => {
       map.set(item.value, item)
     })
     return map
-  }, [allCourseOptions, postCourseOptions])
+  }, [allCourseOptions, postOptions])
 
   const courseLookup = useMemo(() => {
     const map = new Map<string, string>()
@@ -402,9 +276,9 @@ export function HeroSection() {
   const courseOptionsByType = useMemo<Record<CourseType, CourseOption[]>>(() => {
     return {
       graduacao: allCourseOptions,
-      pos: postCourseOptions,
+      pos: postOptions,
     }
-  }, [allCourseOptions, postCourseOptions])
+  }, [allCourseOptions, postOptions])
 
   const availableCourses = useMemo(() => {
     if (!courseType) return []
@@ -432,7 +306,6 @@ export function HeroSection() {
   const canLoadMoreVisibleCourses = visibleCourses.length < filteredCourses.length
 
   const handleCourseSearchMenuScroll: UIEventHandler<HTMLDivElement> = (event) => {
-    if (courseType !== 'pos') return
     if (!canLoadMoreVisibleCourses) return
 
     const target = event.currentTarget
@@ -449,7 +322,7 @@ export function HeroSection() {
       const normalizedLabel = detail.courseLabel.trim()
       const normalizedLabelComparable = normalizeComparableText(normalizedLabel)
       const preferredOptions =
-        detail.courseType === 'graduacao' ? allCourseOptions : postCourseOptions
+        detail.courseType === 'graduacao' ? allCourseOptions : postOptions
 
       const resolvedOption = preferredOptions.find((option) => {
         return normalizeComparableText(option.label) === normalizedLabelComparable
@@ -485,11 +358,8 @@ export function HeroSection() {
         course: false,
       }))
 
-      if (detail.courseType === 'pos' && postCourseStatus === 'idle') {
-        void loadPostCourses()
-      }
     },
-    [allCourseOptions, loadPostCourses, postCourseOptions, postCourseStatus],
+    [allCourseOptions, postOptions],
   )
 
   useEffect(() => {
@@ -688,7 +558,7 @@ export function HeroSection() {
       const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 6)
       const statusLead = parseEnvInteger(import.meta.env.VITE_CRM_STATUS_LEAD, 1)
       const poloId = parseEnvInteger(import.meta.env.VITE_CRM_POLO, 4658)
-      const gradCourseId = getGraduationCourseId(course)
+      const gradCourseId = selectedCourseOption?.courseId ?? 0
       const postCourseId = selectedCourseOption?.courseId ?? 0
 
       const payload = {
@@ -769,8 +639,26 @@ export function HeroSection() {
 
       setSubmitStatus('success')
       setSubmitMessage('Cadastro enviado com sucesso.')
+      saveCourseLeadDraft({
+        courseType: isPostGraduation ? 'pos' : 'graduacao',
+        courseValue: course,
+        courseLabel,
+        courseId: selectedCourseOption?.courseId,
+        fullName: fullName.trim(),
+        email: email.trim(),
+        phone,
+      })
+      const redirectPath = getCoursePath(
+        {
+          courseType: isPostGraduation ? 'pos' : 'graduacao',
+          courseValue: course,
+          courseLabel,
+        },
+        { leadSubmitted: true },
+      )
+
       window.setTimeout(() => {
-        window.location.assign(THANK_YOU_PATH)
+        window.location.assign(redirectPath)
       }, 220)
     } catch (error) {
       console.error('Erro ao enviar lead para o CRM:', error)
@@ -784,8 +672,7 @@ export function HeroSection() {
   const emailInvalid = Boolean(touched.email && fieldErrors.email)
   const phoneInvalid = Boolean(touched.phone && fieldErrors.phone)
   const courseInvalid = Boolean(touched.course && fieldErrors.course)
-  const isPostCoursesLoading = courseType === 'pos' && postCourseStatus === 'loading'
-  const isCourseSearchDisabled = !courseType || isPostCoursesLoading
+  const isCourseSearchDisabled = !courseType
   const isStepAnimating = Boolean(stepTransition)
   const stepTransitionClass = stepTransition
     ? `is-${stepTransition.direction}-${stepTransition.phase}`
@@ -795,7 +682,7 @@ export function HeroSection() {
     COURSE_TYPE_OPTIONS.find((item) => item.value === courseType)?.label ?? 'Modalidade'
 
   const handleCourseSearchBlockedInteraction = () => {
-    if (courseType || isPostCoursesLoading) return false
+    if (courseType) return false
 
     setTouched((previous) => ({ ...previous, courseType: true }))
     setFieldErrors((previous) => ({
@@ -1004,27 +891,7 @@ export function HeroSection() {
                     aria-label="Cursos disponíveis"
                     onScroll={handleCourseSearchMenuScroll}
                   >
-                    {courseType === 'pos' && postCourseStatus === 'loading' ? (
-                      <span className="lp-course-search__empty">
-                        Carregando cursos de Pós-graduação...
-                      </span>
-                    ) : courseType === 'pos' && postCourseStatus === 'error' ? (
-                      <div className="lp-course-search__error">
-                        <span className="lp-course-search__empty">{postCourseErrorMessage}</span>
-                        <button
-                          type="button"
-                          className="lp-course-search__retry"
-                          onMouseDown={(event) => {
-                            event.preventDefault()
-                          }}
-                          onClick={() => {
-                            void loadPostCourses(true)
-                          }}
-                        >
-                          Tentar novamente
-                        </button>
-                      </div>
-                    ) : visibleCourses.length > 0 ? (
+                    {visibleCourses.length > 0 ? (
                       visibleCourses.map((item) => (
                         <button
                           key={item.value}
@@ -1050,7 +917,7 @@ export function HeroSection() {
                       <span className="lp-course-search__empty">Nenhum curso encontrado.</span>
                     )}
 
-                    {courseType === 'pos' && canLoadMoreVisibleCourses ? (
+                    {canLoadMoreVisibleCourses ? (
                       <span className="lp-course-search__empty lp-course-search__more">
                         Role para carregar mais cursos...
                       </span>

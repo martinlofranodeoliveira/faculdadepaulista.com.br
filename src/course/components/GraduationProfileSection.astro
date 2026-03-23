@@ -1,0 +1,17 @@
+---
+import type { CoursePresentation } from '../coursePageData'
+
+interface Props {
+  presentation: CoursePresentation
+}
+
+const { presentation } = Astro.props
+---
+
+<article class="course-page__grad-profile-card">
+  <div class="course-page__grad-profile-accent" aria-hidden="true"></div>
+  <div class="course-page__grad-profile-copy">
+    <h2 id="course-grad-profile-title">{presentation.graduationProfile.title}</h2>
+    <p>{presentation.graduationProfile.description}</p>
+  </div>
+</article>

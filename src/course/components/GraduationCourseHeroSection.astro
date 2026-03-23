@@ -1,0 +1,116 @@
+---
+import type { CoursePresentation } from '../coursePageData'
+import { CourseLeadForm } from '../CourseLeadForm'
+
+interface Props {
+  title: string
+  leadSubmitted?: boolean
+  rawLabel?: string
+  courseValue?: string
+  courseId?: number
+  presentation: CoursePresentation
+}
+
+const {
+  title,
+  leadSubmitted = false,
+  rawLabel,
+  courseValue,
+  courseId,
+  presentation,
+} = Astro.props
+---
+
+<div class="course-page__shell">
+  <section class="course-page__grad-hero-grid" id="detalhes">
+    <div class="course-page__grad-media-column">
+      <figure class="course-page__grad-video-frame">
+        <img
+          src={presentation.graduationHero.mediaImage}
+          alt={presentation.graduationHero.mediaAlt}
+          width="659"
+          height="371"
+          loading="eager"
+          decoding="async"
+        />
+      </figure>
+
+      <div class="course-page__grad-rating-badge" aria-label={presentation.graduationHero.ratingLabel}>
+        <span class="course-page__grad-rating-stars" aria-hidden="true">★★★★☆</span>
+        <span class="course-page__grad-rating-text">{presentation.graduationHero.ratingLabel}</span>
+      </div>
+
+      <div class="course-page__grad-highlights">
+        {presentation.graduationHero.highlights.map((item) => (
+          <div class="course-page__grad-highlight-item">
+            <span class="course-page__grad-highlight-icon-wrap" aria-hidden="true">
+              <img
+                src={item.icon}
+                alt=""
+                width="21"
+                height="21"
+                loading="lazy"
+                decoding="async"
+                class="course-page__grad-highlight-icon"
+              />
+            </span>
+            <div class="course-page__grad-highlight-copy">
+              <strong>{item.title}</strong>
+              <p>{item.text}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="course-page__grad-info-stack">
+        {presentation.infoCards.map((card, index) => (
+          <article class="course-page__grad-info-card">
+            <img
+              src={
+                index === 0
+                  ? '/course/graduation/icon-support.svg'
+                  : index === 1
+                    ? '/course/graduation/icon-internship.svg'
+                    : '/course/graduation/icon-lab.svg'
+              }
+              alt=""
+              width="38"
+              height="38"
+              loading="lazy"
+              decoding="async"
+              class="course-page__grad-info-icon"
+            />
+            <h2>{card.title}</h2>
+            <p>{card.description}</p>
+          </article>
+        ))}
+      </div>
+
+    </div>
+
+    <aside class="course-page__form-column course-page__form-column--graduation" id="course-form">
+      <div class="course-page__form-sticky course-page__form-sticky--graduation">
+        <CourseLeadForm
+          client:load
+          courseType="graduacao"
+          courseTitle={title}
+          courseLabel={rawLabel ?? title}
+          courseValue={courseValue}
+          courseId={courseId}
+          leadSubmitted={leadSubmitted}
+          paymentPlanOptions={presentation.paymentPlanOptions}
+          workloadOptions={presentation.workloadOptions}
+          pricing={presentation.pricing}
+        />
+      </div>
+    </aside>
+
+    <div class="course-page__grad-profile-band">
+      <div class="course-page__grad-profile-shell">
+        <div class="course-page__grad-profile-lane">
+          <slot />
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

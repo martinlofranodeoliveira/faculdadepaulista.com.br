@@ -1,0 +1,11 @@
+﻿---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { GraduationVestibularPage } from '@/vestibular/GraduationVestibularPage'
+
+const title = 'Vestibular | Graduação | Faculdade Paulista'
+const description = 'Selecione a forma de ingresso e continue o fluxo do vestibular.'
+---
+
+<BaseLayout title={title} description={description} canonicalPath="/graduacao/vestibular" noindex={true}>
+  <GraduationVestibularPage client:load />
+</BaseLayout>

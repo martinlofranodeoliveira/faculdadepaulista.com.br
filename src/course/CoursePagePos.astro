@@ -1,0 +1,54 @@
+---
+import { FooterSection } from '@/landing/components/FooterSection'
+import { Header } from '@/landing/components/Header'
+
+import CourseFaqSection from './components/CourseFaqSection.astro'
+import CoursePageIntro from './components/CoursePageIntro.astro'
+import PostCourseHeroSection from './components/PostCourseHeroSection.astro'
+import PostCourseCurriculumSection from './components/PostCourseCurriculumSection.astro'
+import PostCourseDifferentialsSection from './components/PostCourseDifferentialsSection.astro'
+import PostCourseSalarySection from './components/PostCourseSalarySection.astro'
+import RelatedCoursesSection from './components/RelatedCoursesSection.astro'
+import { getCoursePageViewModel, type CoursePageProps } from './coursePageShared'
+import './course.css'
+
+const props = Astro.props as CoursePageProps
+const viewModel = await getCoursePageViewModel(props)
+---
+
+<Header client:load />
+
+<main class="course-page">
+  <CoursePageIntro
+    categoryLabel={viewModel.categoryLabel}
+    categoryPath={viewModel.categoryPath}
+    pageHeading={viewModel.pageHeading}
+    breadcrumbCurrentLabel={viewModel.breadcrumbCurrentLabel}
+    description={props.description}
+    variant="post"
+  />
+
+  <PostCourseHeroSection
+    courseType="pos"
+    title={props.title}
+    leadSubmitted={props.leadSubmitted}
+    rawLabel={props.rawLabel}
+    courseValue={props.courseValue}
+    courseId={props.courseId}
+    presentation={viewModel.presentation}
+  />
+
+  <PostCourseCurriculumSection
+    curriculumVariants={viewModel.curriculumVariants}
+    activeCurriculumVariant={viewModel.activeCurriculumVariant}
+    curriculumDownloadHref={viewModel.curriculumDownloadHref}
+    curriculumDownloadFilename={viewModel.curriculumDownloadFilename}
+  />
+
+  <PostCourseSalarySection courseType="pos" presentation={viewModel.presentation} />
+  <PostCourseDifferentialsSection presentation={viewModel.presentation} />
+  <RelatedCoursesSection courses={viewModel.relatedCourses} />
+  <CourseFaqSection items={viewModel.courseFaqItems} whatsappHref={viewModel.whatsappHref} />
+</main>
+
+<FooterSection />

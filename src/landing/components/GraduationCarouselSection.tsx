@@ -1,178 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+﻿import { useEffect, useMemo, useRef, useState } from 'react'
 
+import type { LandingPostCourse } from '../landingModels'
 import { openCourseLeadModal } from '../coursePrefill'
-import { fetchPostCoursesRaw } from '../postCourses'
 
 const ALL_AREAS = '__all_areas__'
 const COURSES_PER_PAGE = 5
 
-type PostCourse = {
-  value: string
-  label: string
-  url?: string
-  courseId?: number
-  area: string
-  oldInstallmentPrice: string
-  currentInstallmentPrice: string
-}
-
-type LoadStatus = 'idle' | 'loading' | 'success' | 'error'
 type SortOrder = 'asc' | 'desc'
-
-function normalizeComparableText(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim()
-}
-
-function toSlug(value: string): string {
-  return normalizeComparableText(value)
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
-
-function normalizeApiValue(line: string): string {
-  const separatorIndex = line.indexOf(':')
-  if (separatorIndex < 0) return ''
-  return line.slice(separatorIndex + 1).trim()
-}
-
-function formatApiInstallmentPrice(value: string): string {
-  if (!value) return value
-
-  return value
-    .replace(/\s+/g, ' ')
-    .replace(/(\d+)\s*x\s*/i, '$1X ')
-    .replace(/R\$\s*/i, 'R$ ')
-    .trim()
-    .toUpperCase()
-}
-
-function fallbackOldInstallmentPrice(): string {
-  return '18X R$ 132,00'
-}
-
-function fallbackCurrentInstallmentPrice(): string {
-  return '18X R$ 66,00'
-}
-
-function extractIntegerFromBlock(block: string, patterns: RegExp[]): number | undefined {
-  for (const pattern of patterns) {
-    const match = block.match(pattern)?.[1]?.trim()
-    if (!match) continue
-
-    const parsed = Number.parseInt(match, 10)
-    if (Number.isFinite(parsed)) return parsed
-  }
-  return undefined
-}
-
-function parsePostGraduationCourses(raw: string): PostCourse[] {
-  const blocks = raw.split(/\r?\n---\r?\n/g)
-  const unique = new Map<string, PostCourse>()
-
-  blocks.forEach((block) => {
-    const lines = block
-      .split(/\r?\n/g)
-      .map((line) => line.trim())
-      .filter(Boolean)
-
-    let disponibilidade = ''
-    let nivel = ''
-    let nomeCurso = ''
-    let nomeArea = ''
-    let urlCurso = ''
-    let precoDe = ''
-    let precoPor = ''
-
-    lines.forEach((line) => {
-      const normalizedLine = normalizeComparableText(line)
-
-      if (normalizedLine.startsWith('disponibilidade:')) {
-        disponibilidade = normalizeApiValue(line)
-        return
-      }
-
-      if (normalizedLine.startsWith('nivel:') || normalizedLine.startsWith('nivel :')) {
-        nivel = normalizeApiValue(line)
-        return
-      }
-
-      if (normalizedLine.startsWith('nome do curso:')) {
-        nomeCurso = normalizeApiValue(line)
-        return
-      }
-
-      if (normalizedLine.startsWith('nome area:')) {
-        nomeArea = normalizeApiValue(line)
-        return
-      }
-
-      if (normalizedLine.startsWith('url curso:')) {
-        urlCurso = normalizeApiValue(line)
-        return
-      }
-
-      if (normalizedLine.startsWith('de:')) {
-        precoDe = normalizeApiValue(line)
-        return
-      }
-
-      if (normalizedLine.startsWith('por:')) {
-        precoPor = normalizeApiValue(line)
-      }
-    })
-
-    if (!disponibilidade || !nivel || !nomeCurso || !urlCurso) return
-
-    const disponibilidadeNormalizada = normalizeComparableText(disponibilidade)
-    const nivelNormalizado = normalizeComparableText(nivel)
-
-    if (!disponibilidadeNormalizada.includes('disponivel')) return
-    if (!nivelNormalizado.includes('pos-graduacao') && !nivelNormalizado.includes('pos graduacao')) {
-      return
-    }
-
-    const courseName = nomeCurso.replace(/\s+/g, ' ').trim()
-
-    let slug = ''
-    try {
-      const parsedUrl = new URL(urlCurso)
-      const segments = parsedUrl.pathname.split('/').filter(Boolean)
-      slug = segments[segments.length - 1] ?? ''
-    } catch {
-      slug = ''
-    }
-
-    if (!slug) slug = toSlug(courseName)
-    if (!slug) return
-
-    const value = `pos-${slug}`
-    const area = (nomeArea || 'GERAL').replace(/\s+/g, ' ').trim().toUpperCase()
-    const courseId = extractIntegerFromBlock(block, [
-      /ID\s*(?:do\s*)?Curso:\s*(\d+)/i,
-      /id\s*curso:\s*(\d+)/i,
-      /idcurso:\s*(\d+)/i,
-      /curso\s*id:\s*(\d+)/i,
-    ])
-
-    if (!unique.has(value)) {
-      unique.set(value, {
-        value,
-        label: courseName,
-        url: urlCurso,
-        courseId,
-        area,
-        oldInstallmentPrice: formatApiInstallmentPrice(precoDe) || fallbackOldInstallmentPrice(),
-        currentInstallmentPrice:
-          formatApiInstallmentPrice(precoPor) || fallbackCurrentInstallmentPrice(),
-      })
-    }
-  })
-
-  return [...unique.values()].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'))
+type Props = {
+  courses: LandingPostCourse[]
 }
 
 function GraduationLabelIcon() {
@@ -221,104 +57,32 @@ function SortFilterIcon() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <path
-        d="M3.33301 5H16.6663"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M5.83301 10H14.1663"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      <path
-        d="M8.33301 15H11.6663"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
+      <path d="M3.33301 5H16.6663" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M5.83301 10H14.1663" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M8.33301 15H11.6663" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   )
 }
 
-export function GraduationCarouselSection() {
-  const [courses, setCourses] = useState<PostCourse[]>([])
-  const [status, setStatus] = useState<LoadStatus>('idle')
-  const [shouldLoadCourses, setShouldLoadCourses] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(
-    'Não foi possível carregar os cursos de pós-graduação.',
-  )
+export function GraduationCarouselSection({ courses }: Props) {
   const [activeArea, setActiveArea] = useState(ALL_AREAS)
   const [currentPage, setCurrentPage] = useState(1)
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
-  const sectionRef = useRef<HTMLElement | null>(null)
   const listRef = useRef<HTMLDivElement | null>(null)
 
-  const loadPostCourses = useCallback(async (force = false) => {
-    setStatus('loading')
-    setErrorMessage('Não foi possível carregar os cursos de pós-graduação.')
-
-    try {
-      const rawText = await fetchPostCoursesRaw(force)
-      const parsedCourses = parsePostGraduationCourses(rawText)
-
-      if (!parsedCourses.length) {
-        throw new Error('No post-graduation courses were parsed from the API response')
-      }
-
-      setCourses(parsedCourses)
-      setStatus('success')
-    } catch (error) {
-      console.error('Erro ao carregar cursos de pós-graduação:', error)
-      setStatus('error')
-      setErrorMessage('Não foi possível carregar os cursos agora. Tente novamente em instantes.')
-    }
-  }, [])
-
-  useEffect(() => {
-    const section = sectionRef.current
-    if (!section) return
-
-    if (typeof IntersectionObserver === 'undefined') {
-      setShouldLoadCourses(true)
-      return
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return
-        setShouldLoadCourses(true)
-        observer.disconnect()
-      },
-      { rootMargin: '320px 0px' },
-    )
-
-    observer.observe(section)
-    return () => observer.disconnect()
-  }, [])
-
-  useEffect(() => {
-    if (!shouldLoadCourses || status !== 'idle') return
-    void loadPostCourses()
-  }, [loadPostCourses, shouldLoadCourses, status])
-
   const areaOptions = useMemo(() => {
-    const uniqueAreas = [...new Set(courses.map((course) => course.area))]
-      .filter(Boolean)
-      .sort((a, b) => a.localeCompare(b, 'pt-BR'))
+    const uniqueAreas = [...new Set(courses.map((course) => course.area).filter(Boolean))].sort(
+      (a, b) => a.localeCompare(b, 'pt-BR'),
+    )
 
     return [ALL_AREAS, ...uniqueAreas]
   }, [courses])
 
   const filteredCourses = useMemo(() => {
     const areaFiltered =
-      activeArea === ALL_AREAS
-        ? courses
-        : courses.filter((course) => course.area === activeArea)
+      activeArea === ALL_AREAS ? courses : courses.filter((course) => course.area === activeArea)
 
-    const sorted = [...areaFiltered].sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'))
+    const sorted = [...areaFiltered].sort((a, b) => a.title.localeCompare(b.title, 'pt-BR'))
     return sortOrder === 'asc' ? sorted : sorted.reverse()
   }, [activeArea, courses, sortOrder])
 
@@ -340,7 +104,6 @@ export function GraduationCarouselSection() {
     return filteredCourses.slice(start, start + COURSES_PER_PAGE)
   }, [filteredCourses, safeCurrentPage])
 
-  const shownCoursesCount = paginatedCourses.length
   const totalCoursesCount = filteredCourses.length
   const scopeLabel =
     activeArea === ALL_AREAS ? 'PÓS EM TODAS AS ÁREAS' : `PÓS NA ÁREA DE ${activeArea}`
@@ -365,7 +128,7 @@ export function GraduationCarouselSection() {
   }, [activeArea, safeCurrentPage, sortOrder])
 
   return (
-    <section className="lp-grad-carousel" id="pos-graduacao" ref={sectionRef}>
+    <section className="lp-grad-carousel" id="pos-graduacao">
       <div className="lp-shell">
         <header className="lp-grad-carousel__head">
           <h2>PÓS-GRADUAÇÕES EAD</h2>
@@ -388,94 +151,67 @@ export function GraduationCarouselSection() {
 
         <div className="lp-grad-carousel__divider" aria-hidden="true" />
 
-        {status === 'loading' ? (
-          <div className="lp-grad-carousel__state">Carregando cursos de pós-graduação...</div>
-        ) : null}
-
-        {status === 'error' ? (
-          <div className="lp-grad-carousel__state lp-grad-carousel__state--error">
-            <span>{errorMessage}</span>
-            <button
-              type="button"
-              className="lp-grad-carousel__retry"
-              onClick={() => void loadPostCourses(true)}
-            >
-              Tentar novamente
-            </button>
-          </div>
-        ) : null}
-
-        {status === 'success' ? (
+        {paginatedCourses.length ? (
           <>
-            {paginatedCourses.length ? (
-              <div className="lp-grad-carousel__sections">
-                <section className="lp-grad-carousel__area-section">
-                  <div className="lp-grad-carousel__scope-row">
-                    <p className="lp-grad-carousel__scope">{scopeLabel}</p>
+            <div className="lp-grad-carousel__sections">
+              <section className="lp-grad-carousel__area-section">
+                <div className="lp-grad-carousel__scope-row">
+                  <p className="lp-grad-carousel__scope">{scopeLabel}</p>
 
-                    <button
-                      type="button"
-                      className="lp-grad-carousel__sort"
-                      aria-label={
-                        sortOrder === 'asc'
-                          ? 'Ordenar cursos de Z a A'
-                          : 'Ordenar cursos de A a Z'
-                      }
-                      onClick={() =>
-                        setSortOrder((previous) => (previous === 'asc' ? 'desc' : 'asc'))
-                      }
-                    >
-                      <SortFilterIcon />
-                      <span>{sortOrder === 'asc' ? 'AZ' : 'ZA'}</span>
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    className="lp-grad-carousel__sort"
+                    aria-label={sortOrder === 'asc' ? 'Ordenar cursos de Z a A' : 'Ordenar cursos de A a Z'}
+                    onClick={() => setSortOrder((previous) => (previous === 'asc' ? 'desc' : 'asc'))}
+                  >
+                    <SortFilterIcon />
+                    <span>{sortOrder === 'asc' ? 'AZ' : 'ZA'}</span>
+                  </button>
+                </div>
 
-                  <div className="lp-grad-carousel__list" ref={listRef}>
-                    {paginatedCourses.map((course) => (
-                      <article key={course.value} className="lp-grad-carousel__item">
-                        <div className="lp-grad-carousel__content">
-                          <div className="lp-grad-carousel__meta">
-                            <span>
-                              <GraduationLabelIcon />
-                              PÓS-GRADUAÇÃO EAD
-                            </span>
-                            <span>
-                              <VideoLabelIcon />
-                              COM VIDEOAULAS
-                            </span>
-                          </div>
-
-                          <h3>{course.label}</h3>
-
-                          <div className="lp-grad-carousel__price">
-                            <strong>{course.currentInstallmentPrice}/MÊS</strong>
-                            <span>{course.oldInstallmentPrice}</span>
-                          </div>
+                <div className="lp-grad-carousel__list" ref={listRef}>
+                  {paginatedCourses.map((course) => (
+                    <article key={course.courseValue} className="lp-grad-carousel__item">
+                      <div className="lp-grad-carousel__content">
+                        <div className="lp-grad-carousel__meta">
+                          <span>
+                            <GraduationLabelIcon />
+                            PÓS-GRADUAÇÃO EAD
+                          </span>
+                          <span>
+                            <VideoLabelIcon />
+                            COM VIDEOAULAS
+                          </span>
                         </div>
 
-                        <a
-                          href="#inscricao"
-                          className="lp-grad-carousel__cta"
-                          onClick={(event) => {
-                            event.preventDefault()
-                            openCourseLeadModal({
-                              courseType: 'pos',
-                              courseValue: course.value,
-                              courseLabel: course.label,
-                              courseId: course.courseId,
-                            })
-                          }}
-                        >
-                          INSCREVA-SE
-                        </a>
-                      </article>
-                    ))}
-                  </div>
-                </section>
-              </div>
-            ) : (
-              <div className="lp-grad-carousel__state">Nenhum curso encontrado para esta área.</div>
-            )}
+                        <h3>{course.title}</h3>
+
+                        <div className="lp-grad-carousel__price">
+                          <strong>{course.currentInstallmentPrice}</strong>
+                          {course.oldInstallmentPrice ? <span>{course.oldInstallmentPrice}</span> : null}
+                        </div>
+                      </div>
+
+                      <a
+                        href="#inscricao"
+                        className="lp-grad-carousel__cta"
+                        onClick={(event) => {
+                          event.preventDefault()
+                          openCourseLeadModal({
+                            courseType: 'pos',
+                            courseValue: course.courseValue,
+                            courseLabel: course.courseLabel,
+                            courseId: course.courseId,
+                          })
+                        }}
+                      >
+                        INSCREVA-SE
+                      </a>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            </div>
 
             {totalCoursesCount > 0 ? (
               <div className="lp-grad-carousel__footer">
@@ -490,21 +226,8 @@ export function GraduationCarouselSection() {
                       disabled={!canGoToPreviousPage}
                       onClick={() => setCurrentPage((previous) => Math.max(1, previous - 1))}
                     >
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M14.5 5L8 11.5L14.5 18"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M14.5 5L8 11.5L14.5 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </button>
 
@@ -513,9 +236,7 @@ export function GraduationCarouselSection() {
                         <button
                           key={pageNumber}
                           type="button"
-                          className={`lp-grad-carousel__page-number ${
-                            safeCurrentPage === pageNumber ? 'is-active' : ''
-                          }`}
+                          className={`lp-grad-carousel__page-number ${safeCurrentPage === pageNumber ? 'is-active' : ''}`}
                           aria-label={`Ir para página ${pageNumber}`}
                           aria-current={safeCurrentPage === pageNumber ? 'page' : undefined}
                           onClick={() => setCurrentPage(pageNumber)}
@@ -532,34 +253,18 @@ export function GraduationCarouselSection() {
                       disabled={!canGoToNextPage}
                       onClick={() => setCurrentPage((previous) => Math.min(totalPages, previous + 1))}
                     >
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                      >
-                        <path
-                          d="M9.5 5L16 11.5L9.5 18"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M9.5 5L16 11.5L9.5 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </button>
                   </div>
-
-                  <p className="lp-grad-carousel__pagination-count">
-                    {shownCoursesCount} de {totalCoursesCount} cursos
-                  </p>
                 </div>
-
               </div>
             ) : null}
           </>
-        ) : null}
+        ) : (
+          <div className="lp-grad-carousel__state">Nenhum curso encontrado para esta área.</div>
+        )}
       </div>
     </section>
   )

@@ -1,10 +1,12 @@
-import { useRef } from 'react'
+﻿import { useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
+import type { LandingGraduationCourseCard } from '../landingModels'
 import { openCourseLeadModal } from '../coursePrefill'
-import { graduationCarouselCourses } from '../data'
 
-const coursesWithoutFixedBadge = new Set(['graduacao-enfermagem', 'graduacao-psicologia'])
+type Props = {
+  courses: LandingGraduationCourseCard[]
+}
 
 function getDisplayTitle(title: string): string {
   return title
@@ -13,11 +15,7 @@ function getDisplayTitle(title: string): string {
     .trim()
 }
 
-const onlineGraduationCourses = graduationCarouselCourses.filter(
-  (course) => course.modalityLabel !== 'GRADUAÇÃO PRESENCIAL',
-)
-
-export function AllGraduationsCarouselSection() {
+export function AllGraduationsCarouselSection({ courses }: Props) {
   const trackRef = useRef<HTMLDivElement | null>(null)
   const dragStateRef = useRef({
     isDragging: false,
@@ -87,7 +85,6 @@ export function AllGraduationsCarouselSection() {
     })
   }
 
-  // Drag by pointer is disabled; mobile relies on native scrolling and desktop uses arrows.
   const handlePointerDown: React.PointerEventHandler<HTMLDivElement> = () => {}
 
   const handlePointerMove: React.PointerEventHandler<HTMLDivElement> = (event) => {
@@ -188,18 +185,11 @@ export function AllGraduationsCarouselSection() {
   }
 
   return (
-    <section
-      className="lp-all-grad"
-      id="graduacao-online"
-      aria-labelledby="graduacoes-online-title"
-    >
+    <section className="lp-all-grad" id="graduacao-online" aria-labelledby="graduacoes-online-title">
       <div className="lp-shell">
         <header className="lp-all-grad__head">
           <h2 id="graduacoes-online-title">GRADUAÇÕES SEMIPRESENCIAIS / EAD</h2>
-          <p>
-            Explore nosso Catálogo de Cursos e encontre a Formação ideal para o seu
-            sucesso.
-          </p>
+          <p>Explore nosso Catálogo de Cursos e encontre a formação ideal para o seu sucesso.</p>
         </header>
 
         <div className="lp-all-grad__slider">
@@ -221,7 +211,7 @@ export function AllGraduationsCarouselSection() {
             onPointerCancel={handlePointerCancel}
             onClickCapture={handleClickCapture}
           >
-            {onlineGraduationCourses.map((course) => (
+            {courses.map((course) => (
               <article key={course.courseValue} className="lp-all-grad-card">
                 <div className="lp-all-grad-card__image-wrap">
                   <img
@@ -243,14 +233,16 @@ export function AllGraduationsCarouselSection() {
                 </div>
 
                 <div className="lp-all-grad-card__prices">
-                  <p className="lp-all-grad-card__price-old">
-                    <span>De:</span> {course.oldInstallmentPrice}
-                  </p>
+                  {course.oldInstallmentPrice ? (
+                    <p className="lp-all-grad-card__price-old">
+                      <span>De:</span> {course.oldInstallmentPrice}
+                    </p>
+                  ) : null}
                   <div className="lp-all-grad-card__price-current-row">
                     <p className="lp-all-grad-card__price-current">
                       <span>Por:</span> {course.installmentPrice}
                     </p>
-                    {!coursesWithoutFixedBadge.has(course.courseValue) ? (
+                    {course.fixedInstallments ? (
                       <span className="lp-all-grad-card__fixed">FIXOS</span>
                     ) : null}
                   </div>
@@ -264,7 +256,8 @@ export function AllGraduationsCarouselSection() {
                     openCourseLeadModal({
                       courseType: 'graduacao',
                       courseValue: course.courseValue,
-                      courseLabel: course.title,
+                      courseLabel: course.courseLabel,
+                      courseId: course.courseId,
                     })
                   }}
                 >

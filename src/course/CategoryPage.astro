@@ -1,0 +1,55 @@
+---
+import type { CoursePageEntry } from '@/lib/courseCatalog'
+import { FooterSection } from '@/landing/components/FooterSection'
+import { Header } from '@/landing/components/Header'
+
+import './category.css'
+
+interface Props {
+  categoryType: 'graduacao' | 'pos'
+  title: string
+  description: string
+  courses: Pick<CoursePageEntry, 'path' | 'title'>[]
+}
+
+const { categoryType, title, description, courses } = Astro.props
+
+const eyebrow = categoryType === 'pos' ? 'Pós-graduação' : 'Graduação'
+const categoryPath = categoryType === 'pos' ? '/pos-graduacao' : '/graduacao'
+---
+
+<Header client:load />
+
+<main class="category-page">
+  <div class="category-page__shell">
+    <section class="category-page__hero">
+      <span class="category-page__eyebrow">{eyebrow}</span>
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </section>
+
+    <section class="category-page__section">
+      <div class="category-page__section-head">
+        <div>
+          <h2>Página de categoria pronta</h2>
+          <p>
+            A rota `{categoryPath}` já está ativa para receber o visual final e servir como destino
+            dos breadcrumbs das páginas de curso.
+          </p>
+        </div>
+
+        <strong>{courses.length} cursos</strong>
+      </div>
+
+      <ul class="category-page__list">
+        {courses.map((course) => (
+          <li>
+            <a href={course.path}>{course.title}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </div>
+</main>
+
+<FooterSection />

@@ -1,0 +1,37 @@
+---
+import type { CoursePresentation } from '../coursePageData'
+
+interface Props {
+  presentation: CoursePresentation
+}
+
+const { presentation } = Astro.props
+---
+
+<section class="course-page__grad-salary-section" aria-labelledby="course-salary-title">
+  <div class="course-page__shell">
+    <article class="course-page__grad-salary-card" aria-labelledby="course-salary-title">
+      <div class="course-page__grad-salary-copy">
+        <h2 id="course-salary-title">
+          <span>{presentation.salary.accentTitle}</span>
+          <span>{presentation.salary.darkTitle}</span>
+        </h2>
+        <p>{presentation.salary.subtitle}</p>
+        <small>{presentation.salary.note}</small>
+      </div>
+
+      <div class="course-page__grad-salary-divider" aria-hidden="true"></div>
+
+      <div class="course-page__grad-salary-chart" aria-label="Faixas salariais estimadas">
+        {presentation.salary.items.map((item) => (
+          <div class="course-page__grad-salary-item">
+            <span class="course-page__grad-salary-label">{item.label}</span>
+            <strong>{item.value}</strong>
+            <div class="course-page__grad-salary-bar" style={`--bar-height:${item.height}px;`}></div>
+            <span class="course-page__grad-salary-caption">{item.caption}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  </div>
+</section>

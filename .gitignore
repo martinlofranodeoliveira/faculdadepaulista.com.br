@@ -8,12 +8,14 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+.astro
 dist
 dist-ssr
 *.local
 .env
 .env.*
 !.env.example
+tmp/
 
 # Editor directories and files
 .vscode/*

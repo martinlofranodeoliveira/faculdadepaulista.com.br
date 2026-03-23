@@ -1,3 +1,4 @@
+﻿/// <reference types="astro/client" />
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
@@ -14,7 +15,14 @@ interface ImportMetaEnv {
   readonly VITE_CRM_FONTE_TEXTO?: string
   readonly VITE_CRM_ORIGEM?: string
   readonly VITE_CRM_POLO?: string
-  readonly VITE_POS_COURSES_ENDPOINT?: string
+  readonly VITE_POST_COURSES_CACHE_TTL_MS?: string
+  readonly COURSES_API_BASE_URL?: string
+  readonly COURSES_API_KEY_FASUL?: string
+  readonly COURSES_API_KEY_UNICESP?: string
+  readonly COURSES_API_INSTITUTION_ID_FASUL?: string
+  readonly COURSES_API_INSTITUTION_ID_UNICESP?: string
+  readonly COURSES_API_CACHE_TTL_MS?: string
+  readonly VITE_CLARITY_PROJECT_ID?: string
 }
 
 interface ImportMeta {

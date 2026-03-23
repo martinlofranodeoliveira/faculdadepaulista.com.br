@@ -1,0 +1,96 @@
+﻿---
+import CoursePageGraduacao from '@/course/CoursePageGraduacao.astro'
+import NotFoundPage from '@/components/NotFoundPage.astro'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { getGraduationCoursePages } from '@/lib/courseCatalog'
+
+export const prerender = false
+
+const { slug = '' } = Astro.params
+const courses = await getGraduationCoursePages()
+const course = courses.find((entry) => entry.slug === slug)
+const leadSubmitted = Astro.url.searchParams.get('lead') === '1'
+
+if (!course) {
+  Astro.response.status = 404
+}
+
+const title = course
+  ? `${course.title} | Graduação | Faculdade Paulista`
+  : 'Curso não encontrado | Faculdade Paulista'
+const description = course
+  ? course.seoDescription || course.description
+  : 'O curso solicitado não foi encontrado.'
+const siteUrl = 'https://faculdadepaulista.com.br'
+const structuredData = course
+  ? [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Course',
+        name: course.title,
+        description,
+        provider: {
+          '@type': 'CollegeOrUniversity',
+          name: 'Faculdade Paulista',
+          url: `${siteUrl}/`,
+        },
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: `${siteUrl}/`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Graduação',
+            item: `${siteUrl}/graduacao`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: course.title,
+            item: `${siteUrl}/graduacao/${slug}`,
+          },
+        ],
+      },
+    ]
+  : undefined
+
+const notFoundTitle = 'Curso não encontrado'
+const notFoundMessage = 'Verifique o endereço ou volte para a página inicial.'
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={`/graduacao/${slug}`}
+  structuredData={structuredData}
+  noindex={!course}
+>
+  {course ? (
+    <CoursePageGraduacao
+      courseType="graduacao"
+      title={course.title}
+      description={description}
+      leadSubmitted={leadSubmitted}
+      rawLabel={course.rawLabel}
+      courseValue={course.value}
+      courseId={course.courseId}
+      currentPath={Astro.url.pathname}
+      courseData={course}
+    />
+  ) : (
+    <NotFoundPage
+      title={notFoundTitle}
+      message={notFoundMessage}
+      homeLabel="Voltar para a página inicial"
+    />
+  )}
+</BaseLayout>
+

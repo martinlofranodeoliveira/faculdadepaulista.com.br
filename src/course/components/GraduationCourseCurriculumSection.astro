@@ -1,0 +1,85 @@
+﻿---
+import type { CoursePresentation } from '../coursePageData'
+
+interface Props {
+  presentation: CoursePresentation
+  curriculumDownloadHref: string
+  curriculumDownloadFilename: string
+}
+
+const { presentation, curriculumDownloadHref, curriculumDownloadFilename } = Astro.props as Props
+const hasCurriculum = presentation.curriculum.length > 0
+const hasDownload = Boolean(curriculumDownloadHref)
+---
+
+<section class="course-page__grad-curriculum" aria-labelledby="course-curriculum-title">
+  <div class="course-page__shell course-page__grad-curriculum-shell" data-grad-curriculum-root>
+    <div class="course-page__grad-curriculum-head">
+      <h2 id="course-curriculum-title">Grade curricular</h2>
+      {
+        hasDownload ? (
+          <a
+            href={curriculumDownloadHref}
+            download={curriculumDownloadFilename}
+            class="course-page__grad-curriculum-download"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="course-page__download-icon" aria-hidden="true"></span>
+            Baixar matriz completa
+          </a>
+        ) : null
+      }
+    </div>
+
+    {
+      hasCurriculum ? (
+        <div class="course-page__grad-curriculum-list">
+          {presentation.curriculum.map((item) => (
+            <details class="course-page__grad-curriculum-item" open={item.open}>
+              <summary
+                class="course-page__grad-curriculum-summary"
+                onclick="this.parentElement.open = !this.parentElement.open; return false;"
+              >
+                <div class="course-page__grad-curriculum-title-group">
+                  <span class="course-page__grad-curriculum-label">{item.label}</span>
+                  <span class="course-page__grad-curriculum-title">{item.title}</span>
+                </div>
+
+                <div class="course-page__grad-curriculum-meta">
+                  <span class="course-page__grad-curriculum-hours">{item.hours}</span>
+                  <span class="course-page__grad-curriculum-toggle" aria-hidden="true"></span>
+                </div>
+              </summary>
+
+              {item.summary || item.disciplines?.length ? (
+                <div class="course-page__grad-curriculum-body">
+                  {item.summary ? <p>{item.summary}</p> : null}
+
+                  {item.disciplines?.length ? (
+                    <div class="course-page__grad-curriculum-disciplines">
+                      <strong>Disciplinas:</strong>
+                      <ul>
+                        {item.disciplines.map((discipline) => (
+                          <li>{discipline}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+            </details>
+          ))}
+        </div>
+      ) : (
+        <p class="course-page__grad-curriculum-empty">Matriz curricular indisponível no momento.</p>
+      )
+    }
+
+    {hasCurriculum ? (
+      <a href="#course-form" class="course-page__grad-curriculum-cta">
+        <span class="course-page__grad-curriculum-cta-text">Inscreva-se já</span>
+      </a>
+    ) : null}
+  </div>
+</section>

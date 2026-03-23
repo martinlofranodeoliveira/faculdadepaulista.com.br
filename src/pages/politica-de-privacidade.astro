@@ -1,0 +1,11 @@
+---
+import { LegalPage } from '@/legal/LegalPage'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+const title = 'Política de Privacidade | Faculdade Paulista'
+const description = 'Leia a política de privacidade da Faculdade Paulista.'
+---
+
+<BaseLayout title={title} description={description} canonicalPath="/politica-de-privacidade">
+  <LegalPage kind="privacy" />
+</BaseLayout>

@@ -1,0 +1,17 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { PostThankYouPage } from '@/thankyou/PostThankYouPage'
+
+const title = 'Inscrição finalizada | Pós-graduação | Faculdade Paulista'
+const description =
+  'Recebemos sua inscrição na pós-graduação. Agora vamos analisar seus dados e retornar em até 24h.'
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/pos-graduacao/inscricao-finalizada"
+  noindex={true}
+>
+  <PostThankYouPage client:load />
+</BaseLayout>

@@ -2008,7 +2008,7 @@ section[id] {
 }
 
 .lp-presential-card--compact-image {
-  grid-template-columns: minmax(0, 222px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 252px) minmax(0, 1fr);
 }
 
 .lp-presential-card__image {
@@ -2028,10 +2028,16 @@ section[id] {
   object-position: center top;
 }
 
+.lp-presential-card__image.is-wide {
+  max-width: 252px;
+  width: 100%;
+}
+
 .lp-presential-card__image.is-compact {
   border-radius: 16px;
   height: 423px;
-  max-width: 222px;
+  max-width: 252px;
+  width: 100%;
 }
 
 .lp-presential-card__content {

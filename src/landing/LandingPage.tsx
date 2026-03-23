@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 
 import './landing.css'
 
@@ -13,12 +13,29 @@ import { HeroSection } from './components/HeroSection'
 import { PostGraduationBannerSection } from './components/PostGraduationBannerSection'
 import { PresentialGraduationSection } from './components/PresentialGraduationSection'
 import { TestimonialsSection } from './components/TestimonialsSection'
-import {
-  COURSE_MODAL_OPEN_EVENT,
-  type CoursePrefillDetail,
-} from './coursePrefill'
+import { COURSE_MODAL_OPEN_EVENT, type CoursePrefillDetail } from './coursePrefill'
+import type {
+  LandingCourseOption,
+  LandingGraduationCourseCard,
+  LandingPostCourse,
+  LandingPresentialCourse,
+} from './landingModels'
 
-export function LandingPage() {
+type LandingPageProps = {
+  graduationOptions: LandingCourseOption[]
+  postOptions: LandingCourseOption[]
+  onlineGraduationCourses: LandingGraduationCourseCard[]
+  presentialCourses: LandingPresentialCourse[]
+  postCourses: LandingPostCourse[]
+}
+
+export function LandingPage({
+  graduationOptions,
+  postOptions,
+  onlineGraduationCourses,
+  presentialCourses,
+  postCourses,
+}: LandingPageProps) {
   const [selectedCourse, setSelectedCourse] = useState<CoursePrefillDetail | null>(null)
 
   useEffect(() => {
@@ -38,17 +55,16 @@ export function LandingPage() {
     <>
       <main className="lp-page">
         <h1 className="lp-visually-hidden">
-          Faculdade Paulista: Graduação Presencial, Semipresencial e EAD com Nota Máxima
-          no MEC
+          Faculdade Paulista: Graduação Presencial, Semipresencial e EAD com Nota Máxima no MEC
         </h1>
-        <Header />
-        <HeroSection />
-        <PresentialGraduationSection />
+        <Header isLandingPage />
+        <HeroSection graduationOptions={graduationOptions} postOptions={postOptions} />
+        <PresentialGraduationSection courses={presentialCourses} />
         <div className="lp-all-grad-shell">
-          <AllGraduationsCarouselSection />
+          <AllGraduationsCarouselSection courses={onlineGraduationCourses} />
         </div>
         <PostGraduationBannerSection />
-        <GraduationCarouselSection />
+        <GraduationCarouselSection courses={postCourses} />
         <FutureSection />
         <TestimonialsSection />
         <FaqSection />

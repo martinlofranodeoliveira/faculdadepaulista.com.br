@@ -9,6 +9,14 @@ const ThankYouPage = lazy(() =>
   import('./thankyou/ThankYouPage').then((module) => ({ default: module.ThankYouPage })),
 )
 
+const EMPTY_LANDING_DATA = {
+  graduationOptions: [] as Array<never>,
+  postOptions: [] as Array<never>,
+  onlineGraduationCourses: [] as Array<never>,
+  presentialCourses: [] as Array<never>,
+  postCourses: [] as Array<never>,
+}
+
 function App() {
   const normalizedPath =
     window.location.pathname.toLowerCase().replace(/\/+$/, '') || '/'
@@ -37,7 +45,7 @@ function App() {
     )
   }
 
-  return <LandingPage />
+  return <LandingPage {...EMPTY_LANDING_DATA} />
 }
 
 export default App

@@ -1,0 +1,39 @@
+﻿---
+import type { CoursePresentation } from '../coursePageData'
+
+interface Props {
+  presentation: CoursePresentation
+}
+
+const { presentation } = Astro.props as Props
+---
+
+<section class="course-page__career" aria-labelledby="course-career-title">
+  <div class="course-page__shell">
+    <article class="course-page__career-card">
+      <span class="course-page__career-accent" aria-hidden="true"></span>
+
+      <div class="course-page__career-copy">
+        <section class="course-page__career-block" aria-labelledby="course-career-title">
+          <h2 id="course-career-title">{presentation.graduationCareer.areaTitle}</h2>
+          <p>{presentation.graduationCareer.areaDescription}</p>
+        </section>
+
+        <section class="course-page__career-block" aria-labelledby="course-market-title">
+          <h2 id="course-market-title">{presentation.graduationCareer.marketTitle}</h2>
+          <p>{presentation.graduationCareer.marketIntro}</p>
+
+          <ul class="course-page__career-list">
+            {presentation.graduationCareer.bullets.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+
+          <p>{presentation.graduationCareer.marketClosing}</p>
+        </section>
+      </div>
+    </article>
+
+    <a class="course-page__career-cta course-page__section-cta" href="#course-form">Inscreva-se já</a>
+  </div>
+</section>

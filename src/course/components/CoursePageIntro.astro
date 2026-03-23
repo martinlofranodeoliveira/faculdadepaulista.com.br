@@ -1,0 +1,36 @@
+---
+interface Props {
+  categoryLabel: string
+  categoryPath: string
+  pageHeading: string
+  breadcrumbCurrentLabel?: string
+  description: string
+  variant?: 'default' | 'post' | 'graduation'
+}
+
+const { categoryLabel, categoryPath, pageHeading, breadcrumbCurrentLabel, description } =
+  Astro.props
+const variantClass =
+  Astro.props.variant === 'post'
+    ? ' course-page__pagehead--post'
+    : Astro.props.variant === 'graduation'
+      ? ' course-page__pagehead--graduation'
+      : ''
+---
+
+<div class={`course-page__shell course-page__pagehead${variantClass}`}>
+  <nav class="course-page__breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a>
+    <span class="course-page__breadcrumb-separator" aria-hidden="true">/</span>
+    <a href={categoryPath}>{categoryLabel}</a>
+    <span class="course-page__breadcrumb-separator" aria-hidden="true">/</span>
+    <span class="course-page__breadcrumb-current" aria-current="page">
+      {breadcrumbCurrentLabel ?? pageHeading}
+    </span>
+  </nav>
+
+  <section class="course-page__intro">
+    <h1 class="course-page__title">{pageHeading}</h1>
+    <p class="course-page__description">{description}</p>
+  </section>
+</div>

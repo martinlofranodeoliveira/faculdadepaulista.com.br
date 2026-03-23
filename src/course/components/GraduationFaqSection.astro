@@ -1,0 +1,71 @@
+---
+interface FaqItem {
+  question: string
+  answer: string
+}
+
+interface Props {
+  items: FaqItem[]
+  whatsappHref: string
+}
+
+const { items, whatsappHref } = Astro.props as Props
+---
+
+<section class="course-page__faq" aria-labelledby="course-faq-title">
+  <div class="course-page__shell">
+    <div class="course-page__faq-content">
+      <h2 id="course-faq-title">Dúvidas frequentes</h2>
+
+      <div class="course-page__faq-list">
+        {items.map((item) => (
+          <details class="course-page__faq-item">
+            <summary>
+              <span>{item.question}</span>
+              <img
+                src="/course/faq/faq-chevron.svg"
+                alt=""
+                width="12"
+                height="8"
+                loading="lazy"
+                decoding="async"
+                class="course-page__faq-toggle-icon"
+              />
+            </summary>
+            <div class="course-page__faq-answer">
+              <p>{item.answer}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+
+      <div class="course-page__faq-contact">
+        <div class="course-page__faq-contact-copy">
+          <img
+            src="/course/faq/faq-help-icon.png"
+            alt=""
+            width="57"
+            height="56"
+            loading="lazy"
+            decoding="async"
+            class="course-page__faq-contact-icon"
+          />
+
+          <div class="course-page__faq-contact-text">
+            <strong>Ainda tem dúvidas?</strong>
+            <p>Fale com nossas consultoras no WhatsApp</p>
+          </div>
+        </div>
+
+        <a
+          href={whatsappHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="course-page__faq-help-cta"
+        >
+          Converse conosco
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,31 @@
+﻿---
+import { FooterSection } from '@/landing/components/FooterSection'
+import { Header } from '@/landing/components/Header'
+
+import CategoryBreadcrumb from './components/CategoryBreadcrumb.astro'
+import CategorySwitchBar from './components/CategorySwitchBar.astro'
+import PostCategoryExplorer from './components/PostCategoryExplorer'
+import type { PostCategoryCourse } from './postCategoryData'
+
+import './category.css'
+
+interface Props {
+  courses: PostCategoryCourse[]
+}
+
+const { courses } = Astro.props
+---
+
+<Header client:load />
+
+<main class="category-page category-page--post">
+  <CategorySwitchBar current="pos" />
+
+  <div class="category-page__shell">
+    <CategoryBreadcrumb currentLabel="Pós-graduação" />
+    <PostCategoryExplorer client:load courses={courses} />
+  </div>
+</main>
+
+<FooterSection />
+

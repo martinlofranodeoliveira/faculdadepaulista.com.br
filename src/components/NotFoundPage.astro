@@ -1,0 +1,106 @@
+---
+interface Props {
+  code?: string
+  title?: string
+  message?: string
+  homeHref?: string
+  homeLabel?: string
+}
+
+const {
+  code = 'Erro 404',
+  title = 'Página não encontrada',
+  message = 'O endereço acessado não existe ou não está mais disponível.',
+  homeHref = '/',
+  homeLabel = 'Voltar para a página inicial',
+} = Astro.props
+---
+
+<main class="not-found-page">
+  <div class="not-found-page__card">
+    <p class="not-found-page__code">{code}</p>
+    <h1 class="not-found-page__title">{title}</h1>
+    <p class="not-found-page__message">{message}</p>
+    <a class="not-found-page__button" href={homeHref}>{homeLabel}</a>
+  </div>
+</main>
+
+<style>
+  .not-found-page {
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding: 32px 20px;
+    background:
+      radial-gradient(circle at top right, rgba(248, 0, 102, 0.1), transparent 32%),
+      linear-gradient(180deg, #fff 0%, #f4f4f4 100%);
+  }
+
+  .not-found-page__card {
+    width: min(100%, 560px);
+    padding: 40px 32px;
+    border-radius: 28px;
+    background: #fff;
+    box-shadow: 0 24px 60px rgba(27, 18, 18, 0.12);
+    text-align: center;
+  }
+
+  .not-found-page__code {
+    margin: 0 0 12px;
+    color: #f80000;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .not-found-page__title {
+    margin: 0;
+    color: #171717;
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1;
+  }
+
+  .not-found-page__message {
+    margin: 18px 0 0;
+    color: #585858;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .not-found-page__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 250px;
+    min-height: 52px;
+    margin-top: 28px;
+    padding: 0 28px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #fe0000 0%, #fe0066 100%);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  @media (max-width: 720px) {
+    .not-found-page {
+      padding: 20px 16px;
+    }
+
+    .not-found-page__card {
+      padding: 32px 20px;
+      border-radius: 22px;
+    }
+
+    .not-found-page__message {
+      font-size: 15px;
+    }
+
+    .not-found-page__button {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+</style>

@@ -1,0 +1,29 @@
+﻿---
+import PostCategoryPage from '@/course/PostCategoryPage.astro'
+import { getPostCategoryCourses } from '@/course/postCategoryData'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+export const prerender = false
+
+const courses = await getPostCategoryCourses()
+const title = 'Pós-graduação | Faculdade Paulista'
+const description =
+  'Conheça os cursos de pós-graduação da Faculdade Paulista e navegue pelas páginas de curso com estrutura preparada para SEO.'
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Pós-graduação Faculdade Paulista',
+  description,
+  url: 'https://faculdadepaulista.com.br/pos-graduacao',
+}
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/pos-graduacao"
+  structuredData={structuredData}
+>
+  <PostCategoryPage courses={courses} />
+</BaseLayout>
+

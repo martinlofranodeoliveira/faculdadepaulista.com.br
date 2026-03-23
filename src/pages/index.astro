@@ -1,0 +1,66 @@
+﻿---
+import { getLandingPageData } from '@/landing/landingData.server'
+import { LandingPage } from '@/landing/LandingPage'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+
+const title = 'Faculdade Paulista | Graduação e Pós-graduação com Nota Máxima no MEC'
+const description =
+  'Estude na Faculdade Paulista com cursos de Graduação e Pós-graduação EAD e presencial. Matrículas abertas, professores qualificados e suporte especializado.'
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CollegeOrUniversity',
+      name: 'Faculdade Paulista',
+      url: 'https://faculdadepaulista.com.br/',
+      logo: 'https://faculdadepaulista.com.br/android-chrome-512x512.png',
+      telephone: '+55 35 9806-0604',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Rua Dr. Diogo de Faria, 66 - Vila Mariana',
+        addressLocality: 'São Paulo',
+        addressRegion: 'SP',
+        postalCode: '04037-000',
+        addressCountry: 'BR',
+      },
+    },
+    {
+      '@type': 'WebSite',
+      name: 'Faculdade Paulista',
+      url: 'https://faculdadepaulista.com.br/',
+      inLanguage: 'pt-BR',
+    },
+  ],
+}
+
+const landingData = await getLandingPageData()
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath="/"
+  structuredData={structuredData}
+>
+  <Fragment slot="head">
+    <link
+      rel="preload"
+      as="image"
+      href="/landing/bg-hero-estudante-faculdade-paulista.webp"
+      type="image/webp"
+      media="(min-width: 721px)"
+      imagesizes="100vw"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/landing/bg-hero-estudante-faculdade-paulista-mobile.webp"
+      type="image/webp"
+      media="(max-width: 720px)"
+      imagesizes="100vw"
+    />
+  </Fragment>
+
+  <LandingPage client:load {...landingData} />
+</BaseLayout>

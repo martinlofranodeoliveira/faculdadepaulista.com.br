@@ -1,36 +1,17 @@
 ﻿import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 
+import { getCourseDisplayTitle, getCoursePath } from '@/lib/courseRoutes'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
+import { saveCourseLeadDraft } from '@/course/courseLeadDraft'
 
 import type { CoursePrefillDetail } from '../coursePrefill'
 
 const CRM_LEAD_ENDPOINT =
   import.meta.env.VITE_CRM_LEAD_ENDPOINT ??
   '/crm-api/administrativo/leads/adicionar'
-const THANK_YOU_PATH = '/obrigado'
 const CRM_NOT_IDENTIFIED = 'Não identificado'
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i
 const NAME_REGEX = /^[\p{L}\s.'-]+$/u
-
-const GRADUATION_CRM_COURSE_IDS: Record<string, number> = {
-  'graduacao-administracao': 1,
-  'graduacao-analise-desenvolvimento-sistemas': 6,
-  'graduacao-gestao-recursos-humanos': 5,
-  'graduacao-gestao-tecnologia-informacao': 4,
-  'graduacao-pedagogia': 2,
-  'graduacao-negocios-imobiliarios': 3,
-  'graduacao-logistica': 7,
-  'graduacao-processos-gerenciais': 8,
-  'graduacao-marketing': 9,
-  'graduacao-ciencias-contabeis': 11,
-  'graduacao-gestao-comercial': 12,
-  'graduacao-seguranca-publica': 15,
-  'graduacao-gestao-publica': 14,
-  'graduacao-servico-social': 16,
-  'graduacao-gestao-financeira': 13,
-  'graduacao-psicologia': 0,
-  'graduacao-enfermagem': 0,
-}
 
 type FieldErrors = {
   fullName?: string
@@ -125,19 +106,6 @@ function parseEnvInteger(value: string | undefined, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback
 }
 
-function getGraduationCourseId(courseValue: string | undefined): number {
-  if (!courseValue) return 0
-  return GRADUATION_CRM_COURSE_IDS[courseValue] ?? 0
-}
-
-function stripCourseModality(label: string): string {
-  return label
-    .replace(/\s*\((?:semipresencial|presencial|ead)\)\s*/gi, ' ')
-    .replace(/\b(?:semipresencial|presencial|ead)\b/gi, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-}
-
 export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -189,7 +157,7 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
   const courseLabel = selection?.courseLabel ?? ''
   const isPostGraduation = selection?.courseType === 'pos'
   const courseHeadingPrefix = isPostGraduation ? 'PÓS EM' : 'GRADUAÇÃO EM'
-  const displayCourseLabel = isPostGraduation ? courseLabel : stripCourseModality(courseLabel)
+  const displayCourseLabel = selection ? getCourseDisplayTitle(selection) : courseLabel
   const modalHeaderImage = isPostGraduation
     ? '/landing/bgmodal-pos.webp'
     : '/landing/bgmodal.webp'
@@ -231,7 +199,7 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
       const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 6)
       const statusLead = parseEnvInteger(import.meta.env.VITE_CRM_STATUS_LEAD, 1)
       const poloId = parseEnvInteger(import.meta.env.VITE_CRM_POLO, 4658)
-      const gradCourseId = getGraduationCourseId(selection.courseValue)
+      const gradCourseId = selection.courseId ?? 0
       const postCourseId = selection.courseId ?? 0
 
       const payload = {
@@ -312,9 +280,26 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
 
       setSubmitStatus('success')
       setSubmitMessage('Cadastro enviado com sucesso.')
+      saveCourseLeadDraft({
+        courseType: selection.courseType,
+        courseValue: selection.courseValue,
+        courseLabel,
+        courseId: selection.courseId,
+        fullName: fullName.trim(),
+        email: email.trim(),
+        phone,
+      })
+      const redirectPath = getCoursePath(
+        {
+          courseType: selection.courseType,
+          courseValue: selection.courseValue,
+          courseLabel,
+        },
+        { leadSubmitted: true },
+      )
 
       closeTimer.current = window.setTimeout(() => {
-        window.location.assign(THANK_YOU_PATH)
+        window.location.assign(redirectPath)
       }, 220)
     } catch (error) {
       console.error('Erro ao enviar lead para o CRM:', error)
@@ -399,4 +384,5 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
     </div>
   )
 }
+
 

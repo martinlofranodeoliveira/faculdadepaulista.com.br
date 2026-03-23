@@ -1,0 +1,13 @@
+---
+interface Props {
+  currentLabel: string
+}
+
+const { currentLabel } = Astro.props
+---
+
+<nav class="category-page__breadcrumb" aria-label="Breadcrumb">
+  <a href="/">Home</a>
+  <span>/</span>
+  <strong>{currentLabel}</strong>
+</nav>

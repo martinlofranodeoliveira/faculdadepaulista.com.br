@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 set -euo pipefail
 
 # Usage:
@@ -9,10 +9,12 @@ set -euo pipefail
 #   REPO_URL=https://github.com/<user>/faculdadepaulista.com.br.git
 #   TARGET_DIR=/www/wwwroot/faculdadepaulista.com.br
 #   BRANCH=main
+#   APP_RESTART_CMD="systemctl restart faculdadepaulista"
 
 REPO_URL="${REPO_URL:-https://github.com/martinlofranodeoliveira/faculdadepaulista.com.br.git}"
 TARGET_DIR="${TARGET_DIR:-/www/wwwroot/faculdadepaulista.com.br}"
 BRANCH="${BRANCH:-main}"
+APP_RESTART_CMD="${APP_RESTART_CMD:-}"
 
 echo "==> Repo:   $REPO_URL"
 echo "==> Pasta:  $TARGET_DIR"
@@ -36,5 +38,10 @@ npm ci
 
 echo "==> Build de produção..."
 npm run build
+
+if [ -n "$APP_RESTART_CMD" ]; then
+  echo "==> Reiniciando aplicação..."
+  eval "$APP_RESTART_CMD"
+fi
 
 echo "==> OK: build gerada em $TARGET_DIR/dist"

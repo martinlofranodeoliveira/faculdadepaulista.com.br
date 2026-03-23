@@ -27,7 +27,12 @@ const siteUrl = Astro.site ?? new URL('https://faculdadepaulista.com.br')
 const canonicalUrl = new URL(canonicalPath, siteUrl).toString()
 const socialImage = new URL(image, siteUrl).toString()
 const clarityProjectId = import.meta.env.VITE_CLARITY_PROJECT_ID?.trim()
-const robotsContent = noindex
+const sitewideNoindex = ['1', 'true', 'yes', 'on'].includes(
+  String(import.meta.env.SITE_NOINDEX ?? '')
+    .trim()
+    .toLowerCase(),
+)
+const robotsContent = noindex || sitewideNoindex
   ? 'noindex, nofollow'
   : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
 const serializedStructuredData = structuredData

@@ -4,6 +4,14 @@ import { buildSitemapXml, getSitemapEntries } from '@/lib/sitemap'
 
 export const prerender = false
 
+function isSitewideNoindexEnabled(): boolean {
+  return ['1', 'true', 'yes', 'on'].includes(
+    String(import.meta.env.SITE_NOINDEX ?? '')
+      .trim()
+      .toLowerCase(),
+  )
+}
+
 function resolveCacheControlHeader(): string {
   const rawTtl = import.meta.env.VITE_POST_COURSES_CACHE_TTL_MS
   const ttlInMilliseconds = rawTtl ? Number.parseInt(rawTtl, 10) : 300000
@@ -17,6 +25,15 @@ function resolveCacheControlHeader(): string {
 }
 
 export const GET: APIRoute = async () => {
+  if (isSitewideNoindexEnabled()) {
+    return new Response('Not Found', {
+      status: 404,
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    })
+  }
+
   const entries = await getSitemapEntries()
   const xml = buildSitemapXml(entries)
 

@@ -18,10 +18,8 @@ interface ImportMetaEnv {
   readonly VITE_CRM_POLO?: string
   readonly VITE_POST_COURSES_CACHE_TTL_MS?: string
   readonly COURSES_API_BASE_URL?: string
-  readonly COURSES_API_KEY_FASUL?: string
-  readonly COURSES_API_KEY_UNICESP?: string
-  readonly COURSES_API_INSTITUTION_ID_FASUL?: string
-  readonly COURSES_API_INSTITUTION_ID_UNICESP?: string
+  readonly COURSES_API_KEY?: string
+  readonly COURSES_API_INSTITUTION_ID?: string
   readonly COURSES_API_CACHE_TTL_MS?: string
   readonly VITE_CLARITY_PROJECT_ID?: string
 }

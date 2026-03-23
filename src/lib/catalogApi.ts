@@ -256,29 +256,18 @@ function baseHasPublicPrefix(): boolean {
 }
 
 function getInstitutionConfigs(): InstitutionConfig[] {
-  const entries: InstitutionConfig[] = []
+  const paulistaKey = readServerEnv('COURSES_API_KEY')?.trim()
 
-  const fasulKey = readServerEnv('COURSES_API_KEY_FASUL')?.trim()
-  if (fasulKey) {
-    entries.push({
-      id: parseInstitutionId(readServerEnv('COURSES_API_INSTITUTION_ID_FASUL'), 1),
-      name: 'FASUL',
-      slug: 'fasul',
-      apiKey: fasulKey,
-    })
-  }
+  if (!paulistaKey) return []
 
-  const unicespKey = readServerEnv('COURSES_API_KEY_UNICESP')?.trim()
-  if (unicespKey) {
-    entries.push({
-      id: parseInstitutionId(readServerEnv('COURSES_API_INSTITUTION_ID_UNICESP'), 2),
-      name: 'UNICESP',
-      slug: 'unicesp',
-      apiKey: unicespKey,
-    })
-  }
-
-  return entries
+  return [
+    {
+      id: parseInstitutionId(readServerEnv('COURSES_API_INSTITUTION_ID'), 6),
+      name: 'PAULISTA',
+      slug: 'paulista',
+      apiKey: paulistaKey,
+    },
+  ]
 }
 
 function parseInstitutionId(value: string | undefined, fallback: number): number {
@@ -847,6 +836,7 @@ async function getCourseBundle(
 }
 
 function getInstitutionPreference(institutionSlug: string): number {
+  if (institutionSlug === 'paulista') return 30
   if (institutionSlug === 'unicesp') return 20
   if (institutionSlug === 'fasul') return 10
   return 0

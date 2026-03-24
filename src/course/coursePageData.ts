@@ -79,6 +79,8 @@ export type CoursePresentation = {
   }
   paymentPlanGroups: Array<{
     workload: string
+    workloadVariantId: number | null
+    pricingId: number | null
     totalAmountCents: number
     currentInstallmentText: string
     paymentPlanOptions: string[]
@@ -133,6 +135,8 @@ function buildPostPaymentPlanGroups(course: CatalogCourse | undefined) {
     string,
     {
       workload: string
+      workloadVariantId: number | null
+      pricingId: number | null
       totalAmountCents: number
       totalHours: number
     }
@@ -148,6 +152,8 @@ function buildPostPaymentPlanGroups(course: CatalogCourse | undefined) {
     if (!current || item.amountCents < current.totalAmountCents) {
       grouped.set(workload, {
         workload,
+        workloadVariantId: item.workloadVariantId,
+        pricingId: item.id,
         totalAmountCents: item.amountCents,
         totalHours: item.totalHours,
       })
@@ -164,6 +170,8 @@ function buildPostPaymentPlanGroups(course: CatalogCourse | undefined) {
     })
     .map((entry) => ({
       workload: entry.workload,
+      workloadVariantId: entry.workloadVariantId,
+      pricingId: entry.pricingId,
       totalAmountCents: entry.totalAmountCents,
       currentInstallmentText: `${formatCurrencyAmount(entry.totalAmountCents / 100 / 18).toUpperCase()}/MÊS`,
       paymentPlanOptions: buildPaymentPlanOptionsFromTotal(entry.totalAmountCents),
@@ -370,16 +378,16 @@ function buildGraduationCareer(course: CatalogCourse | undefined, title: string)
   }
 }
 
-function buildDifferentials(course: CatalogCourse | undefined) {
-  const lines = splitDifferentials(course?.competitiveDifferentials || '')
+function buildDifferentials() {
   const defaults = [
-    {
-      icon: '/course/differentials/ava.svg',
-      title: 'Ambiente Virtual de Aprendizagem',
-      description: 'Acesso 24 horas por dia, via aplicativo ou web, garantindo flexibilidade para estudar no seu ritmo.',
-    },
-    {
-      icon: '/course/differentials/biblioteca.svg',
+      {
+        icon: '/course/differentials/ava.svg',
+        title: 'Ambiente Virtual de Aprendizagem',
+        description:
+          'Ambiente Virtual de Aprendizagem (AVA) moderno e intuitivo, com acesso 24 horas por dia, via aplicativo ou web, garantindo flexibilidade para estudar no seu ritmo, de onde estiver.',
+      },
+      {
+        icon: '/course/differentials/biblioteca.svg',
       title: 'Biblioteca digital',
       description: 'Acervo digital com livros, artigos científicos e conteúdos de apoio ao longo do curso.',
     },
@@ -400,16 +408,13 @@ function buildDifferentials(course: CatalogCourse | undefined) {
       description: 'Integra teoria e prática, favorecendo o raciocínio crítico e a tomada de decisão profissional.',
       wide: true,
     },
-  ]
+    ]
 
-  return {
-    title: 'Principais diferenciais do curso',
-    items: defaults.map((item, index) => ({
-      ...item,
-      description: lines[index] || item.description,
-    })),
+    return {
+      title: 'Principais diferenciais do curso',
+      items: defaults,
+    }
   }
-}
 
 function buildSalary(title: string, areaLabel: string, courseType: CourseType): CoursePresentation['salary'] {
   const salaryArea = (areaLabel || title).toUpperCase()
@@ -534,7 +539,7 @@ export function getCoursePagePresentation({ course, courseType, title, area }: I
       secondaryImage: '/course/graduation-labs/lab-secondary.webp',
     },
     graduationCareer: buildGraduationCareer(course, title),
-    differentials: buildDifferentials(course),
+    differentials: buildDifferentials(),
     pricing: {
       oldInstallmentText: course?.oldInstallmentPrice || '',
       currentInstallmentText: currentPrice,

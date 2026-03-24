@@ -57,14 +57,20 @@ const { items, whatsappHref } = Astro.props as Props
           </div>
         </div>
 
-        <a
-          href={whatsappHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="course-page__faq-help-cta"
-        >
-          Converse conosco
-        </a>
+        {whatsappHref ? (
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="course-page__faq-help-cta"
+          >
+            Converse conosco
+          </a>
+        ) : (
+          <span class="course-page__faq-help-cta" aria-disabled="true">
+            Converse conosco
+          </span>
+        )}
       </div>
     </div>
   </div>

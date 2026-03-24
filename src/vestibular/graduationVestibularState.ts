@@ -1,6 +1,10 @@
 export type GraduationVestibularLead = {
   fullName: string
   email: string
+  journeyId?: number
+  courseId?: number
+  courseLabel?: string
+  courseValue?: string
 }
 
 const GRADUATION_VESTIBULAR_STORAGE_KEY = 'graduation-vestibular-lead'
@@ -10,10 +14,14 @@ export function storeGraduationVestibularLead(lead: GraduationVestibularLead) {
 
   window.sessionStorage.setItem(
     GRADUATION_VESTIBULAR_STORAGE_KEY,
-    JSON.stringify({
-      fullName: lead.fullName.trim(),
-      email: lead.email.trim(),
-    }),
+      JSON.stringify({
+        fullName: lead.fullName.trim(),
+        email: lead.email.trim(),
+        journeyId: lead.journeyId,
+        courseId: lead.courseId,
+        courseLabel: lead.courseLabel?.trim(),
+        courseValue: lead.courseValue?.trim(),
+      }),
   )
 }
 
@@ -30,8 +38,17 @@ export function readGraduationVestibularLead(): GraduationVestibularLead | null 
     return {
       fullName: parsed.fullName,
       email: typeof parsed.email === 'string' ? parsed.email : '',
+      journeyId: typeof parsed.journeyId === 'number' ? parsed.journeyId : undefined,
+      courseId: typeof parsed.courseId === 'number' ? parsed.courseId : undefined,
+      courseLabel: typeof parsed.courseLabel === 'string' ? parsed.courseLabel : undefined,
+      courseValue: typeof parsed.courseValue === 'string' ? parsed.courseValue : undefined,
     }
   } catch {
     return null
   }
+}
+
+export function clearGraduationVestibularLead() {
+  if (typeof window === 'undefined') return
+  window.sessionStorage.removeItem(GRADUATION_VESTIBULAR_STORAGE_KEY)
 }

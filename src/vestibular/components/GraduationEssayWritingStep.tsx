@@ -1,8 +1,14 @@
 ﻿import { useMemo, useRef, useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, LoaderCircle } from 'lucide-react'
+
+import type { EssayThemeId } from './GraduationEssayThemeStep'
 
 type Props = {
   onBack: () => void
+  onFinish: (payload: { themeId: EssayThemeId; title: string; text: string }) => Promise<void> | void
+  selectedThemeId: EssayThemeId
+  isSubmitting?: boolean
+  submitError?: string
 }
 
 const MIN_ESSAY_TITLE_LENGTH = 5
@@ -11,7 +17,13 @@ const MIN_ESSAY_BODY_LENGTH = 300
 const MAX_ESSAY_BODY_LENGTH = 5000
 const MIN_ESSAY_LINES = 15
 
-export function GraduationEssayWritingStep({ onBack }: Props) {
+export function GraduationEssayWritingStep({
+  onBack,
+  onFinish,
+  selectedThemeId,
+  isSubmitting = false,
+  submitError,
+}: Props) {
   const [essayTitle, setEssayTitle] = useState('')
   const [essay, setEssay] = useState('')
   const [hasTriedFinish, setHasTriedFinish] = useState(false)
@@ -37,7 +49,7 @@ export function GraduationEssayWritingStep({ onBack }: Props) {
   const showTitleError = hasTriedFinish && !isTitleValid
   const showEssayError = hasTriedFinish && !isEssayValid
 
-  function handleFinish() {
+  async function handleFinish() {
     if (!isTitleValid) {
       setHasTriedFinish(true)
       titleRef.current?.focus()
@@ -50,13 +62,17 @@ export function GraduationEssayWritingStep({ onBack }: Props) {
       return
     }
 
-    window.location.assign('/graduacao/inscricao-finalizada')
+    await onFinish({
+      themeId: selectedThemeId,
+      title: essayTitle.trim(),
+      text: essay.trim(),
+    })
   }
 
   return (
     <section className="vestibular-step vestibular-step--essay-writing" aria-labelledby="vestibular-step-title">
       <div className="vestibular-step__shell">
-        <button type="button" className="vestibular-step__back" onClick={onBack}>
+        <button type="button" className="vestibular-step__back" onClick={onBack} disabled={isSubmitting}>
           <ArrowLeft size={18} strokeWidth={2.1} aria-hidden="true" />
           <span>Voltar</span>
         </button>
@@ -113,9 +129,12 @@ export function GraduationEssayWritingStep({ onBack }: Props) {
           </p>
         ) : null}
 
+        {submitError ? <p className="vestibular-step__validation-error">{submitError}</p> : null}
+
         <div className="vestibular-step__actions">
           <p>{`Quantidade de caracteres: ${essayCharacterCount} / ${MAX_ESSAY_BODY_LENGTH} · Linhas: ${essayLineCount} / ${MIN_ESSAY_LINES}`}</p>
-          <button type="button" className="vestibular-step__continue" onClick={handleFinish}>
+          <button type="button" className="vestibular-step__continue" onClick={handleFinish} disabled={isSubmitting}>
+            {isSubmitting ? <LoaderCircle size={18} className="is-spinning" /> : null}
             FINALIZAR
           </button>
         </div>

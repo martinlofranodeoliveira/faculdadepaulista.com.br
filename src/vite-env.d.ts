@@ -16,6 +16,7 @@ interface ImportMetaEnv {
   readonly VITE_CRM_FONTE_TEXTO?: string
   readonly VITE_CRM_ORIGEM?: string
   readonly VITE_CRM_POLO?: string
+  readonly VITE_JOURNEY_DEFAULT_POLE_ID?: string
   readonly VITE_POST_COURSES_CACHE_TTL_MS?: string
   readonly COURSES_API_BASE_URL?: string
   readonly COURSES_API_KEY?: string

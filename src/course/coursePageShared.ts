@@ -7,6 +7,7 @@ import {
 
 import { getCourseFaqItems } from './courseFaqData'
 import { getCoursePagePresentation, type CoursePresentation } from './coursePageData'
+import { buildCurriculumPdfUrl } from './curriculumPdf'
 
 export type CourseType = 'graduacao' | 'pos'
 
@@ -74,24 +75,6 @@ function slugifyFilePart(value: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-function buildCurriculumDownloadHref(
-  pageHeading: string,
-  curriculum: Array<{ title: string; hours: string }>,
-  totalHours: number,
-) {
-  const lines = [
-    pageHeading,
-    '',
-    'GRADE CURRICULAR',
-    '',
-    ...curriculum.flatMap((item) => [`${item.title} - ${formatHoursLabel(item.hours)}`]),
-    '',
-    `TOTAL: ${formatHoursLabel(`${totalHours}h`)}`,
-  ]
-
-  return `data:text/plain;charset=utf-8,${encodeURIComponent(lines.join('\n'))}`
-}
-
 function buildBreadcrumbCurrentLabel(courseType: CourseType, title: string, rawLabel?: string) {
   if (courseType === 'pos') return `Pós-graduação em ${title}`
 
@@ -125,7 +108,7 @@ function mapPostCurriculumVariants(course: CatalogCourse, pageHeading: string): 
       variant.totalHours || curriculum.reduce((sum, item) => sum + parseHoursValue(item.hours), 0)
     const chipLabel = totalHours ? `${totalHours}H` : variant.name.toUpperCase()
     const option = totalHours ? `${totalHours} Horas` : variant.name
-    const filename = `${slugifyFilePart(pageHeading)}-${slugifyFilePart(chipLabel)}-matriz-curricular.txt`
+    const filename = `${slugifyFilePart(pageHeading)}-${slugifyFilePart(chipLabel)}-matriz-curricular.pdf`
 
     return {
       id: String(variant.id || chipLabel.toLowerCase()),
@@ -134,7 +117,7 @@ function mapPostCurriculumVariants(course: CatalogCourse, pageHeading: string): 
       totalHours,
       curriculum,
       downloadHref:
-        course.teachingPlanUrl || buildCurriculumDownloadHref(pageHeading, curriculum, totalHours),
+        course.teachingPlanUrl || buildCurriculumPdfUrl('pos', course.slug, variant.id || chipLabel.toLowerCase()),
       downloadFilename: course.teachingPlanUrl
         ? course.teachingPlanUrl.split('/').pop() || filename
         : filename,
@@ -168,7 +151,7 @@ export async function getCoursePageViewModel({
     courseType === 'pos' ? await getPostCoursePageSummaries() : await getGraduationCoursePageSummaries()
 
   const relatedCourses = mapRelatedCourses(relatedPool, currentPath)
-  const whatsappHref = 'https://wa.me/553598060604'
+  const whatsappHref = ''
 
   const curriculumVariants =
     courseType === 'pos' && courseData ? mapPostCurriculumVariants(courseData, pageHeading) : []
@@ -182,16 +165,17 @@ export async function getCoursePageViewModel({
     curriculumSource.reduce((total, item) => total + parseHoursValue(item.hours), 0)
   const curriculumDownloadHref =
     courseType === 'graduacao'
-      ? courseData?.teachingPlanUrl || ''
+      ? courseData?.teachingPlanUrl || (courseData ? buildCurriculumPdfUrl('graduacao', courseData.slug) : '')
       : activeCurriculumVariant?.downloadHref ??
         courseData?.teachingPlanUrl ??
-        buildCurriculumDownloadHref(pageHeading, curriculumSource, curriculumTotalHours)
+        (courseData ? buildCurriculumPdfUrl('pos', courseData.slug, activeCurriculumVariant?.id) : '')
   const curriculumDownloadFilename =
     courseType === 'graduacao'
-      ? (courseData?.teachingPlanUrl ? courseData.teachingPlanUrl.split('/').pop() || '' : '')
+      ? ((courseData?.teachingPlanUrl ? courseData.teachingPlanUrl.split('/').pop() || '' : '') ||
+        `${slugifyFilePart(pageHeading)}-matriz-curricular.pdf`)
       : activeCurriculumVariant?.downloadFilename ??
         ((courseData?.teachingPlanUrl ? courseData.teachingPlanUrl.split('/').pop() || '' : '') ||
-          `${slugifyFilePart(pageHeading)}-matriz-curricular.txt`)
+          `${slugifyFilePart(pageHeading)}-matriz-curricular.pdf`)
 
   return {
     categoryLabel,

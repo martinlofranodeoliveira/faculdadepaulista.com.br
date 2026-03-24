@@ -1,11 +1,14 @@
 ﻿import { useMemo, useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, LoaderCircle } from 'lucide-react'
 
 import type { AdmissionOptionId } from '../GraduationVestibularPage'
 
 type Props = {
   admissionOptionId: AdmissionOptionId
   onBack: () => void
+  onFinish: () => Promise<void> | void
+  isSubmitting?: boolean
+  submitError?: string
 }
 
 type InstallmentRow = {
@@ -37,23 +40,29 @@ function getOptionTitle(admissionOptionId: AdmissionOptionId) {
   }
 }
 
-export function GraduationEnrollmentOfferStep({ admissionOptionId, onBack }: Props) {
+export function GraduationEnrollmentOfferStep({
+  admissionOptionId,
+  onBack,
+  onFinish,
+  isSubmitting = false,
+  submitError,
+}: Props) {
   const [hasAcceptedContract, setHasAcceptedContract] = useState(false)
   const [isContractModalOpen, setIsContractModalOpen] = useState(false)
   const optionTitle = useMemo(() => getOptionTitle(admissionOptionId), [admissionOptionId])
 
-  function handleFinish() {
+  async function handleFinish() {
     if (!hasAcceptedContract) {
       return
     }
 
-    window.location.assign('/graduacao/inscricao-finalizada')
+    await onFinish()
   }
 
   return (
     <section className="vestibular-offer" aria-labelledby="vestibular-offer-title">
       <div className="vestibular-offer__shell">
-        <button type="button" className="vestibular-offer__back" onClick={onBack}>
+        <button type="button" className="vestibular-offer__back" onClick={onBack} disabled={isSubmitting}>
           <ArrowLeft size={18} strokeWidth={2.1} aria-hidden="true" />
           <span>Voltar</span>
         </button>
@@ -101,6 +110,8 @@ export function GraduationEnrollmentOfferStep({ admissionOptionId, onBack }: Pro
               deste site
             </span>
           </label>
+
+          {submitError ? <p className="vestibular-step__validation-error">{submitError}</p> : null}
         </div>
 
         <div className="vestibular-offer__footer">
@@ -108,8 +119,9 @@ export function GraduationEnrollmentOfferStep({ admissionOptionId, onBack }: Pro
             type="button"
             className="vestibular-offer__finish"
             onClick={handleFinish}
-            disabled={!hasAcceptedContract}
+            disabled={!hasAcceptedContract || isSubmitting}
           >
+            {isSubmitting ? <LoaderCircle size={18} className="is-spinning" /> : null}
             FINALIZAR
           </button>
         </div>

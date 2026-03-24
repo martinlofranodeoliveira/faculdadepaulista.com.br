@@ -92,11 +92,15 @@ export function buildCurriculumPdfFilename(pageHeading: string): string {
   return `${slugifyFilePart(pageHeading)}-matriz-curricular.pdf`
 }
 
-export function buildCurriculumPdfUrl(courseType: CourseType, slug: string): string {
+export function buildCurriculumPdfUrl(courseType: CourseType, slug: string, variantId?: string | number): string {
   const search = new URLSearchParams({
     type: courseType,
     slug,
   })
+
+  if (variantId !== undefined && variantId !== null && `${variantId}`.trim()) {
+    search.set('variant', `${variantId}`)
+  }
 
   return `/api/curriculum-pdf?${search.toString()}`
 }

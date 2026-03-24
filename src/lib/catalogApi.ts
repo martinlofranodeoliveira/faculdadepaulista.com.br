@@ -618,10 +618,29 @@ function normalizeCurriculumVariants(
     })
 }
 
+function selectDisciplinesForTotalHours(
+  disciplines: CatalogCurriculumDiscipline[],
+  targetHours: number,
+): CatalogCurriculumDiscipline[] {
+  if (!targetHours) return disciplines
+
+  const selected: CatalogCurriculumDiscipline[] = []
+  let accumulatedHours = 0
+
+  for (const discipline of disciplines) {
+    if (accumulatedHours >= targetHours) break
+    selected.push(discipline)
+    accumulatedHours += discipline.hours
+  }
+
+  return selected.length ? selected : disciplines
+}
+
 function normalizeCourseDisciplinesFallback(
   disciplines: ApiCourseDiscipline[] | null | undefined,
+  priceItems: CatalogPriceItem[] = [],
 ): CatalogCurriculumVariant[] {
-  const normalizedDisciplines = (disciplines ?? [])
+  const normalizedDisciplines: CatalogCurriculumDiscipline[] = (disciplines ?? [])
     .map((discipline) => ({
       id: Number(discipline.id ?? 0),
       name: normalizeText(discipline.name),
@@ -637,6 +656,29 @@ function normalizeCourseDisciplinesFallback(
   if (!normalizedDisciplines.length) return []
 
   const totalHours = normalizedDisciplines.reduce((sum, discipline) => sum + discipline.hours, 0)
+  const workloadVariants = Array.from(
+    new Map(
+      priceItems
+        .filter((item) => item.totalHours > 0)
+        .map((item) => [
+          item.workloadVariantId || item.totalHours,
+          {
+            id: item.workloadVariantId || item.totalHours,
+            name: item.workloadName || `${item.totalHours} Horas`,
+            totalHours: item.totalHours,
+          },
+        ]),
+    ).values(),
+  ).sort((a, b) => a.totalHours - b.totalHours)
+
+  if (workloadVariants.length > 0) {
+    return workloadVariants.map((variant) => ({
+      id: variant.id,
+      name: normalizeText(variant.name) || `${variant.totalHours} Horas`,
+      totalHours: variant.totalHours,
+      disciplines: selectDisciplinesForTotalHours(normalizedDisciplines, variant.totalHours),
+    }))
+  }
 
   return [
     {
@@ -1052,6 +1094,7 @@ function mapCatalogCourse(
   const normalizedCurriculumVariants = normalizeCurriculumVariants(bundle?.curriculumVariants)
   const fallbackCurriculumVariants = normalizeCourseDisciplinesFallback(
     course.course_disciplines ?? detail?.course_disciplines,
+    priceItems,
   )
   const curriculumVariants =
     normalizedCurriculumVariants.length > 0 ? normalizedCurriculumVariants : fallbackCurriculumVariants

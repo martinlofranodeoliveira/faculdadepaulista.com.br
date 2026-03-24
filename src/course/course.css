@@ -565,6 +565,14 @@
   padding: 0 0 18px;
 }
 
+.course-page__curriculum-table-head--button {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
+
 .course-page__curriculum-heading {
   align-items: center;
   color: #0b111f;
@@ -1714,6 +1722,10 @@
   position: absolute;
   transform: translate(-50%, -50%) rotate(45deg);
   width: 8px;
+}
+
+.course-page__curriculum-table-head--button.is-collapsed .course-page__curriculum-panel-toggle::before {
+  transform: translate(-50%, -62%) rotate(135deg);
 }
 
 .course-page__labs-nav span.is-disabled {

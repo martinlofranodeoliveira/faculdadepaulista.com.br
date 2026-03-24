@@ -57,14 +57,19 @@ export function clearCourseLeadDraft(): void {
 }
 
 export function matchesCourseLeadDraft(
-  draft: Pick<StoredCourseLeadDraft, 'courseType' | 'courseValue' | 'courseLabel'>,
+  draft: Pick<StoredCourseLeadDraft, 'courseType' | 'courseValue' | 'courseLabel' | 'courseId'>,
   currentCourse: {
     courseType: 'graduacao' | 'pos'
+    courseId?: number
     courseValue?: string
     courseLabel: string
   },
 ): boolean {
   if (draft.courseType !== currentCourse.courseType) return false
+
+  if (draft.courseId && currentCourse.courseId) {
+    return draft.courseId === currentCourse.courseId
+  }
 
   if (draft.courseValue && currentCourse.courseValue) {
     return draft.courseValue === currentCourse.courseValue

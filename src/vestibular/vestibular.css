@@ -1,3 +1,17 @@
+.is-spinning {
+  animation: vestibular-spin 0.9s linear infinite;
+}
+
+@keyframes vestibular-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .vestibular-page {
   background: #ffffff;
   min-height: 100vh;

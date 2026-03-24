@@ -1,4 +1,4 @@
-import { getCoursePagePresentation } from '@/course/coursePageData'
+﻿import { getCoursePagePresentation } from '@/course/coursePageData'
 import {
   buildCurriculumPdfFilename,
   createCurriculumPdfBuffer,
@@ -15,6 +15,8 @@ function isCourseType(value: string | null): value is CourseType {
 export async function GET({ url }: { url: URL }) {
   const typeParam = url.searchParams.get('type')
   const slug = url.searchParams.get('slug')?.trim() ?? ''
+  const variantParam = url.searchParams.get('variant')?.trim() ?? ''
+  const variantId = Number.parseInt(variantParam, 10)
 
   if (!isCourseType(typeParam) || !slug) {
     return new Response('Parâmetros inválidos.', { status: 400 })
@@ -32,15 +34,32 @@ export async function GET({ url }: { url: URL }) {
       ? `GRADUAÇÃO EM ${course.title}`
       : `PÓS-GRADUAÇÃO EM ${course.title}`
 
-  const presentation = getCoursePagePresentation({
-    course: course,
-    courseType: typeParam,
-    title: course.title,
-    rawLabel: course.rawLabel,
-    area: course.primaryAreaLabel,
-  })
+  const selectedVariant =
+    typeParam === 'pos' && Number.isFinite(variantId)
+      ? course.curriculumVariants.find((variant) => variant.id === variantId) ?? null
+      : typeParam === 'pos'
+        ? course.curriculumVariants[0] ?? null
+        : null
 
-  const pdf = createCurriculumPdfBuffer(pageHeading, presentation.curriculum)
+  const curriculumEntries =
+    selectedVariant?.disciplines.length
+      ? [
+          {
+            label: selectedVariant.totalHours ? `${selectedVariant.totalHours}H` : 'Disciplinas',
+            title: selectedVariant.name || `Matriz curricular de ${course.title}`,
+            hours: `${selectedVariant.totalHours || selectedVariant.disciplines.reduce((sum, discipline) => sum + discipline.hours, 0)}h`,
+            disciplines: selectedVariant.disciplines.map((discipline) => discipline.name),
+          },
+        ]
+      : getCoursePagePresentation({
+          course: course,
+          courseType: typeParam,
+          title: course.title,
+          rawLabel: course.rawLabel,
+          area: course.primaryAreaLabel,
+        }).curriculum
+
+  const pdf = createCurriculumPdfBuffer(pageHeading, curriculumEntries)
   const filename = buildCurriculumPdfFilename(pageHeading)
 
   return new Response(new Uint8Array(pdf), {
@@ -52,3 +71,4 @@ export async function GET({ url }: { url: URL }) {
     },
   })
 }
+

@@ -1,14 +1,22 @@
 ﻿import { useMemo, useRef, useState } from 'react'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, LoaderCircle } from 'lucide-react'
 
 type Props = {
   onBack: () => void
+  onContinue: (presentation: string) => Promise<void> | void
+  isSubmitting?: boolean
+  submitError?: string
 }
 
 const MIN_PRESENTATION_LENGTH = 250
 const MAX_PRESENTATION_LENGTH = 2500
 
-export function GraduationSimplifiedStep({ onBack }: Props) {
+export function GraduationSimplifiedStep({
+  onBack,
+  onContinue,
+  isSubmitting = false,
+  submitError,
+}: Props) {
   const [presentation, setPresentation] = useState('')
   const [hasTriedContinue, setHasTriedContinue] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
@@ -18,19 +26,20 @@ export function GraduationSimplifiedStep({ onBack }: Props) {
     characterCount >= MIN_PRESENTATION_LENGTH && characterCount <= MAX_PRESENTATION_LENGTH
   const showValidationError = hasTriedContinue && !isValid
 
-  function handleContinue() {
-    if (isValid) {
+  async function handleContinue() {
+    if (!isValid) {
+      setHasTriedContinue(true)
+      textareaRef.current?.focus()
       return
     }
 
-    setHasTriedContinue(true)
-    textareaRef.current?.focus()
+    await onContinue(presentation.trim())
   }
 
   return (
     <section className="vestibular-step" aria-labelledby="vestibular-step-title">
       <div className="vestibular-step__shell">
-        <button type="button" className="vestibular-step__back" onClick={onBack}>
+        <button type="button" className="vestibular-step__back" onClick={onBack} disabled={isSubmitting}>
           <ArrowLeft size={18} strokeWidth={2.1} aria-hidden="true" />
           <span>Voltar</span>
         </button>
@@ -71,9 +80,12 @@ export function GraduationSimplifiedStep({ onBack }: Props) {
           </p>
         ) : null}
 
+        {submitError ? <p className="vestibular-step__validation-error">{submitError}</p> : null}
+
         <div className="vestibular-step__actions">
           <p>{`Quantidade de caracteres: ${characterCount} / ${MAX_PRESENTATION_LENGTH}`}</p>
-          <button type="button" className="vestibular-step__continue" onClick={handleContinue}>
+          <button type="button" className="vestibular-step__continue" onClick={handleContinue} disabled={isSubmitting}>
+            {isSubmitting ? <LoaderCircle size={18} className="is-spinning" /> : null}
             CONTINUAR
           </button>
         </div>

@@ -1,13 +1,25 @@
 ﻿import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { AlertCircle, ChevronDown, ChevronLeft, LoaderCircle } from 'lucide-react'
 
+import {
+  createJourneyStep1,
+  finalizeJourney,
+  updateJourneyStep2,
+} from '@/lib/journeyClient'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
 
 import {
   clearCourseLeadDraft,
   matchesCourseLeadDraft,
   readCourseLeadDraft,
+  saveCourseLeadDraft,
 } from './courseLeadDraft'
+import {
+  clearJourneyProgress,
+  matchesJourneyProgress,
+  readJourneyProgress,
+  saveJourneyProgress,
+} from './journeyProgress'
 import { storePostThankYouLead } from '@/thankyou/postThankYouState'
 import { storeGraduationVestibularLead } from '@/vestibular/graduationVestibularState'
 
@@ -23,6 +35,8 @@ type Props = {
   leadSubmitted?: boolean
   paymentPlanGroups?: Array<{
     workload: string
+    workloadVariantId: number | null
+    pricingId: number | null
     totalAmountCents: number
     currentInstallmentText: string
     paymentPlanOptions: string[]
@@ -184,6 +198,7 @@ export function CourseLeadForm({
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
   const [submitMessage, setSubmitMessage] = useState('')
   const [resumeAvailable, setResumeAvailable] = useState(false)
+  const [crmSubmitted, setCrmSubmitted] = useState(leadSubmitted)
   const nameInputRef = useRef<HTMLInputElement | null>(null)
   const cpfInputRef = useRef<HTMLInputElement | null>(null)
 
@@ -205,22 +220,33 @@ export function CourseLeadForm({
 
   useEffect(() => {
     const draft = readCourseLeadDraft()
-    const matchesCurrentCourse =
+    const storedJourney = readJourneyProgress()
+    const matchesCurrentDraft =
       draft &&
       matchesCourseLeadDraft(draft, {
         courseType,
+        courseId,
+        courseValue,
+        courseLabel,
+      })
+    const matchesCurrentJourney =
+      storedJourney &&
+      matchesJourneyProgress(storedJourney, {
+        courseType,
+        courseId,
         courseValue,
         courseLabel,
       })
 
-    setResumeAvailable(Boolean(matchesCurrentCourse))
+    setResumeAvailable(Boolean(matchesCurrentDraft || matchesCurrentJourney))
+    if (matchesCurrentDraft) {
+      setFullName(draft.fullName)
+      setEmail(draft.email)
+      setPhone(draft.phone)
+      setAgreementAccepted(true)
+    }
 
-    if (!matchesCurrentCourse) return
-
-    setFullName(draft.fullName)
-    setEmail(draft.email)
-    setPhone(draft.phone)
-    setAgreementAccepted(true)
+    if (!matchesCurrentDraft && !matchesCurrentJourney) return
 
     if (hasSecondStep) {
       setStep(2)
@@ -233,7 +259,7 @@ export function CourseLeadForm({
     if (leadSubmitted) {
       nameInputRef.current?.focus()
     }
-  }, [courseLabel, courseType, courseValue, hasSecondStep, leadSubmitted])
+  }, [courseId, courseLabel, courseType, courseValue, hasSecondStep, leadSubmitted])
 
   useEffect(() => {
     if (!hasSecondStep) return
@@ -245,23 +271,36 @@ export function CourseLeadForm({
 
   const handleRestoreProgress = () => {
     const draft = readCourseLeadDraft()
-    if (
-      !draft ||
-      !matchesCourseLeadDraft(draft, {
+    const storedJourney = readJourneyProgress()
+    const matchesStoredJourney =
+      storedJourney &&
+      matchesJourneyProgress(storedJourney, {
         courseType,
+        courseId,
         courseValue,
         courseLabel,
       })
-    ) {
-      nameInputRef.current?.focus()
-      return
+    const matchesStoredDraft =
+      draft &&
+      matchesCourseLeadDraft(draft, {
+        courseType,
+        courseId,
+        courseValue,
+        courseLabel,
+      })
+    if (!matchesStoredDraft) {
+      if (matchesStoredJourney) {
+      } else {
+        nameInputRef.current?.focus()
+        return
+      }
+    } else {
+      setFullName(draft.fullName)
+      setEmail(draft.email)
+      setPhone(draft.phone)
+      setAgreementAccepted(true)
+      setResumeAvailable(true)
     }
-
-    setFullName(draft.fullName)
-    setEmail(draft.email)
-    setPhone(draft.phone)
-    setAgreementAccepted(true)
-    setResumeAvailable(true)
 
     if (hasSecondStep) {
       setStep(2)
@@ -288,7 +327,159 @@ export function CourseLeadForm({
     }
   }
 
-  const goToSecondStep = () => {
+  const submitLeadToCrm = async () => {
+    if (crmSubmitted) return
+
+    const trackedFromUrl = syncUtmParamsFromUrl(window.location.search)
+    const storedTrackingParams = readStoredUtmParams()
+    const trackingParams = { ...storedTrackingParams, ...trackedFromUrl }
+    const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 9)
+    const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 78)
+    const etapaPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_POS, 78)
+    const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 6)
+    const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 6)
+    const statusLead = parseEnvInteger(import.meta.env.VITE_CRM_STATUS_LEAD, 1)
+    const poloId = parseEnvInteger(import.meta.env.VITE_CRM_POLO, 4658)
+
+    const payload = {
+      aluno: 0,
+      nome: fullName.trim(),
+      email: email.trim(),
+      telefone: normalizePhone(phone),
+      empresa: empresaId,
+      matricula: '',
+      idCurso: courseId ?? 0,
+      curso: courseLabel,
+      etapa: courseType === 'pos' ? etapaPos : etapaGrad,
+      cpf: hasSecondStep ? normalizeCpf(cpf) : '',
+      valor: paymentPlan,
+      funil: courseType === 'pos' ? funilPos : funilGrad,
+      status: statusLead,
+      observacao:
+        courseType === 'pos'
+          ? `PÓS-GRADUAÇÃO: Página do curso Faculdade Paulista | Plano: ${paymentPlan || 'não informado'} | Carga horária: ${workload || 'não informada'} | Voucher: ${voucherCode.trim() || 'não informado'}`
+          : `GRADUAÇÃO: Página do curso Faculdade Paulista | Voucher: ${voucherCode.trim() || 'não informado'}`,
+      campanha: pickTrackingValue(trackingParams, ['campanha', 'utm_campaign']),
+      midia: pickTrackingValue(trackingParams, ['midia', 'utm_medium']),
+      fonte:
+        courseType === 'pos'
+          ? '33'
+          : pickTrackingValue(
+              trackingParams,
+              ['id_fonte_crm', 'fonte', 'utm_source'],
+              import.meta.env.VITE_CRM_FONTE_ID ?? '33',
+            ),
+      fonteTexto:
+        import.meta.env.VITE_CRM_FONTE_TEXTO ?? 'Landing Page Faculdade Paulista',
+      origem: '1',
+      criativo: pickTrackingValue(trackingParams, [
+        'criativo',
+        'conteudo_anuncio',
+        'utm_content',
+      ]),
+      id_clique_google: pickTrackingValue(trackingParams, ['id_clique_google', 'gclid']),
+      id_clique_facebbok: pickTrackingValue(trackingParams, [
+        'id_clique_facebbok',
+        'id_clique_facebook',
+        'fbclid',
+      ]),
+      id_clique_microsoft: pickTrackingValue(trackingParams, [
+        'id_clique_microsoft',
+        'msclkid',
+      ]),
+      conjunto_de_Anuncios: pickTrackingValue(trackingParams, [
+        'conjunto_de_anuncios',
+        'adset_name',
+        'adset',
+        'utm_term',
+      ]),
+      polo: poloId,
+    }
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    }
+
+    const bearerToken = normalizeBearerToken(import.meta.env.VITE_CRM_BEARER_TOKEN)
+    if (bearerToken) {
+      headers.Authorization = bearerToken
+    }
+
+    if (import.meta.env.VITE_CRM_API_KEY) {
+      headers['X-API-KEY'] = import.meta.env.VITE_CRM_API_KEY
+    }
+
+    const response = await fetch(CRM_LEAD_ENDPOINT, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(payload),
+    })
+
+    if (!response.ok) {
+      throw new Error(`CRM request failed with status ${response.status}`)
+    }
+
+    setCrmSubmitted(true)
+  }
+
+  const ensureJourneyStep1 = async () => {
+    if (!courseId) {
+      throw new Error('Curso sem identificação para iniciar a inscrição.')
+    }
+
+    if (courseType === 'pos' && !selectedPaymentPlanGroup?.workloadVariantId) {
+      throw new Error('Carga horária indisponível para iniciar a inscrição deste curso.')
+    }
+
+    const matchingJourney = readJourneyProgress()
+    if (
+      matchingJourney &&
+      matchesJourneyProgress(matchingJourney, {
+        courseType,
+        courseId,
+        courseValue,
+        courseLabel,
+      })
+    ) {
+      return matchingJourney.journeyId
+    }
+
+    const payload =
+      courseType === 'pos'
+        ? {
+            course_id: courseId,
+            nome: fullName.trim(),
+            email: email.trim(),
+            whatsapp: normalizePhone(phone),
+            workload_variant_id: selectedPaymentPlanGroup?.workloadVariantId ?? undefined,
+            voucher_code: voucherCode.trim() || undefined,
+          }
+        : {
+            course_id: courseId,
+            full_name: fullName.trim(),
+            email: email.trim(),
+            phone: normalizePhone(phone),
+          }
+
+    const response = await createJourneyStep1(payload)
+    saveJourneyProgress({
+      journeyId: response.journey_id,
+      journeyUuid: response.journey_uuid,
+      courseType,
+      courseId,
+      courseValue,
+      courseLabel,
+      fullName: fullName.trim(),
+      email: email.trim(),
+      phone: normalizePhone(phone),
+      workloadVariantId: selectedPaymentPlanGroup?.workloadVariantId ?? undefined,
+      currentStep: response.current_step ?? 1,
+    })
+
+    return response.journey_id
+  }
+
+  const goToSecondStep = async () => {
     const nextErrors = validateFirstStep()
     setErrors(nextErrors)
 
@@ -298,7 +489,21 @@ export function CourseLeadForm({
 
     setAdvanceLoading(true)
 
-    window.setTimeout(() => {
+    try {
+      if (!leadSubmitted) {
+        await submitLeadToCrm()
+      }
+      await ensureJourneyStep1()
+      saveCourseLeadDraft({
+        courseType,
+        courseValue,
+        courseLabel,
+        courseId,
+        fullName: fullName.trim(),
+        email: email.trim(),
+        phone,
+      })
+
       setAdvanceLoading(false)
       setStep(2)
       setPaymentPlan((current) => current || visiblePaymentPlanOptions[0] || '')
@@ -306,7 +511,16 @@ export function CourseLeadForm({
       window.setTimeout(() => {
         cpfInputRef.current?.focus()
       }, 20)
-    }, 220)
+    } catch (error) {
+      console.error('Erro ao iniciar jornada da página de curso:', error)
+      setAdvanceLoading(false)
+      setSubmitStatus('error')
+      setSubmitMessage(
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível iniciar sua inscrição agora. Tente novamente em instantes.',
+      )
+    }
   }
 
   const handleBack = () => {
@@ -318,7 +532,7 @@ export function CourseLeadForm({
     event.preventDefault()
 
     if (hasSecondStep && step === 1) {
-      goToSecondStep()
+      await goToSecondStep()
       return
     }
 
@@ -336,114 +550,72 @@ export function CourseLeadForm({
     setSubmitMessage('Enviando seus dados...')
 
     try {
-      const trackedFromUrl = syncUtmParamsFromUrl(window.location.search)
-      const storedTrackingParams = readStoredUtmParams()
-      const trackingParams = { ...storedTrackingParams, ...trackedFromUrl }
-      const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 9)
-      const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 78)
-      const etapaPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_POS, 78)
-      const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 6)
-      const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 6)
-      const statusLead = parseEnvInteger(import.meta.env.VITE_CRM_STATUS_LEAD, 1)
-      const poloId = parseEnvInteger(import.meta.env.VITE_CRM_POLO, 4658)
-
-      const payload = {
-        aluno: 0,
-        nome: fullName.trim(),
-        email: email.trim(),
-        telefone: normalizePhone(phone),
-        empresa: empresaId,
-        matricula: '',
-        idCurso: courseId ?? 0,
-        curso: courseLabel,
-        etapa: courseType === 'pos' ? etapaPos : etapaGrad,
-        cpf: hasSecondStep ? normalizeCpf(cpf) : '',
-        valor: paymentPlan,
-        funil: courseType === 'pos' ? funilPos : funilGrad,
-        status: statusLead,
-        observacao:
-          courseType === 'pos'
-            ? `PÓS-GRADUAÇÃO: Página do curso Faculdade Paulista | Plano: ${paymentPlan || 'não informado'} | Carga horÃ¡ria: ${workload || 'não informada'} | Voucher: ${voucherCode.trim() || 'não informado'}`
-            : `GRADUAÇÃO: Página do curso Faculdade Paulista | Voucher: ${voucherCode.trim() || 'não informado'}`,
-        campanha: pickTrackingValue(trackingParams, ['campanha', 'utm_campaign']),
-        midia: pickTrackingValue(trackingParams, ['midia', 'utm_medium']),
-        fonte:
-          courseType === 'pos'
-            ? '33'
-            : pickTrackingValue(
-                trackingParams,
-                ['id_fonte_crm', 'fonte', 'utm_source'],
-                import.meta.env.VITE_CRM_FONTE_ID ?? '33',
-              ),
-        fonteTexto:
-          import.meta.env.VITE_CRM_FONTE_TEXTO ?? 'Landing Page Faculdade Paulista',
-        origem: '1',
-        criativo: pickTrackingValue(trackingParams, [
-          'criativo',
-          'conteudo_anuncio',
-          'utm_content',
-        ]),
-        id_clique_google: pickTrackingValue(trackingParams, ['id_clique_google', 'gclid']),
-        id_clique_facebbok: pickTrackingValue(trackingParams, [
-          'id_clique_facebbok',
-          'id_clique_facebook',
-          'fbclid',
-        ]),
-        id_clique_microsoft: pickTrackingValue(trackingParams, [
-          'id_clique_microsoft',
-          'msclkid',
-        ]),
-        conjunto_de_Anuncios: pickTrackingValue(trackingParams, [
-          'conjunto_de_anuncios',
-          'adset_name',
-          'adset',
-          'utm_term',
-        ]),
-        polo: poloId,
+      if (!leadSubmitted) {
+        await submitLeadToCrm()
       }
 
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      }
-
-      const bearerToken = normalizeBearerToken(import.meta.env.VITE_CRM_BEARER_TOKEN)
-      if (bearerToken) {
-        headers.Authorization = bearerToken
-      }
-
-      if (import.meta.env.VITE_CRM_API_KEY) {
-        headers['X-API-KEY'] = import.meta.env.VITE_CRM_API_KEY
-      }
-
-      const response = await fetch(CRM_LEAD_ENDPOINT, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(payload),
-      })
-
-      if (!response.ok) {
-        throw new Error(`CRM request failed with status ${response.status}`)
-      }
-
-      clearCourseLeadDraft()
-      setResumeAvailable(false)
+      const ensuredJourneyId = await ensureJourneyStep1()
 
       if (courseType === 'pos') {
+        if (!selectedPaymentPlanGroup?.pricingId || !selectedPaymentPlanGroup.workloadVariantId) {
+          throw new Error('Preço ou carga horária indisponíveis para concluir esta inscrição.')
+        }
+
+        const defaultPoleId = parseEnvInteger(import.meta.env.VITE_JOURNEY_DEFAULT_POLE_ID, 0)
+        const step2Payload: Record<string, unknown> = {
+          cpf: normalizeCpf(cpf),
+          workload_variant_id: selectedPaymentPlanGroup.workloadVariantId,
+          pricing_id: selectedPaymentPlanGroup.pricingId,
+          payment_plan_label: paymentPlan || undefined,
+          voucher_code: voucherCode.trim() || undefined,
+        }
+
+        if (defaultPoleId > 0) {
+          step2Payload.pole_id = defaultPoleId
+        }
+
+        const step2Response = await updateJourneyStep2(ensuredJourneyId, step2Payload)
+        saveJourneyProgress({
+          journeyId: ensuredJourneyId,
+          courseType,
+          courseId: courseId ?? 0,
+          courseValue,
+          courseLabel,
+          fullName: fullName.trim(),
+          email: email.trim(),
+          phone: normalizePhone(phone),
+          workloadVariantId: selectedPaymentPlanGroup?.workloadVariantId ?? undefined,
+          currentStep: step2Response.current_step ?? 2,
+        })
+        const finalizeResponse = await finalizeJourney(ensuredJourneyId, {
+          voucher_code: voucherCode.trim() || undefined,
+        })
+
+        clearCourseLeadDraft()
+        clearJourneyProgress()
+        setResumeAvailable(false)
         storePostThankYouLead({
           fullName: fullName.trim(),
           email: email.trim(),
         })
         setSubmitStatus('success')
-        setSubmitMessage('Inscrição enviada com sucesso. Redirecionando...')
+        setSubmitMessage(finalizeResponse.message || 'Inscrição enviada com sucesso. Redirecionando...')
         window.setTimeout(() => {
           window.location.assign('/pos-graduacao/inscricao-finalizada')
         }, 80)
         return
       }
 
+      clearCourseLeadDraft()
+      setResumeAvailable(false)
+
       storeGraduationVestibularLead({
         fullName: fullName.trim(),
         email: email.trim(),
+        journeyId: ensuredJourneyId,
+        courseId: courseId ?? 0,
+        courseLabel,
+        courseValue,
       })
       setSubmitStatus('success')
       setSubmitMessage('Inscrição enviada com sucesso. Redirecionando...')
@@ -453,7 +625,11 @@ export function CourseLeadForm({
     } catch (error) {
       console.error('Erro ao enviar lead da página de curso:', error)
       setSubmitStatus('error')
-      setSubmitMessage('Não foi possível enviar agora. Tente novamente em instantes.')
+      setSubmitMessage(
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível enviar agora. Tente novamente em instantes.',
+      )
     }
   }
 

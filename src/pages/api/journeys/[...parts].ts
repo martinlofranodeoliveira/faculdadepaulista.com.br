@@ -9,6 +9,9 @@ type Context = {
   request: Request
 }
 
+const GENERIC_JOURNEY_ERROR_MESSAGE =
+  'Não foi possível concluir esta etapa da inscrição agora. Tente novamente em instantes.'
+
 function jsonResponse(payload: unknown, status = 200) {
   return new Response(JSON.stringify(payload), {
     status,
@@ -38,6 +41,46 @@ function resolveJourneyPath(partsValue?: string): string | null {
   return null
 }
 
+function isSafeJourneyMessage(message: string): boolean {
+  return [
+    /é obrigatório/i,
+    /precisa ser concluíd[ao]/i,
+    /jornada.*não encontrada/i,
+    /payload inválido/i,
+    /rota .* inválida/i,
+    /método não permitido/i,
+  ].some((pattern) => pattern.test(message))
+}
+
+function isInternalJourneyMessage(message: string): boolean {
+  return [
+    /sqlstate/i,
+    /call to undefined method/i,
+    /undefined method/i,
+    /stack/i,
+    /trace/i,
+    /exception/i,
+    /syntax error/i,
+    /parameter number/i,
+    /unauthorized_api_key/i,
+  ].some((pattern) => pattern.test(message))
+}
+
+function getPublicJourneyErrorMessage(status: number, message: string): string {
+  const normalized = message.trim()
+  if (!normalized) return GENERIC_JOURNEY_ERROR_MESSAGE
+
+  if (isSafeJourneyMessage(normalized)) return normalized
+  if (isInternalJourneyMessage(normalized)) return GENERIC_JOURNEY_ERROR_MESSAGE
+
+  if (status === 401 || status === 403) {
+    return 'Não foi possível validar sua inscrição agora. Tente novamente em instantes.'
+  }
+
+  if (status >= 500) return GENERIC_JOURNEY_ERROR_MESSAGE
+  return normalized
+}
+
 async function handle(context: Context) {
   const method = context.request.method.toUpperCase()
   if (method !== 'POST' && method !== 'PATCH') {
@@ -65,11 +108,18 @@ async function handle(context: Context) {
     return jsonResponse(result.payload, result.status)
   } catch (error) {
     if (error instanceof JourneyApiError) {
+      console.error('Erro na Journey API:', {
+        path,
+        method,
+        status: error.status,
+        message: error.message,
+        details: error.details,
+      })
+
       return jsonResponse(
         {
           success: false,
-          message: error.message,
-          details: error.details,
+          message: getPublicJourneyErrorMessage(error.status, error.message),
         },
         error.status,
       )

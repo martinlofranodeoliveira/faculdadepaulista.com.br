@@ -33,6 +33,24 @@ type JourneyEnvelope<T> = {
   details?: unknown
 }
 
+const GENERIC_JOURNEY_ERROR_MESSAGE =
+  'Não foi possível concluir esta etapa da inscrição agora. Tente novamente em instantes.'
+
+function sanitizeJourneyMessage(message: string | undefined): string {
+  const normalized = message?.trim() ?? ''
+  if (!normalized) return GENERIC_JOURNEY_ERROR_MESSAGE
+
+  if (
+    /sqlstate|call to undefined method|undefined method|stack|trace|exception|syntax error|parameter number/i.test(
+      normalized,
+    )
+  ) {
+    return GENERIC_JOURNEY_ERROR_MESSAGE
+  }
+
+  return normalized
+}
+
 async function requestJourney<T>(
   path: string,
   method: 'POST' | 'PATCH',
@@ -49,10 +67,11 @@ async function requestJourney<T>(
   const envelope = (await response.json().catch(() => null)) as JourneyEnvelope<T> | null
 
   if (!response.ok || !envelope?.data) {
-    const message =
+    const message = sanitizeJourneyMessage(
       envelope?.message ||
-      envelope?.errors?.find((item) => item?.message)?.message ||
-      'Não foi possível atualizar sua inscrição agora.'
+        envelope?.errors?.find((item) => item?.message)?.message ||
+        'Não foi possível atualizar sua inscrição agora.',
+    )
     throw new Error(message)
   }
 

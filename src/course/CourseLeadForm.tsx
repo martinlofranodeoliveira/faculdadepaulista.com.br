@@ -182,7 +182,7 @@ export function CourseLeadForm({
   pricing,
   showInternshipInfoLink = false,
 }: Props) {
-  const hasSecondStep = courseType === 'pos'
+  const hasSecondStep = courseType === 'pos' || courseType === 'graduacao'
   const [step, setStep] = useState<Step>(1)
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -606,6 +606,32 @@ export function CourseLeadForm({
         return
       }
 
+      const normalizedGraduationCpf = normalizeCpf(cpf)
+
+      if (normalizedGraduationCpf) {
+        try {
+          const step2Response = await updateJourneyStep2(ensuredJourneyId, {
+            cpf: normalizedGraduationCpf,
+          })
+
+          saveJourneyProgress({
+            journeyId: ensuredJourneyId,
+            courseType,
+            courseId: courseId ?? 0,
+            courseValue,
+            courseLabel,
+            fullName: fullName.trim(),
+            email: email.trim(),
+            phone: normalizePhone(phone),
+            currentStep: step2Response.current_step ?? 2,
+          })
+        } catch (error) {
+          // Graduation step 2 is still unstable in the admin backend.
+          // Keep the user moving to the vestibular flow while preserving the CPF locally.
+          console.warn('Não foi possível sincronizar o CPF da graduação nesta etapa:', error)
+        }
+      }
+
       clearCourseLeadDraft()
       setResumeAvailable(false)
 
@@ -616,6 +642,7 @@ export function CourseLeadForm({
         courseId: courseId ?? 0,
         courseLabel,
         courseValue,
+        cpf: normalizedGraduationCpf || undefined,
       })
       setSubmitStatus('success')
       setSubmitMessage('Inscrição enviada com sucesso. Redirecionando...')
@@ -790,18 +817,20 @@ export function CourseLeadForm({
               {errors.cpf ? <p className="course-lead-form__error">{errors.cpf}</p> : null}
             </div>
 
-            <label className="course-lead-form__field course-lead-form__field--select">
-              <select value={paymentPlan} onChange={(event) => setPaymentPlan(event.target.value)}>
-                {visiblePaymentPlanOptions.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown size={18} strokeWidth={2} />
-            </label>
+            {courseType === 'pos' ? (
+              <label className="course-lead-form__field course-lead-form__field--select">
+                <select value={paymentPlan} onChange={(event) => setPaymentPlan(event.target.value)}>
+                  {visiblePaymentPlanOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown size={18} strokeWidth={2} />
+              </label>
+            ) : null}
 
-            {showInternshipInfoLink ? (
+            {courseType === 'pos' && showInternshipInfoLink ? (
               <a
                 className="course-lead-form__info-link"
                 href="/politica-de-privacidade"

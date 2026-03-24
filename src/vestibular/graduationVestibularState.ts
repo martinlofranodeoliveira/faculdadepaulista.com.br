@@ -1,6 +1,7 @@
 export type GraduationVestibularLead = {
   fullName: string
   email: string
+  cpf?: string
   journeyId?: number
   courseId?: number
   courseLabel?: string
@@ -17,6 +18,7 @@ export function storeGraduationVestibularLead(lead: GraduationVestibularLead) {
       JSON.stringify({
         fullName: lead.fullName.trim(),
         email: lead.email.trim(),
+        cpf: lead.cpf?.trim(),
         journeyId: lead.journeyId,
         courseId: lead.courseId,
         courseLabel: lead.courseLabel?.trim(),
@@ -38,6 +40,7 @@ export function readGraduationVestibularLead(): GraduationVestibularLead | null 
     return {
       fullName: parsed.fullName,
       email: typeof parsed.email === 'string' ? parsed.email : '',
+      cpf: typeof parsed.cpf === 'string' ? parsed.cpf : undefined,
       journeyId: typeof parsed.journeyId === 'number' ? parsed.journeyId : undefined,
       courseId: typeof parsed.courseId === 'number' ? parsed.courseId : undefined,
       courseLabel: typeof parsed.courseLabel === 'string' ? parsed.courseLabel : undefined,

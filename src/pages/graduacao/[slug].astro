@@ -17,8 +17,11 @@ if (!course) {
 const title = course
   ? `${course.title} | Graduação | Faculdade Paulista`
   : 'Curso não encontrado | Faculdade Paulista'
-const description = course
+const metaDescription = course
   ? course.seoDescription || course.description
+  : 'O curso solicitado não foi encontrado.'
+const description = course
+  ? course.description || course.seoDescription
   : 'O curso solicitado não foi encontrado.'
 const siteUrl = 'https://faculdadepaulista.com.br'
 const structuredData = course
@@ -67,7 +70,7 @@ const notFoundMessage = 'Verifique o endereço ou volte para a página inicial.'
 
 <BaseLayout
   title={title}
-  description={description}
+  description={metaDescription}
   canonicalPath={`/graduacao/${slug}`}
   structuredData={structuredData}
   noindex={!course}

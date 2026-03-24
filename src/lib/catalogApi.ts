@@ -835,7 +835,7 @@ async function getCourseBundle(
   return withCache(`course-bundle:${institution.id}:${courseId}`, async () => {
     const [detailEnvelope, mediaEnvelope, pricingEnvelope, curriculumEnvelope] = await Promise.all([
       apiFetch<ApiCourseDetail>(`/api/v1/public/courses/${courseId}`, institution, {
-        show_disciplines: 'N',
+        show_disciplines: 'S',
         price: 'S',
       }),
       optionalApiFetch<ApiCourseMedia>(`/api/v1/public/courses/${courseId}/media`, institution),
@@ -1044,7 +1044,11 @@ function mapCatalogCourse(
     courseLabel: rawLabel,
   })
 
-  const priceItems = normalizePricingItems(bundle?.pricingItems)
+  const priceItemsFromBundle = normalizePricingItems(bundle?.pricingItems)
+  const priceItems =
+    priceItemsFromBundle.length > 0
+      ? priceItemsFromBundle
+      : normalizePricingItems(course.featured_pricing_options)
   const normalizedCurriculumVariants = normalizeCurriculumVariants(bundle?.curriculumVariants)
   const fallbackCurriculumVariants = normalizeCourseDisciplinesFallback(
     course.course_disciplines ?? detail?.course_disciplines,

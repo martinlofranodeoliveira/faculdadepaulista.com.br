@@ -77,8 +77,15 @@ export type CoursePresentation = {
     currentInstallmentText: string
     pixText: string
   }
+  paymentPlanGroups: Array<{
+    workload: string
+    totalAmountCents: number
+    currentInstallmentText: string
+    paymentPlanOptions: string[]
+  }>
   paymentPlanOptions: string[]
   workloadOptions: string[]
+  showInternshipInfoLink: boolean
 }
 
 type Input = {
@@ -92,6 +99,75 @@ type Input = {
 function parseHoursValue(value: string): number {
   const match = value.match(/(\d+)/)
   return match ? Number.parseInt(match[1], 10) : 0
+}
+
+function formatCurrencyAmount(value: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+}
+
+function formatCurrencyFromCents(value: number): string {
+  return formatCurrencyAmount(value / 100)
+}
+
+function buildPaymentPlanOptionsFromTotal(totalAmountCents: number): string[] {
+  if (!totalAmountCents) return []
+
+  return [1, 4, 6, 12, 18].map((installments) => {
+    if (installments === 1) {
+      return `À vista ${formatCurrencyFromCents(totalAmountCents)}`
+    }
+
+    return `${installments}x ${formatCurrencyAmount(totalAmountCents / 100 / installments)}`
+  })
+}
+
+function buildPostPaymentPlanGroups(course: CatalogCourse | undefined) {
+  if (!course?.priceItems.length) return []
+
+  const grouped = new Map<
+    string,
+    {
+      workload: string
+      totalAmountCents: number
+      totalHours: number
+    }
+  >()
+
+  for (const item of course.priceItems) {
+    const workload =
+      item.totalHours > 0
+        ? `${item.totalHours} Horas`
+        : item.workloadName || `Carga ${grouped.size + 1}`
+
+    const current = grouped.get(workload)
+    if (!current || item.amountCents < current.totalAmountCents) {
+      grouped.set(workload, {
+        workload,
+        totalAmountCents: item.amountCents,
+        totalHours: item.totalHours,
+      })
+    }
+  }
+
+  return [...grouped.values()]
+    .sort((a, b) => {
+      if (a.totalHours && b.totalHours && a.totalHours !== b.totalHours) {
+        return a.totalHours - b.totalHours
+      }
+
+      return a.workload.localeCompare(b.workload, 'pt-BR')
+    })
+    .map((entry) => ({
+      workload: entry.workload,
+      totalAmountCents: entry.totalAmountCents,
+      currentInstallmentText: `${formatCurrencyAmount(entry.totalAmountCents / 100 / 18).toUpperCase()}/MÊS`,
+      paymentPlanOptions: buildPaymentPlanOptionsFromTotal(entry.totalAmountCents),
+    }))
 }
 
 function getGraduationFallbackImage(course?: CatalogCourse): string {
@@ -145,8 +221,8 @@ function buildGraduationInfoCards(course: CatalogCourse | undefined, title: stri
   ]
 }
 
-function buildPostHeroFacts(course: CatalogCourse | undefined) {
-  const workloadNumbers = (course?.workloadOptions ?? [])
+function buildPostHeroFacts(course: CatalogCourse | undefined, workloadOptions: string[]) {
+  const workloadNumbers = workloadOptions
     .map((item) => parseHoursValue(item))
     .filter((value) => value > 0)
     .sort((a, b) => a - b)
@@ -159,7 +235,7 @@ function buildPostHeroFacts(course: CatalogCourse | undefined) {
       ? `${workloadNumbers[0]} a ${workloadNumbers[workloadNumbers.length - 1]} Horas`
       : workloadNumbers.length === 1
         ? `${workloadNumbers[0]} Horas`
-        : 'Carga horária variável'
+        : 'Carga horária conforme oferta'
 
   const durationText =
     months.length > 1
@@ -181,7 +257,12 @@ function buildPostHeroFacts(course: CatalogCourse | undefined) {
     },
     {
       eyebrow: workloadText,
-      text: 'Carga horária dinâmica conforme a oferta vigente.',
+      text:
+        course?.modality === 'presencial'
+          ? 'Aulas presenciais'
+          : course?.modality === 'semipresencial'
+            ? 'Aulas EAD + prática presencial'
+            : 'Aulas EAD',
     },
     {
       eyebrow: durationText,
@@ -391,13 +472,18 @@ export function getCoursePagePresentation({ course, courseType, title, area }: I
   const isPost = courseType === 'pos'
   const modalityLabel = course?.modalityLabel || 'EAD'
   const description = course?.description || buildGeneratedDescription(courseType, title)
+  const paymentPlanGroups = isPost ? buildPostPaymentPlanGroups(course) : []
   const workloadOptions =
-    course?.workloadOptions.length
-      ? course.workloadOptions
-      : isPost
-        ? ['360 Horas', '400 Horas', '600 Horas']
-        : ['Carga horária conforme matriz curricular']
-  const currentPrice = course?.currentInstallmentPriceMonthly || course?.currentInstallmentPrice || ''
+    paymentPlanGroups.length > 0
+      ? paymentPlanGroups.map((group) => group.workload)
+      : course?.workloadOptions.length
+        ? course.workloadOptions
+        : ['Carga horária conforme oferta']
+  const currentPrice =
+    paymentPlanGroups[0]?.currentInstallmentText ||
+    course?.currentInstallmentPriceMonthly ||
+    course?.currentInstallmentPrice ||
+    ''
 
   return {
     image: course?.image || (isPost ? '/course/hero-post.webp' : getGraduationFallbackImage(course)),
@@ -414,7 +500,7 @@ export function getCoursePagePresentation({ course, courseType, title, area }: I
       description: course?.competenciesBenefits || description,
     },
     heroFacts: isPost
-      ? buildPostHeroFacts(course)
+      ? buildPostHeroFacts(course, workloadOptions)
       : [
           {
             eyebrow: 'Formato',
@@ -454,18 +540,11 @@ export function getCoursePagePresentation({ course, courseType, title, area }: I
       currentInstallmentText: currentPrice,
       pixText: course?.pixText || '',
     },
+    paymentPlanGroups,
     paymentPlanOptions:
-      course?.priceItems.length
-        ? course.priceItems.map((item) =>
-            `${item.installmentsMax}x de ${new Intl.NumberFormat('pt-BR', {
-              style: 'currency',
-              currency: 'BRL',
-              minimumFractionDigits: 2,
-            }).format(item.amountCents / 100)}`,
-          )
-        : isPost
-          ? ['Consulte as condições vigentes']
-          : ['Mensalidade promocional'],
+      paymentPlanGroups[0]?.paymentPlanOptions ??
+      (isPost ? ['Consulte as condições vigentes'] : ['Mensalidade promocional']),
     workloadOptions,
+    showInternshipInfoLink: isPost && course?.modality === 'presencial',
   }
 }

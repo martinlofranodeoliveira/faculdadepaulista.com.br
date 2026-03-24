@@ -26,10 +26,25 @@ export function stripGraduationModality(label: string): string {
     .trim()
 }
 
+export function stripPostGraduationPrefix(label: string): string {
+  const trimmed = label.trim()
+  const normalized = normalizeComparableText(trimmed)
+
+  for (const prefix of ['pos-graduacao em ', 'especializacao em ']) {
+    if (normalized.startsWith(prefix)) {
+      return trimmed.slice(prefix.length).trim()
+    }
+  }
+
+  return trimmed
+}
+
 export function getCourseDisplayTitle(input: CourseRouteInput): string {
-  return input.courseType === 'graduacao'
-    ? stripGraduationModality(input.courseLabel)
-    : input.courseLabel.trim()
+  if (input.courseType === 'graduacao') {
+    return stripGraduationModality(input.courseLabel)
+  }
+
+  return stripPostGraduationPrefix(input.courseLabel)
 }
 
 export function getCourseSlug(input: CourseRouteInput): string {

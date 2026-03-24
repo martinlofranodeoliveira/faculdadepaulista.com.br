@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState, type FormEvent } from 'react'
+﻿import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { AlertCircle, ChevronDown, ChevronLeft, LoaderCircle } from 'lucide-react'
 
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
@@ -21,6 +21,12 @@ type Props = {
   courseValue?: string
   courseId?: number
   leadSubmitted?: boolean
+  paymentPlanGroups?: Array<{
+    workload: string
+    totalAmountCents: number
+    currentInstallmentText: string
+    paymentPlanOptions: string[]
+  }>
   paymentPlanOptions: string[]
   workloadOptions: string[]
   pricing: {
@@ -28,6 +34,7 @@ type Props = {
     currentInstallmentText: string
     pixText: string
   }
+  showInternshipInfoLink?: boolean
 }
 
 type FieldErrors = {
@@ -155,9 +162,11 @@ export function CourseLeadForm({
   courseValue,
   courseId,
   leadSubmitted = false,
+  paymentPlanGroups = [],
   paymentPlanOptions,
   workloadOptions,
   pricing,
+  showInternshipInfoLink = false,
 }: Props) {
   const hasSecondStep = courseType === 'pos'
   const [step, setStep] = useState<Step>(1)
@@ -177,6 +186,22 @@ export function CourseLeadForm({
   const [resumeAvailable, setResumeAvailable] = useState(false)
   const nameInputRef = useRef<HTMLInputElement | null>(null)
   const cpfInputRef = useRef<HTMLInputElement | null>(null)
+
+  const selectedPaymentPlanGroup = useMemo(() => {
+    if (!paymentPlanGroups.length) return null
+
+    return (
+      paymentPlanGroups.find((group) => group.workload === workload) ?? paymentPlanGroups[0] ?? null
+    )
+  }, [paymentPlanGroups, workload])
+
+  const visiblePaymentPlanOptions =
+    selectedPaymentPlanGroup?.paymentPlanOptions.length
+      ? selectedPaymentPlanGroup.paymentPlanOptions
+      : paymentPlanOptions
+
+  const visibleCurrentInstallmentText =
+    selectedPaymentPlanGroup?.currentInstallmentText || pricing.currentInstallmentText
 
   useEffect(() => {
     const draft = readCourseLeadDraft()
@@ -209,6 +234,14 @@ export function CourseLeadForm({
       nameInputRef.current?.focus()
     }
   }, [courseLabel, courseType, courseValue, hasSecondStep, leadSubmitted])
+
+  useEffect(() => {
+    if (!hasSecondStep) return
+
+    setPaymentPlan((current) =>
+      visiblePaymentPlanOptions.includes(current) ? current : (visiblePaymentPlanOptions[0] ?? ''),
+    )
+  }, [hasSecondStep, visiblePaymentPlanOptions])
 
   const handleRestoreProgress = () => {
     const draft = readCourseLeadDraft()
@@ -268,7 +301,7 @@ export function CourseLeadForm({
     window.setTimeout(() => {
       setAdvanceLoading(false)
       setStep(2)
-      setPaymentPlan((current) => current || paymentPlanOptions[0] || '')
+      setPaymentPlan((current) => current || visiblePaymentPlanOptions[0] || '')
       setWorkload((current) => current || workloadOptions[0] || '')
       window.setTimeout(() => {
         cpfInputRef.current?.focus()
@@ -434,7 +467,7 @@ export function CourseLeadForm({
     courseType === 'graduacao'
       ? 'PREENCHA O FORMULÁRIO PARA SE INSCREVER'
       : 'PREENCHA O FORMULÁRIO E SAIBA MAIS'
-  const showPriceCard = Boolean(pricing.currentInstallmentText)
+  const showPriceCard = Boolean(visibleCurrentInstallmentText)
   const promoBannerSrc =
     courseType === 'pos' ? '/course/topo-form-pos-grad.webp' : '/course/topo-form-grad.webp'
   const promoBannerWidth = courseType === 'pos' ? 513 : 510
@@ -530,15 +563,17 @@ export function CourseLeadForm({
                   <ChevronDown size={18} strokeWidth={2} />
                 </label>
 
-                <a
-                  className="course-lead-form__info-link course-lead-form__info-link--step1"
-                  href="/politica-de-privacidade"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <AlertCircle size={18} strokeWidth={2} />
-                  <span>Saiba mais sobre o Estágio e a Prática Obrigatória</span>
-                </a>
+                {showInternshipInfoLink ? (
+                  <a
+                    className="course-lead-form__info-link course-lead-form__info-link--step1"
+                    href="/politica-de-privacidade"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <AlertCircle size={18} strokeWidth={2} />
+                    <span>Saiba mais sobre o Estágio e a Prática Obrigatória</span>
+                  </a>
+                ) : null}
               </>
             ) : null}
 
@@ -581,7 +616,7 @@ export function CourseLeadForm({
 
             <label className="course-lead-form__field course-lead-form__field--select">
               <select value={paymentPlan} onChange={(event) => setPaymentPlan(event.target.value)}>
-                {paymentPlanOptions.map((option) => (
+                {visiblePaymentPlanOptions.map((option) => (
                   <option key={option} value={option}>
                     {option}
                   </option>
@@ -590,15 +625,17 @@ export function CourseLeadForm({
               <ChevronDown size={18} strokeWidth={2} />
             </label>
 
-            <a
-              className="course-lead-form__info-link"
-              href="/politica-de-privacidade"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <AlertCircle size={18} strokeWidth={2} />
-              <span>Saiba mais sobre o Estágio e a Prática Obrigatória</span>
-            </a>
+            {showInternshipInfoLink ? (
+              <a
+                className="course-lead-form__info-link"
+                href="/politica-de-privacidade"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <AlertCircle size={18} strokeWidth={2} />
+                <span>Saiba mais sobre o Estágio e a Prática Obrigatória</span>
+              </a>
+            ) : null}
           </>
         )}
       </div>
@@ -634,7 +671,7 @@ export function CourseLeadForm({
           <div className="course-lead-form__price-values">
             <p className="course-lead-form__price-old">{pricing.oldInstallmentText}</p>
             <p className="course-lead-form__price-current">
-              Por: <strong>{pricing.currentInstallmentText.toUpperCase()}</strong>
+              Por: <strong>{visibleCurrentInstallmentText.toUpperCase()}</strong>
             </p>
           </div>
 

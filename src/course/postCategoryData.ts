@@ -1,4 +1,4 @@
-import { getPostCoursePages } from '@/lib/courseCatalog'
+import { getPostCatalogCourseSummaries } from '@/lib/catalogApi'
 
 export type PostCategoryCourse = {
   path: string
@@ -21,7 +21,7 @@ function normalizePriceLabel(value: string): string {
 }
 
 export async function getPostCategoryCourses(force = false): Promise<PostCategoryCourse[]> {
-  const entries = await getPostCoursePages(force)
+  const entries = await getPostCatalogCourseSummaries(force)
 
   return entries.map((course) => ({
     path: course.path,

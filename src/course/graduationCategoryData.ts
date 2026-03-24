@@ -1,4 +1,4 @@
-import { getGraduationCoursePages } from '@/lib/courseCatalog'
+import { getGraduationCatalogCourseSummaries } from '@/lib/catalogApi'
 
 export type GraduationCategoryCourse = {
   path: string
@@ -22,7 +22,7 @@ function toMonthlyPriceLabel(value: string) {
 }
 
 export async function getGraduationCategoryCourses(force = false): Promise<GraduationCategoryCourse[]> {
-  const entries = await getGraduationCoursePages(force)
+  const entries = await getGraduationCatalogCourseSummaries(force)
 
   return entries.map((course) => ({
     path: course.path,

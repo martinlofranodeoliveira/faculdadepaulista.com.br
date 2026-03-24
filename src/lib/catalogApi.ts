@@ -70,6 +70,29 @@ export type CatalogCourse = {
   laborMarket: string
 }
 
+export type CatalogCourseSummary = Pick<
+  CatalogCourse,
+  | 'institutionId'
+  | 'institutionName'
+  | 'institutionSlug'
+  | 'courseType'
+  | 'courseId'
+  | 'slug'
+  | 'value'
+  | 'path'
+  | 'title'
+  | 'rawLabel'
+  | 'image'
+  | 'currentInstallmentPrice'
+  | 'currentInstallmentPriceMonthly'
+  | 'oldInstallmentPrice'
+  | 'modality'
+  | 'modalityBadge'
+  | 'areaSlug'
+  | 'primaryAreaLabel'
+  | 'fixedInstallments'
+>
+
 type ApiEnvelope<T> = {
   data: T
   meta?: Record<string, unknown>
@@ -858,6 +881,108 @@ function getCatalogCourseScore(course: CatalogCourse): number {
   return score
 }
 
+function getCatalogCourseSummaryScore(course: CatalogCourseSummary): number {
+  let score = 0
+  if (course.image) score += 5
+  if (course.currentInstallmentPrice) score += 4
+  if (course.currentInstallmentPriceMonthly) score += 2
+  score += getInstitutionPreference(course.institutionSlug)
+  return score
+}
+
+function buildCatalogCourseSummary(
+  institution: InstitutionConfig,
+  course: ApiCourseListItem,
+  courseType: CourseType,
+): CatalogCourseSummary {
+  const seo = pickSeoFields(course.seo)
+  const rawLabel = normalizeText(course.name)
+  const title = getCourseDisplayTitle({
+    courseType,
+    courseLabel: seo.courseName || rawLabel,
+  })
+  const slug = toSlug(seo.slug || title || rawLabel || `curso-${course.id}`)
+  const value = `${courseType}-${slug}`
+  const path = getCoursePath({
+    courseType,
+    courseValue: value,
+    courseLabel: rawLabel,
+  })
+  const priceItems = normalizePricingItems(course.featured_pricing_options)
+  const modality = resolvePrimaryModality([course.modalities ?? '', course.offering_modality ?? ''])
+  const primaryAreaLabel = buildPrimaryAreaLabel(
+    (course.area_names ?? []).map((item) => normalizeText(item)).filter(Boolean),
+  )
+  const totalPriceCents = getCourseTotalPriceCents(courseType, course, priceItems)
+  const fallbackCurrentPrice = getFallbackCurrentPriceLabels(courseType, title, modality)
+  const currentInstallmentPrice = totalPriceCents
+    ? formatFixed18InstallmentLabel(totalPriceCents)
+    : fallbackCurrentPrice.installment
+  const currentInstallmentPriceMonthly = totalPriceCents
+    ? formatFixed18MonthlyLabel(totalPriceCents)
+    : fallbackCurrentPrice.monthly
+
+  return {
+    institutionId: institution.id,
+    institutionName: institution.name,
+    institutionSlug: institution.slug,
+    courseType,
+    courseId: Number(course.id ?? 0),
+    slug,
+    value,
+    path,
+    title,
+    rawLabel,
+    image:
+      toAbsoluteMediaUrl(seo.ogImageUrl) ||
+      toAbsoluteMediaUrl(course.main_image_url) ||
+      getCourseFallbackImage(courseType, value),
+    currentInstallmentPrice,
+    currentInstallmentPriceMonthly,
+    oldInstallmentPrice: getFallbackOldInstallmentPrice(courseType, modality),
+    modality,
+    modalityBadge: getModalityLabel(courseType, modality),
+    areaSlug: buildAreaSlug(primaryAreaLabel),
+    primaryAreaLabel,
+    fixedInstallments: false,
+  }
+}
+
+function dedupeCatalogCourseSummaries(courses: CatalogCourseSummary[]): CatalogCourseSummary[] {
+  const deduped = new Map<string, CatalogCourseSummary>()
+
+  for (const course of courses) {
+    const key =
+      course.courseId > 0
+        ? [course.courseType, `id:${course.courseId}`, course.modality].join('::')
+        : [
+            course.courseType,
+            normalizeComparableText(course.title || course.rawLabel),
+            course.modality,
+          ].join('::')
+
+    const current = deduped.get(key)
+    if (!current) {
+      deduped.set(key, course)
+      continue
+    }
+
+    const currentScore = getCatalogCourseSummaryScore(current)
+    const nextScore = getCatalogCourseSummaryScore(course)
+
+    if (nextScore > currentScore) {
+      deduped.set(key, course)
+      continue
+    }
+
+    if (nextScore === currentScore && course.title.localeCompare(current.title, 'pt-BR') < 0) {
+      deduped.set(key, course)
+    }
+  }
+
+  return [...deduped.values()]
+}
+
 function dedupeCatalogCourses(courses: CatalogCourse[]): CatalogCourse[] {
   const deduped = new Map<string, CatalogCourse>()
 
@@ -1069,12 +1194,59 @@ export async function getCatalogCourses(courseType: CourseType, force = false): 
   }, force)
 }
 
+export async function getCatalogCourseSummaries(
+  courseType: CourseType,
+  force = false,
+): Promise<CatalogCourseSummary[]> {
+  return withCache(`catalog-course-summaries:${courseType}`, async () => {
+    const institutions = getInstitutionConfigs()
+    if (!institutions.length || !API_BASE_URL) return []
+
+    const perInstitution = await Promise.all(
+      institutions.map(async (institution) => {
+        try {
+          const shouldFetchUnfiltered = courseType === 'graduacao'
+          const items = await fetchAllPages<ApiCourseListItem>('/api/v1/public/courses', institution, {
+            level: shouldFetchUnfiltered ? undefined : courseType,
+            show_disciplines: 'N',
+            price: 'S',
+          })
+
+          const filteredItems = shouldFetchUnfiltered
+            ? items.filter((course) => normalizeText(course.level).toLowerCase() === 'graduacao')
+            : items
+
+          return filteredItems.map((course) =>
+            buildCatalogCourseSummary(institution, course, courseType),
+          )
+        } catch (error) {
+          console.error(
+            `Erro ao carregar resumo do catálogo ${courseType} da instituição ${institution.name}:`,
+            error,
+          )
+          return []
+        }
+      }),
+    )
+
+    return dedupeCatalogCourseSummaries(perInstitution.flat())
+  }, force)
+}
+
 export async function getGraduationCatalogCourses(force = false) {
   return getCatalogCourses('graduacao', force)
 }
 
 export async function getPostCatalogCourses(force = false) {
   return getCatalogCourses('pos', force)
+}
+
+export async function getGraduationCatalogCourseSummaries(force = false) {
+  return getCatalogCourseSummaries('graduacao', force)
+}
+
+export async function getPostCatalogCourseSummaries(force = false) {
+  return getCatalogCourseSummaries('pos', force)
 }
 
 export function splitDifferentials(text: string): string[] {

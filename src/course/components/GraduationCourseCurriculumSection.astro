@@ -38,10 +38,7 @@ const hasDownload = Boolean(curriculumDownloadHref)
         <div class="course-page__grad-curriculum-list">
           {presentation.curriculum.map((item) => (
             <details class="course-page__grad-curriculum-item" open={item.open}>
-              <summary
-                class="course-page__grad-curriculum-summary"
-                onclick="this.parentElement.open = !this.parentElement.open; return false;"
-              >
+              <summary class="course-page__grad-curriculum-summary">
                 <div class="course-page__grad-curriculum-title-group">
                   <span class="course-page__grad-curriculum-label">{item.label}</span>
                   <span class="course-page__grad-curriculum-title">{item.title}</span>

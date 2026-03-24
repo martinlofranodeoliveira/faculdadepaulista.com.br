@@ -6,6 +6,13 @@ export type GraduationVestibularLead = {
   courseId?: number
   courseLabel?: string
   courseValue?: string
+  currentStep?: number
+  entryMethod?: string
+  presentationLetter?: string
+  essayThemeId?: string
+  essayTitle?: string
+  essayText?: string
+  enemRegistration?: string
 }
 
 const GRADUATION_VESTIBULAR_STORAGE_KEY = 'graduation-vestibular-lead'
@@ -23,6 +30,13 @@ export function storeGraduationVestibularLead(lead: GraduationVestibularLead) {
         courseId: lead.courseId,
         courseLabel: lead.courseLabel?.trim(),
         courseValue: lead.courseValue?.trim(),
+        currentStep: lead.currentStep,
+        entryMethod: lead.entryMethod?.trim(),
+        presentationLetter: lead.presentationLetter?.trim(),
+        essayThemeId: lead.essayThemeId?.trim(),
+        essayTitle: lead.essayTitle?.trim(),
+        essayText: lead.essayText?.trim(),
+        enemRegistration: lead.enemRegistration?.trim(),
       }),
   )
 }
@@ -45,6 +59,15 @@ export function readGraduationVestibularLead(): GraduationVestibularLead | null 
       courseId: typeof parsed.courseId === 'number' ? parsed.courseId : undefined,
       courseLabel: typeof parsed.courseLabel === 'string' ? parsed.courseLabel : undefined,
       courseValue: typeof parsed.courseValue === 'string' ? parsed.courseValue : undefined,
+      currentStep: typeof parsed.currentStep === 'number' ? parsed.currentStep : undefined,
+      entryMethod: typeof parsed.entryMethod === 'string' ? parsed.entryMethod : undefined,
+      presentationLetter:
+        typeof parsed.presentationLetter === 'string' ? parsed.presentationLetter : undefined,
+      essayThemeId: typeof parsed.essayThemeId === 'string' ? parsed.essayThemeId : undefined,
+      essayTitle: typeof parsed.essayTitle === 'string' ? parsed.essayTitle : undefined,
+      essayText: typeof parsed.essayText === 'string' ? parsed.essayText : undefined,
+      enemRegistration:
+        typeof parsed.enemRegistration === 'string' ? parsed.enemRegistration : undefined,
     }
   } catch {
     return null

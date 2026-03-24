@@ -636,6 +636,11 @@
   display: grid;
 }
 
+.course-page__curriculum-panel-set[hidden],
+.course-page__curriculum-rows[hidden] {
+  display: none !important;
+}
+
 .course-page__curriculum-row {
   align-items: start;
   border-bottom: 1px solid #d9d9d9;

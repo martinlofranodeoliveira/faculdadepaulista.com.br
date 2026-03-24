@@ -14,6 +14,15 @@ export type StoredJourneyProgress = {
   email?: string
   phone?: string
   workloadVariantId?: number
+  cpf?: string
+  pricingId?: number
+  paymentPlanLabel?: string
+  entryMethod?: string
+  presentationLetter?: string
+  essayThemeId?: string
+  essayTitle?: string
+  essayText?: string
+  enemRegistration?: string
   currentStep?: number | string | null
   status?: string | null
   createdAt: number

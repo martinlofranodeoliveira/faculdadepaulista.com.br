@@ -1,4 +1,4 @@
-Ôªøimport { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { clearJourneyProgress, saveJourneyProgress } from '@/course/journeyProgress'
 import { finalizeJourney, updateJourneyStep3 } from '@/lib/journeyClient'
@@ -70,6 +70,21 @@ function mapAdmissionOptionToEntryMethod(optionId: AdmissionOptionId): string {
   }
 }
 
+function mapEntryMethodToAdmissionOption(entryMethod?: string | null): AdmissionOptionId {
+  switch (entryMethod) {
+    case 'segunda_graduacao':
+      return 'segunda-graduacao'
+    case 'transferencia':
+      return 'transferencia'
+    case 'enem':
+      return 'enem'
+    case 'redacao':
+      return 'redacao'
+    default:
+      return 'simplificada'
+  }
+}
+
 function getEssayThemeLabel(themeId: EssayThemeId): string {
   return themeId === 'tema-b' ? 'Tema B' : 'Tema A'
 }
@@ -80,6 +95,9 @@ export function GraduationVestibularPage() {
   const [selectedOptionId, setSelectedOptionId] = useState<AdmissionOptionId>('simplificada')
   const [selectedEssayThemeId, setSelectedEssayThemeId] = useState<EssayThemeId>('tema-a')
   const [enemRegistration, setEnemRegistration] = useState('')
+  const [resumePresentation, setResumePresentation] = useState('')
+  const [resumeEssayTitle, setResumeEssayTitle] = useState('')
+  const [resumeEssayText, setResumeEssayText] = useState('')
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -96,6 +114,48 @@ export function GraduationVestibularPage() {
       courseLabel: storedLead.courseLabel ?? '',
       courseValue: storedLead.courseValue,
     })
+
+    if (storedLead.enemRegistration) {
+      setEnemRegistration(storedLead.enemRegistration)
+    }
+
+    if (storedLead.presentationLetter) {
+      setResumePresentation(storedLead.presentationLetter)
+    }
+
+    if (storedLead.essayTitle) {
+      setResumeEssayTitle(storedLead.essayTitle)
+    }
+
+    if (storedLead.essayText) {
+      setResumeEssayText(storedLead.essayText)
+    }
+
+    const resumedOption = mapEntryMethodToAdmissionOption(storedLead.entryMethod)
+    setSelectedOptionId(resumedOption)
+
+    if (storedLead.essayThemeId === 'tema-b' || storedLead.essayThemeId === 'tema-a') {
+      setSelectedEssayThemeId(storedLead.essayThemeId)
+    }
+
+    if ((storedLead.currentStep ?? 0) >= 3 && storedLead.entryMethod) {
+      if (resumedOption === 'simplificada') {
+        setStep('simplified')
+        return
+      }
+
+      if (resumedOption === 'redacao') {
+        setStep('essay-writing')
+        return
+      }
+
+      setStep('enrollment-offer')
+      return
+    }
+
+    if ((storedLead.currentStep ?? 0) >= 2) {
+      setStep('selection')
+    }
   }, [])
 
   function handleSelectOption(optionId: AdmissionOptionId) {
@@ -129,7 +189,7 @@ export function GraduationVestibularPage() {
 
   async function finalizeGraduationFlow(step3Payload: Record<string, unknown>) {
     if (!identity.journeyId || !identity.courseId) {
-      setSubmitError('Jornada n√£o encontrada. Volte para a p√°gina do curso e reinicie a inscri√ß√£o.')
+      setSubmitError('Jornada n„o encontrada. Volte para a p·gina do curso e reinicie a inscriÁ„o.')
       return
     }
 
@@ -154,11 +214,11 @@ export function GraduationVestibularPage() {
       clearGraduationVestibularLead()
       window.location.assign('/graduacao/inscricao-finalizada')
     } catch (error) {
-      console.error('Erro ao finalizar jornada da gradua√ß√£o:', error)
+      console.error('Erro ao finalizar jornada da graduaÁ„o:', error)
       setSubmitError(
         error instanceof Error
           ? error.message
-          : 'N√£o foi poss√≠vel concluir sua inscri√ß√£o agora. Tente novamente em instantes.',
+          : 'N„o foi possÌvel concluir sua inscriÁ„o agora. Tente novamente em instantes.',
       )
     } finally {
       setIsSubmitting(false)
@@ -213,6 +273,7 @@ export function GraduationVestibularPage() {
 
         {step === 'simplified' ? (
           <GraduationSimplifiedStep
+            initialPresentation={resumePresentation}
             onBack={() => setStep('selection')}
             onContinue={handleSimplifiedContinue}
             isSubmitting={isSubmitting}
@@ -231,6 +292,8 @@ export function GraduationVestibularPage() {
 
         {step === 'essay-writing' ? (
           <GraduationEssayWritingStep
+            initialTitle={resumeEssayTitle}
+            initialEssay={resumeEssayText}
             selectedThemeId={selectedEssayThemeId}
             onBack={() => setStep('essay-theme')}
             onFinish={handleEssayFinish}
@@ -252,3 +315,4 @@ export function GraduationVestibularPage() {
     </main>
   )
 }
+

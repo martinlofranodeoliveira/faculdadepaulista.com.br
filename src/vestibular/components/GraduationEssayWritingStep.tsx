@@ -1,4 +1,4 @@
-﻿import { useMemo, useRef, useState } from 'react'
+﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, LoaderCircle } from 'lucide-react'
 
 import type { EssayThemeId } from './GraduationEssayThemeStep'
@@ -9,6 +9,8 @@ type Props = {
   selectedThemeId: EssayThemeId
   isSubmitting?: boolean
   submitError?: string
+  initialTitle?: string
+  initialEssay?: string
 }
 
 const MIN_ESSAY_TITLE_LENGTH = 5
@@ -23,12 +25,22 @@ export function GraduationEssayWritingStep({
   selectedThemeId,
   isSubmitting = false,
   submitError,
+  initialTitle = '',
+  initialEssay = '',
 }: Props) {
-  const [essayTitle, setEssayTitle] = useState('')
-  const [essay, setEssay] = useState('')
+  const [essayTitle, setEssayTitle] = useState(initialTitle)
+  const [essay, setEssay] = useState(initialEssay)
   const [hasTriedFinish, setHasTriedFinish] = useState(false)
   const titleRef = useRef<HTMLInputElement | null>(null)
   const essayRef = useRef<HTMLTextAreaElement | null>(null)
+
+  useEffect(() => {
+    setEssayTitle(initialTitle)
+  }, [initialTitle])
+
+  useEffect(() => {
+    setEssay(initialEssay)
+  }, [initialEssay])
 
   const titleCharacterCount = useMemo(() => essayTitle.trim().length, [essayTitle])
   const essayCharacterCount = useMemo(() => essay.trim().length, [essay])

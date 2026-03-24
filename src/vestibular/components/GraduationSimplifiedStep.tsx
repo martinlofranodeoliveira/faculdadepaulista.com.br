@@ -1,4 +1,4 @@
-﻿import { useMemo, useRef, useState } from 'react'
+﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, LoaderCircle } from 'lucide-react'
 
 type Props = {
@@ -6,6 +6,7 @@ type Props = {
   onContinue: (presentation: string) => Promise<void> | void
   isSubmitting?: boolean
   submitError?: string
+  initialPresentation?: string
 }
 
 const MIN_PRESENTATION_LENGTH = 250
@@ -16,10 +17,15 @@ export function GraduationSimplifiedStep({
   onContinue,
   isSubmitting = false,
   submitError,
+  initialPresentation = '',
 }: Props) {
-  const [presentation, setPresentation] = useState('')
+  const [presentation, setPresentation] = useState(initialPresentation)
   const [hasTriedContinue, setHasTriedContinue] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
+
+  useEffect(() => {
+    setPresentation(initialPresentation)
+  }, [initialPresentation])
 
   const characterCount = useMemo(() => presentation.trim().length, [presentation])
   const isValid =

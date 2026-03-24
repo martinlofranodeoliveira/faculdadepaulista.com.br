@@ -15,6 +15,12 @@ export type StoredJourneyProgress = {
   phone?: string
   workloadVariantId?: number
   cpf?: string
+  stateUf?: string
+  city?: string
+  poleId?: number
+  poleName?: string
+  pcd?: boolean
+  pcdDetails?: string
   pricingId?: number
   paymentPlanLabel?: string
   entryMethod?: string

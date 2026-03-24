@@ -64,7 +64,20 @@ type FieldErrors = {
   email?: string
   phone?: string
   cpf?: string
+  stateUf?: string
+  city?: string
+  poleId?: string
+  pcd?: string
+  pcdDetails?: string
   agreement?: string
+}
+
+type PoleOption = {
+  id: number
+  name: string
+  city: string
+  stateUf: string
+  stateName: string
 }
 
 type ResumeMode = 'default' | 'lookup' | 'select'
@@ -101,6 +114,12 @@ type ResumeCourseOption = {
   phone: string
   workloadVariantId?: number
   cpf?: string
+  stateUf?: string
+  city?: string
+  poleId?: number
+  poleName?: string
+  pcd?: boolean
+  pcdDetails?: string
   pricingId?: number
   paymentPlanLabel?: string
   entryMethod?: string
@@ -264,6 +283,39 @@ function readRecordNumber(
   return undefined
 }
 
+function readRecordBoolean(
+  record: Record<string, unknown> | undefined,
+  keys: string[],
+): boolean | undefined {
+  if (!record) return undefined
+
+  for (const key of keys) {
+    const value = record[key]
+    if (typeof value === 'boolean') return value
+    if (typeof value === 'number') return value !== 0
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase()
+      if (['1', 'true', 'sim', 'yes'].includes(normalized)) return true
+      if (['0', 'false', 'nao', 'não', 'no'].includes(normalized)) return false
+    }
+  }
+
+  return undefined
+}
+
+async function fetchPoleOptions(): Promise<PoleOption[]> {
+  const response = await fetch('/api/poles')
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: { items?: PoleOption[] }; message?: string }
+    | null
+
+  if (!response.ok) {
+    throw new Error(payload?.message || 'Não foi possível carregar os polos agora.')
+  }
+
+  return Array.isArray(payload?.data?.items) ? payload.data.items : []
+}
+
 async function fetchResumeCourseRoutes(
   courseType: CourseType,
   courseIds: number[],
@@ -338,6 +390,20 @@ function buildResumeOption(
       readRecordNumber(step2, ['workload_variant_id']) ??
       readRecordNumber(step1, ['workload_variant_id']),
     cpf: readRecordString(step2, ['cpf']),
+    stateUf: readRecordString(step2, ['estado', 'state_uf', 'uf']),
+    city: readRecordString(step2, ['cidade', 'city']),
+    poleId:
+      readRecordNumber(step2, ['pole_id']) ??
+      (isRecord((snapshot as JourneyPendingItem).pole)
+        ? readRecordNumber((snapshot as JourneyPendingItem).pole as Record<string, unknown>, ['id'])
+        : undefined),
+    poleName:
+      readRecordString(step2, ['polo']) ||
+      (isRecord((snapshot as JourneyPendingItem).pole)
+        ? readRecordString((snapshot as JourneyPendingItem).pole as Record<string, unknown>, ['name'])
+        : undefined),
+    pcd: readRecordBoolean(step2, ['pcd']),
+    pcdDetails: readRecordString(step2, ['quais_necessidades']),
     pricingId: readRecordNumber(step2, ['pricing_id']),
     paymentPlanLabel: readRecordString(step2, ['payment_plan_label']),
     entryMethod: readRecordString(step3, ['entry_method']),
@@ -347,6 +413,25 @@ function buildResumeOption(
     essayText: readRecordString(step3, ['essay_text']),
     enemRegistration: readRecordString(step3, ['enem_registration', 'enem_code']),
   }
+}
+
+function hasCompletedGraduationStep2(progress: {
+  cpf?: string
+  stateUf?: string
+  city?: string
+  poleId?: number
+  pcd?: boolean
+  pcdDetails?: string
+  currentStep?: number | string | null
+}): boolean {
+  if (!progress.cpf?.trim()) return false
+  if (!progress.stateUf?.trim()) return false
+  if (!progress.city?.trim()) return false
+  if (!progress.poleId || progress.poleId <= 0) return false
+  if (typeof progress.pcd !== 'boolean') return false
+  if (progress.pcd && !progress.pcdDetails?.trim()) return false
+
+  return normalizeCurrentStep(progress.currentStep) >= 2
 }
 
 export function CourseLeadForm({
@@ -369,6 +454,14 @@ export function CourseLeadForm({
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [cpf, setCpf] = useState('')
+  const [graduationStateUf, setGraduationStateUf] = useState('')
+  const [graduationCity, setGraduationCity] = useState('')
+  const [graduationPoleId, setGraduationPoleId] = useState('')
+  const [graduationPcd, setGraduationPcd] = useState('')
+  const [graduationPcdDetails, setGraduationPcdDetails] = useState('')
+  const [poleOptions, setPoleOptions] = useState<PoleOption[]>([])
+  const [polesLoading, setPolesLoading] = useState(courseType === 'graduacao')
+  const [polesMessage, setPolesMessage] = useState('')
   const [agreementAccepted, setAgreementAccepted] = useState(false)
   const [paymentPlan, setPaymentPlan] = useState(paymentPlanOptions[0] ?? '')
   const [workload, setWorkload] = useState(workloadOptions[0] ?? '')
@@ -407,11 +500,56 @@ export function CourseLeadForm({
   const visibleCurrentInstallmentText =
     selectedPaymentPlanGroup?.currentInstallmentText || pricing.currentInstallmentText
 
+  const graduationStateOptions = useMemo(() => {
+    const stateMap = new Map<string, string>()
+    for (const pole of poleOptions) {
+      if (!pole.stateUf) continue
+      stateMap.set(pole.stateUf, pole.stateName || pole.stateUf)
+    }
+
+    return [...stateMap.entries()]
+      .map(([stateUf, stateName]) => ({ stateUf, stateName }))
+      .sort(
+        (left, right) =>
+          left.stateUf.localeCompare(right.stateUf, 'pt-BR') ||
+          left.stateName.localeCompare(right.stateName, 'pt-BR'),
+      )
+  }, [poleOptions])
+
+  const graduationCityOptions = useMemo(() => {
+    const cityMap = new Map<string, string>()
+    for (const pole of poleOptions) {
+      if (!graduationStateUf || pole.stateUf !== graduationStateUf || !pole.city) continue
+      cityMap.set(pole.city, pole.city)
+    }
+
+    return [...cityMap.values()].sort((left, right) => left.localeCompare(right, 'pt-BR'))
+  }, [graduationStateUf, poleOptions])
+
+  const filteredPoleOptions = useMemo(() => {
+    return poleOptions.filter((pole) => {
+      if (graduationStateUf && pole.stateUf !== graduationStateUf) return false
+      if (graduationCity && pole.city !== graduationCity) return false
+      return true
+    })
+  }, [graduationCity, graduationStateUf, poleOptions])
+
+  const selectedGraduationPole = useMemo(() => {
+    const normalizedPoleId = Number.parseInt(graduationPoleId, 10)
+    if (!Number.isFinite(normalizedPoleId) || normalizedPoleId <= 0) return undefined
+    return poleOptions.find((pole) => pole.id === normalizedPoleId)
+  }, [graduationPoleId, poleOptions])
+
   const hydrateResumeIntoCurrentCourse = (progress: StoredJourneyProgress) => {
     if (progress.fullName) setFullName(progress.fullName)
     if (progress.email) setEmail(progress.email)
     if (progress.phone) setPhone(formatPhoneMask(progress.phone))
     if (progress.cpf) setCpf(formatCpfMask(progress.cpf))
+    if (progress.stateUf) setGraduationStateUf(progress.stateUf)
+    if (progress.city) setGraduationCity(progress.city)
+    if (progress.poleId) setGraduationPoleId(String(progress.poleId))
+    if (typeof progress.pcd === 'boolean') setGraduationPcd(progress.pcd ? 'sim' : 'nao')
+    if (progress.pcdDetails) setGraduationPcdDetails(progress.pcdDetails)
     setAgreementAccepted(true)
 
     if (progress.workloadVariantId) {
@@ -458,7 +596,7 @@ export function CourseLeadForm({
         courseValue,
         courseLabel,
       })
-        ? storedJourney
+      ? storedJourney
         : null
 
     if (matchesCurrentDraft) {
@@ -475,7 +613,11 @@ export function CourseLeadForm({
     const searchParams = new URLSearchParams(window.location.search)
     if (searchParams.get('resume') !== '1') return
 
-    if (courseType === 'graduacao' && normalizeCurrentStep(matchesCurrentJourney.currentStep) >= 2) {
+    if (
+      courseType === 'graduacao' &&
+      (normalizeCurrentStep(matchesCurrentJourney.currentStep) >= 3 ||
+        hasCompletedGraduationStep2(matchesCurrentJourney))
+    ) {
       storeGraduationVestibularLead({
         fullName: matchesCurrentJourney.fullName || '',
         email: matchesCurrentJourney.email || '',
@@ -485,6 +627,12 @@ export function CourseLeadForm({
         courseLabel: matchesCurrentJourney.courseLabel,
         courseValue: matchesCurrentJourney.courseValue,
         currentStep: normalizeCurrentStep(matchesCurrentJourney.currentStep),
+        stateUf: matchesCurrentJourney.stateUf,
+        city: matchesCurrentJourney.city,
+        poleId: matchesCurrentJourney.poleId,
+        poleName: matchesCurrentJourney.poleName,
+        pcd: matchesCurrentJourney.pcd,
+        pcdDetails: matchesCurrentJourney.pcdDetails,
         entryMethod: matchesCurrentJourney.entryMethod,
         presentationLetter: matchesCurrentJourney.presentationLetter,
         essayThemeId: matchesCurrentJourney.essayThemeId,
@@ -501,6 +649,75 @@ export function CourseLeadForm({
     hydrateResumeIntoCurrentCourse(matchesCurrentJourney)
     window.history.replaceState({}, '', `${window.location.pathname}${window.location.hash}`)
   }, [courseId, courseLabel, courseType, courseValue, hasSecondStep, paymentPlanGroups])
+
+  useEffect(() => {
+    if (courseType !== 'graduacao') return
+
+    let cancelled = false
+
+    const loadPoles = async () => {
+      setPolesLoading(true)
+      setPolesMessage('')
+
+      try {
+        const items = await fetchPoleOptions()
+        if (cancelled) return
+        setPoleOptions(items)
+      } catch (error) {
+        if (cancelled) return
+        setPolesMessage(
+          error instanceof Error
+            ? error.message
+            : 'Não foi possível carregar os polos agora. Tente novamente em instantes.',
+        )
+      } finally {
+        if (!cancelled) setPolesLoading(false)
+      }
+    }
+
+    void loadPoles()
+
+    return () => {
+      cancelled = true
+    }
+  }, [courseType])
+
+  useEffect(() => {
+    if (courseType !== 'graduacao') return
+    if (polesLoading) return
+
+    if (!graduationStateUf) {
+      if (graduationCity) setGraduationCity('')
+      if (graduationPoleId) setGraduationPoleId('')
+      return
+    }
+
+    if (graduationCity && !graduationCityOptions.includes(graduationCity)) {
+      setGraduationCity('')
+      setGraduationPoleId('')
+    }
+  }, [courseType, graduationCity, graduationCityOptions, graduationPoleId, graduationStateUf, polesLoading])
+
+  useEffect(() => {
+    if (courseType !== 'graduacao') return
+    if (polesLoading) return
+
+    if (!graduationCity) {
+      if (graduationPoleId) setGraduationPoleId('')
+      return
+    }
+
+    const hasSelectedPole = filteredPoleOptions.some((pole) => String(pole.id) === graduationPoleId)
+    if (!hasSelectedPole) {
+      setGraduationPoleId('')
+    }
+  }, [courseType, filteredPoleOptions, graduationCity, graduationPoleId, polesLoading])
+
+  useEffect(() => {
+    if (graduationPcd !== 'sim' && graduationPcdDetails) {
+      setGraduationPcdDetails('')
+    }
+  }, [graduationPcd, graduationPcdDetails])
 
   useEffect(() => {
     if (!hasSecondStep) return
@@ -566,6 +783,22 @@ export function CourseLeadForm({
   }
 
   const validateSecondStep = (): FieldErrors => {
+    if (courseType === 'graduacao') {
+      const needsDetailsRequired = graduationPcd === 'sim'
+
+      return {
+        cpf: validateCpf(cpf),
+        stateUf: graduationStateUf ? undefined : 'Selecione o estado.',
+        city: graduationCity ? undefined : 'Selecione a cidade.',
+        poleId: graduationPoleId ? undefined : 'Selecione o polo.',
+        pcd: graduationPcd ? undefined : 'Informe se você é portador de necessidades.',
+        pcdDetails:
+          needsDetailsRequired && !graduationPcdDetails.trim()
+            ? 'Informe qual ou quais necessidades.'
+            : undefined,
+      }
+    }
+
     return {
       cpf: validateCpf(cpf),
     }
@@ -786,6 +1019,12 @@ export function CourseLeadForm({
     phone: option.phone,
     workloadVariantId: option.workloadVariantId,
     cpf: option.cpf,
+    stateUf: option.stateUf,
+    city: option.city,
+    poleId: option.poleId,
+    poleName: option.poleName,
+    pcd: option.pcd,
+    pcdDetails: option.pcdDetails,
     pricingId: option.pricingId,
     paymentPlanLabel: option.paymentPlanLabel,
     entryMethod: option.entryMethod,
@@ -835,7 +1074,10 @@ export function CourseLeadForm({
 
     saveJourneyProgress(buildStoredJourneyProgress(refreshedOption))
 
-    if (courseType === 'graduacao' && refreshedOption.currentStep >= 2) {
+    if (
+      courseType === 'graduacao' &&
+      (refreshedOption.currentStep >= 3 || hasCompletedGraduationStep2(refreshedOption))
+    ) {
       storeGraduationVestibularLead({
         fullName: refreshedOption.fullName,
         email: refreshedOption.email,
@@ -845,6 +1087,12 @@ export function CourseLeadForm({
         courseLabel: refreshedOption.courseLabel,
         courseValue: refreshedOption.courseValue,
         currentStep: refreshedOption.currentStep,
+        stateUf: refreshedOption.stateUf,
+        city: refreshedOption.city,
+        poleId: refreshedOption.poleId,
+        poleName: refreshedOption.poleName,
+        pcd: refreshedOption.pcd,
+        pcdDetails: refreshedOption.pcdDetails,
         entryMethod: refreshedOption.entryMethod,
         presentationLetter: refreshedOption.presentationLetter,
         essayThemeId: refreshedOption.essayThemeId,
@@ -1087,11 +1335,29 @@ export function CourseLeadForm({
       }
 
       const normalizedGraduationCpf = normalizeCpf(cpf)
+      const graduationPcdValue =
+        graduationPcd === 'sim' ? true : graduationPcd === 'nao' ? false : undefined
 
-      if (normalizedGraduationCpf) {
+      if (
+        normalizedGraduationCpf &&
+        graduationStateUf &&
+        graduationCity &&
+        selectedGraduationPole &&
+        typeof graduationPcdValue === 'boolean'
+      ) {
         try {
           const step2Response = await updateJourneyStep2(ensuredJourneyId, {
             cpf: normalizedGraduationCpf,
+            estado: graduationStateUf,
+            cidade: graduationCity,
+            polo: selectedGraduationPole.name,
+            pole_id: selectedGraduationPole.id,
+            pcd: graduationPcdValue,
+            quais_necessidades:
+              graduationPcdValue && graduationPcdDetails.trim()
+                ? graduationPcdDetails.trim()
+                : null,
+            voucher_code: voucherCode.trim() || null,
           })
 
           saveJourneyProgress({
@@ -1104,6 +1370,15 @@ export function CourseLeadForm({
             email: email.trim(),
             phone: normalizePhone(phone),
             cpf: normalizedGraduationCpf,
+            stateUf: graduationStateUf,
+            city: graduationCity,
+            poleId: selectedGraduationPole.id,
+            poleName: selectedGraduationPole.name,
+            pcd: graduationPcdValue,
+            pcdDetails:
+              graduationPcdValue && graduationPcdDetails.trim()
+                ? graduationPcdDetails.trim()
+                : undefined,
             currentStep: step2Response.current_step ?? 2,
           })
         } catch (error) {
@@ -1123,6 +1398,15 @@ export function CourseLeadForm({
         courseLabel,
         courseValue,
         cpf: normalizedGraduationCpf || undefined,
+        stateUf: graduationStateUf || undefined,
+        city: graduationCity || undefined,
+        poleId: selectedGraduationPole?.id,
+        poleName: selectedGraduationPole?.name,
+        pcd: graduationPcdValue,
+        pcdDetails:
+          graduationPcdValue && graduationPcdDetails.trim()
+            ? graduationPcdDetails.trim()
+            : undefined,
         currentStep: 2,
       })
       setSubmitStatus('success')
@@ -1149,7 +1433,9 @@ export function CourseLeadForm({
   const primaryButtonBusy = advanceLoading || submitStatus === 'submitting'
   const title =
     courseType === 'graduacao'
-      ? 'PREENCHA O FORMULÁRIO PARA SE INSCREVER'
+      ? step === 2
+        ? 'PREENCHA O FORMULÁRIO E SAIBA MAIS'
+        : 'PREENCHA O FORMULÁRIO PARA SE INSCREVER'
       : 'PREENCHA O FORMULÁRIO E SAIBA MAIS'
   const showPriceCard = Boolean(visibleCurrentInstallmentText)
   const promoBannerSrc =
@@ -1384,46 +1670,158 @@ export function CourseLeadForm({
           </>
         ) : (
           <>
-            <div className="course-lead-form__field-stack">
-              <label className={`course-lead-form__field ${errors.cpf ? 'is-invalid' : ''}`}>
-                <input
-                  ref={cpfInputRef}
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="CPF"
-                  autoComplete="off"
-                  maxLength={14}
-                  value={cpf}
-                  onChange={(event) => setCpf(formatCpfMask(event.target.value))}
-                />
-              </label>
-              {errors.cpf ? <p className="course-lead-form__error">{errors.cpf}</p> : null}
-            </div>
-
             {courseType === 'pos' ? (
-              <label className="course-lead-form__field course-lead-form__field--select">
-                <select value={paymentPlan} onChange={(event) => setPaymentPlan(event.target.value)}>
-                  {visiblePaymentPlanOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown size={18} strokeWidth={2} />
-              </label>
-            ) : null}
+              <>
+                <div className="course-lead-form__field-stack">
+                  <label className={`course-lead-form__field ${errors.cpf ? 'is-invalid' : ''}`}>
+                    <input
+                      ref={cpfInputRef}
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="CPF"
+                      autoComplete="off"
+                      maxLength={14}
+                      value={cpf}
+                      onChange={(event) => setCpf(formatCpfMask(event.target.value))}
+                    />
+                  </label>
+                  {errors.cpf ? <p className="course-lead-form__error">{errors.cpf}</p> : null}
+                </div>
 
-            {courseType === 'pos' && showInternshipInfoLink ? (
-              <a
-                className="course-lead-form__info-link"
-                href="/politica-de-privacidade"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <AlertCircle size={18} strokeWidth={2} />
-                <span>{'Saiba mais sobre o Est\u00e1gio e a Pr\u00e1tica Obrigat\u00f3ria'}</span>
-              </a>
-            ) : null}
+                <label className="course-lead-form__field course-lead-form__field--select">
+                  <select value={paymentPlan} onChange={(event) => setPaymentPlan(event.target.value)}>
+                    {visiblePaymentPlanOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown size={18} strokeWidth={2} />
+                </label>
+
+                {showInternshipInfoLink ? (
+                  <a
+                    className="course-lead-form__info-link"
+                    href="/politica-de-privacidade"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <AlertCircle size={18} strokeWidth={2} />
+                    <span>{'Saiba mais sobre o Est\u00e1gio e a Pr\u00e1tica Obrigat\u00f3ria'}</span>
+                  </a>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <div className="course-lead-form__field-row course-lead-form__field-row--graduation-location">
+                  <div className="course-lead-form__field-stack">
+                    <label className={`course-lead-form__field course-lead-form__field--select ${errors.stateUf ? 'is-invalid' : ''}`}>
+                      <select
+                        value={graduationStateUf}
+                        onChange={(event) => setGraduationStateUf(event.target.value)}
+                        disabled={polesLoading || !graduationStateOptions.length}
+                      >
+                        <option value="">{polesLoading ? 'Carregando...' : 'Estado'}</option>
+                        {graduationStateOptions.map((option) => (
+                          <option key={option.stateUf} value={option.stateUf}>
+                            {option.stateUf}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown size={18} strokeWidth={2} />
+                    </label>
+                    {errors.stateUf ? <p className="course-lead-form__error">{errors.stateUf}</p> : null}
+                  </div>
+
+                  <div className="course-lead-form__field-stack">
+                    <label className={`course-lead-form__field course-lead-form__field--select ${errors.city ? 'is-invalid' : ''}`}>
+                      <select
+                        value={graduationCity}
+                        onChange={(event) => setGraduationCity(event.target.value)}
+                        disabled={polesLoading || !graduationStateUf || !graduationCityOptions.length}
+                      >
+                        <option value="">{polesLoading ? 'Carregando...' : 'Cidade'}</option>
+                        {graduationCityOptions.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown size={18} strokeWidth={2} />
+                    </label>
+                    {errors.city ? <p className="course-lead-form__error">{errors.city}</p> : null}
+                  </div>
+                </div>
+
+                <div className="course-lead-form__field-stack">
+                  <label className={`course-lead-form__field course-lead-form__field--select ${errors.poleId ? 'is-invalid' : ''}`}>
+                    <select
+                      value={graduationPoleId}
+                      onChange={(event) => setGraduationPoleId(event.target.value)}
+                      disabled={polesLoading || !graduationCity || !filteredPoleOptions.length}
+                    >
+                      <option value="">{polesLoading ? 'Carregando...' : 'Polo'}</option>
+                      {filteredPoleOptions.map((option) => (
+                        <option key={option.id} value={option.id}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown size={18} strokeWidth={2} />
+                  </label>
+                  {errors.poleId ? <p className="course-lead-form__error">{errors.poleId}</p> : null}
+                </div>
+
+                <div className="course-lead-form__field-stack">
+                  <label className={`course-lead-form__field ${errors.cpf ? 'is-invalid' : ''}`}>
+                    <input
+                      ref={cpfInputRef}
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="CPF"
+                      autoComplete="off"
+                      maxLength={14}
+                      value={cpf}
+                      onChange={(event) => setCpf(formatCpfMask(event.target.value))}
+                    />
+                  </label>
+                  {errors.cpf ? <p className="course-lead-form__error">{errors.cpf}</p> : null}
+                </div>
+
+                <div className="course-lead-form__field-row course-lead-form__field-row--graduation-needs">
+                  <div className="course-lead-form__field-stack">
+                    <label className={`course-lead-form__field course-lead-form__field--select ${errors.pcd ? 'is-invalid' : ''}`}>
+                      <select value={graduationPcd} onChange={(event) => setGraduationPcd(event.target.value)}>
+                        <option value="">Portador de necessidades</option>
+                        <option value="nao">Não</option>
+                        <option value="sim">Sim</option>
+                      </select>
+                      <ChevronDown size={18} strokeWidth={2} />
+                    </label>
+                    {errors.pcd ? <p className="course-lead-form__error">{errors.pcd}</p> : null}
+                  </div>
+
+                  <div className="course-lead-form__field-stack">
+                    <label
+                      className={`course-lead-form__field ${graduationPcd !== 'sim' ? 'is-disabled' : ''} ${errors.pcdDetails ? 'is-invalid' : ''}`}
+                    >
+                      <input
+                        type="text"
+                        placeholder="Qual/Quais"
+                        autoComplete="off"
+                        maxLength={160}
+                        value={graduationPcdDetails}
+                        onChange={(event) => setGraduationPcdDetails(event.target.value)}
+                        disabled={graduationPcd !== 'sim'}
+                      />
+                    </label>
+                    {errors.pcdDetails ? <p className="course-lead-form__error">{errors.pcdDetails}</p> : null}
+                  </div>
+                </div>
+
+                {polesMessage ? <p className="course-lead-form__error">{polesMessage}</p> : null}
+              </>
+            )}
           </>
         )}
       </div>

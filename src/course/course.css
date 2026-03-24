@@ -2268,6 +2268,14 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.course-lead-form__field-row--graduation-location {
+  grid-template-columns: 95px minmax(0, 1fr);
+}
+
+.course-lead-form__field-row--graduation-needs {
+  grid-template-columns: 187px minmax(0, 1fr);
+}
+
 .course-lead-form__field,
 .course-lead-form__voucher-field {
   background: #e8e9ea;
@@ -2302,6 +2310,14 @@
   width: 100%;
 }
 
+.course-lead-form__field input:disabled,
+.course-lead-form__field select:disabled,
+.course-lead-form__voucher-field input:disabled {
+  color: #111;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
 .course-lead-form__field select {
   cursor: pointer;
   display: block;
@@ -2321,6 +2337,10 @@
   color: #1d1d1d;
   flex: 0 0 auto;
   pointer-events: none;
+}
+
+.course-lead-form__field.is-disabled {
+  background: #989898;
 }
 
 .course-lead-form__field.is-invalid,

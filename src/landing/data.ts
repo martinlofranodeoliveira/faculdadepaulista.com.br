@@ -390,7 +390,7 @@ export const testimonials: TestimonialItem[] = [
 
 export const faqItems: FaqItem[] = [
   {
-    question: 'Como funciona o vestibular online?',
+    question: 'Como funciona o Vestibular Online?',
     answer:
       'Nosso processo seletivo é moderno e adaptado à sua rotina. A avaliação é realizada de forma digital, consistindo em uma **prova de redação online** com resultado ágil. Além disso, você pode ingressar imediatamente utilizando sua **nota do ENEM**, realizar uma **Segunda Graduação sem vestibular** ou solicitar sua **Transferência** para garantir uma formação de alto nível.',
   },
@@ -400,12 +400,12 @@ export const faqItems: FaqItem[] = [
       'Oferecemos total conveniência financeira para viabilizar seus estudos. Você pode optar pelo pagamento via **PIX, boleto bancário ou cartão de crédito**. Para maior tranquilidade, disponibilizamos o **crédito recorrente**, uma modalidade que debita a mensalidade mensalmente sem comprometer o limite total do seu cartão.',
   },
   {
-    question: 'Quem pode se inscrever nos cursos de graduação?',
+    question: 'Quem pode se inscrever nos cursos de Graduação?',
     answer:
       'Nossos Cursos de Graduação (Bacharelados, Licenciaturas e Tecnólogos) são destinados a todos que **concluíram o Ensino Médio**. Seja para quem busca a primeira formação ou para Profissionais que desejam uma transição de Carreira, a Faculdade Paulista oferece o suporte necessário para o desenvolvimento de competências de destaque.',
   },
   {
-    question: 'Quem pode se inscrever nos cursos de pós-graduação?',
+    question: 'Quem pode se inscrever nos cursos de Pós-Graduação?',
     answer:
       'A Pós-Graduação é voltada para Profissionais que já possuem **Diploma de Ensino Superior** e buscam Especialização técnica ou estratégica. Oferecemos um portfólio completo para quem deseja **assumir cargos de liderança**, atualizar conhecimentos, pontuar em Concursos e aumentar sua competitividade no Mercado de trabalho.',
   },

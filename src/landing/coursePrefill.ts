@@ -3,6 +3,7 @@ export type CoursePrefillDetail = {
   courseValue?: string
   courseLabel: string
   courseId?: number
+  redirectPath?: string
 }
 
 export const COURSE_PREFILL_EVENT = 'lp:course-prefill'

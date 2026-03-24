@@ -280,23 +280,29 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
 
       setSubmitStatus('success')
       setSubmitMessage('Cadastro enviado com sucesso.')
-      saveCourseLeadDraft({
-        courseType: selection.courseType,
-        courseValue: selection.courseValue,
-        courseLabel,
-        courseId: selection.courseId,
-        fullName: fullName.trim(),
-        email: email.trim(),
-        phone,
-      })
-      const redirectPath = getCoursePath(
-        {
+
+      if (!selection.redirectPath) {
+        saveCourseLeadDraft({
           courseType: selection.courseType,
           courseValue: selection.courseValue,
           courseLabel,
-        },
-        { leadSubmitted: true },
-      )
+          courseId: selection.courseId,
+          fullName: fullName.trim(),
+          email: email.trim(),
+          phone,
+        })
+      }
+
+      const redirectPath =
+        selection.redirectPath ??
+        getCoursePath(
+          {
+            courseType: selection.courseType,
+            courseValue: selection.courseValue,
+            courseLabel,
+          },
+          { leadSubmitted: true },
+        )
 
       closeTimer.current = window.setTimeout(() => {
         window.location.assign(redirectPath)

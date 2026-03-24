@@ -1,8 +1,8 @@
 ﻿import { useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
+import { getCoursePath } from '@/lib/courseRoutes'
 import type { LandingGraduationCourseCard } from '../landingModels'
-import { openCourseLeadModal } from '../coursePrefill'
 
 type Props = {
   courses: LandingGraduationCourseCard[]
@@ -249,19 +249,14 @@ export function AllGraduationsCarouselSection({ courses }: Props) {
                 </div>
 
                 <a
-                  href="#inscricao"
+                  href={getCoursePath({
+                    courseType: 'graduacao',
+                    courseValue: course.courseValue,
+                    courseLabel: course.courseLabel,
+                  })}
                   className="lp-all-grad-card__cta"
-                  onClick={(event) => {
-                    event.preventDefault()
-                    openCourseLeadModal({
-                      courseType: 'graduacao',
-                      courseValue: course.courseValue,
-                      courseLabel: course.courseLabel,
-                      courseId: course.courseId,
-                    })
-                  }}
                 >
-                  INSCREVA-SE
+                  SAIBA MAIS
                 </a>
               </article>
             ))}
@@ -280,3 +275,4 @@ export function AllGraduationsCarouselSection({ courses }: Props) {
     </section>
   )
 }
+

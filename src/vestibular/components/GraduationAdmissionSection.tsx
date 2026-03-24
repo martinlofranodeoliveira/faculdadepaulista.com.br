@@ -1,4 +1,6 @@
-﻿type AdmissionOption = {
+﻿import { useState } from 'react'
+
+type AdmissionOption = {
   id: string
   title: string
   description: string
@@ -47,6 +49,7 @@ export function GraduationAdmissionSection({
   onEnemRegistrationChange,
   onSelectOption,
 }: Props) {
+  const [isAuthorizationModalOpen, setIsAuthorizationModalOpen] = useState(false)
   const isEnemSelected = selectedOptionId === 'enem'
 
   return (
@@ -93,9 +96,13 @@ export function GraduationAdmissionSection({
           </label>
 
           <div className="vestibular-admission__panel-actions">
-            <a href="/politica-de-privacidade" target="_blank" rel="noreferrer">
+            <button
+              type="button"
+              className="vestibular-admission__notice-link"
+              onClick={() => setIsAuthorizationModalOpen(true)}
+            >
               Ver o aviso de autorização
-            </a>
+            </button>
 
             <button
               type="button"
@@ -108,6 +115,52 @@ export function GraduationAdmissionSection({
           </div>
         </div>
       </div>
+
+      {isAuthorizationModalOpen ? (
+        <div
+          className="vestibular-admission__modal-backdrop"
+          role="presentation"
+          onClick={() => setIsAuthorizationModalOpen(false)}
+        >
+          <div
+            className="vestibular-admission__modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="vestibular-authorization-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="vestibular-admission__modal-header">
+              <h3 id="vestibular-authorization-title">AVISO DE AUTORIZAÇÃO</h3>
+              <button
+                type="button"
+                className="vestibular-admission__modal-close"
+                aria-label="Fechar aviso de autorização"
+                onClick={() => setIsAuthorizationModalOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="vestibular-admission__modal-body">
+              <p>
+                Ao preencher o campo: Nº de Inscrição do ENEM, estarei autorizando a Faculdade a
+                obter junto ao órgão responsável pelo Banco de Resultados Oficial do ENEM as notas
+                por mim obtidas e a divulgá-las na lista de classificados.
+              </p>
+            </div>
+
+            <div className="vestibular-admission__modal-footer">
+              <button
+                type="button"
+                className="vestibular-admission__modal-confirm"
+                onClick={() => setIsAuthorizationModalOpen(false)}
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   )
 }

@@ -1,7 +1,7 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react'
 
+import { getCoursePath } from '@/lib/courseRoutes'
 import type { LandingPostCourse } from '../landingModels'
-import { openCourseLeadModal } from '../coursePrefill'
 
 const ALL_AREAS = '__all_areas__'
 const COURSES_PER_PAGE = 5
@@ -193,19 +193,14 @@ export function GraduationCarouselSection({ courses }: Props) {
                       </div>
 
                       <a
-                        href="#inscricao"
+                        href={getCoursePath({
+                          courseType: 'pos',
+                          courseValue: course.courseValue,
+                          courseLabel: course.courseLabel,
+                        })}
                         className="lp-grad-carousel__cta"
-                        onClick={(event) => {
-                          event.preventDefault()
-                          openCourseLeadModal({
-                            courseType: 'pos',
-                            courseValue: course.courseValue,
-                            courseLabel: course.courseLabel,
-                            courseId: course.courseId,
-                          })
-                        }}
                       >
-                        INSCREVA-SE
+                        SAIBA MAIS
                       </a>
                     </article>
                   ))}
@@ -269,3 +264,4 @@ export function GraduationCarouselSection({ courses }: Props) {
     </section>
   )
 }
+

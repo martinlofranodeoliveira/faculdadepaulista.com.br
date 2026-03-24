@@ -104,7 +104,7 @@
 }
 
 .vestibular-admission__shell {
-  margin: 0 auto;
+  margin: 30px auto;
   max-width: 1240px;
   padding: 0 24px;
 }
@@ -117,6 +117,7 @@
   letter-spacing: -0.03em;
   line-height: 45px;
   margin: 0 0 25px;
+  padding-top: 30px;
   text-transform: uppercase;
 }
 
@@ -191,11 +192,13 @@
 
 .vestibular-admission__panel {
   background: #f4f4f4;
+  display: none;
   margin-top: 13px;
   padding: 20px;
 }
 
 .vestibular-admission__panel.is-active {
+  display: block;
   outline: 2px solid rgb(254 0 0 / 14%);
 }
 
@@ -232,7 +235,9 @@
   opacity: 1;
 }
 
-.vestibular-admission__panel a {
+.vestibular-admission__notice-link {
+  background: transparent;
+  border: 0;
   color: #066aff;
   display: inline-block;
   font-family: 'Kumbh Sans', sans-serif;
@@ -240,8 +245,10 @@
   font-weight: 400;
   letter-spacing: -0.02em;
   line-height: 1.25;
+  padding: 0;
   text-decoration: underline;
   text-decoration-skip-ink: none;
+  cursor: pointer;
 }
 
 .vestibular-admission__panel-actions {
@@ -272,6 +279,91 @@
 .vestibular-admission__continue:disabled {
   cursor: not-allowed;
   opacity: 0.45;
+}
+
+.vestibular-admission__modal-backdrop {
+  align-items: center;
+  background: rgb(0 0 0 / 55%);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 1200;
+}
+
+.vestibular-admission__modal {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 28px 80px rgb(0 0 0 / 18%);
+  max-width: 640px;
+  width: min(100%, 640px);
+}
+
+.vestibular-admission__modal-header {
+  align-items: center;
+  border-bottom: 1px solid rgb(0 0 0 / 10%);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 24px 28px 18px;
+}
+
+.vestibular-admission__modal-header h3 {
+  color: #040404;
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.vestibular-admission__modal-close {
+  background: transparent;
+  border: 0;
+  color: rgb(0 0 0 / 56%);
+  cursor: pointer;
+  font-size: 30px;
+  line-height: 1;
+  padding: 0;
+}
+
+.vestibular-admission__modal-body {
+  padding: 22px 28px;
+}
+
+.vestibular-admission__modal-body p {
+  color: rgb(0 0 0 / 78%);
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.vestibular-admission__modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 28px 24px;
+}
+
+.vestibular-admission__modal-confirm {
+  align-items: center;
+  background: linear-gradient(180deg, #fe0000 0%, #c50002 100%);
+  border: 0;
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  height: 44px;
+  justify-content: center;
+  min-width: 120px;
+  padding: 0 22px;
 }
 
 .vestibular-offer {
@@ -923,6 +1015,7 @@
   }
 
   .vestibular-admission__shell {
+    margin: 15px auto;
     padding: 0 17px;
   }
 
@@ -930,6 +1023,7 @@
     font-size: 25px;
     line-height: 29px;
     margin-bottom: 14px;
+    padding-top: 15px;
   }
 
   .vestibular-admission__grid {
@@ -967,7 +1061,7 @@
     height: 48px;
   }
 
-  .vestibular-admission__panel a {
+  .vestibular-admission__notice-link {
     font-size: 14px;
   }
 
@@ -979,6 +1073,40 @@
   .vestibular-admission__continue {
     height: 38px;
     min-width: 0;
+    width: 100%;
+  }
+
+  .vestibular-admission__modal-backdrop {
+    padding: 17px;
+  }
+
+  .vestibular-admission__modal {
+    border-radius: 18px;
+  }
+
+  .vestibular-admission__modal-header {
+    padding: 18px 20px 14px;
+  }
+
+  .vestibular-admission__modal-header h3 {
+    font-size: 18px;
+    line-height: 1.15;
+  }
+
+  .vestibular-admission__modal-body {
+    padding: 16px 20px;
+  }
+
+  .vestibular-admission__modal-body p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .vestibular-admission__modal-footer {
+    padding: 0 20px 20px;
+  }
+
+  .vestibular-admission__modal-confirm {
     width: 100%;
   }
 

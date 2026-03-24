@@ -10,11 +10,13 @@ set -euo pipefail
 #   TARGET_DIR=/www/wwwroot/faculdadepaulista.com.br
 #   BRANCH=main
 #   APP_RESTART_CMD="systemctl restart faculdadepaulista"
+#   SERVICE_NAME=faculdadepaulista
 
 REPO_URL="${REPO_URL:-https://github.com/martinlofranodeoliveira/faculdadepaulista.com.br.git}"
 TARGET_DIR="${TARGET_DIR:-/www/wwwroot/faculdadepaulista.com.br}"
 BRANCH="${BRANCH:-main}"
 APP_RESTART_CMD="${APP_RESTART_CMD:-}"
+SERVICE_NAME="${SERVICE_NAME:-faculdadepaulista}"
 
 echo "==> Repo:   $REPO_URL"
 echo "==> Pasta:  $TARGET_DIR"
@@ -42,6 +44,9 @@ npm run build
 if [ -n "$APP_RESTART_CMD" ]; then
   echo "==> Reiniciando aplicação..."
   eval "$APP_RESTART_CMD"
+elif command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files "${SERVICE_NAME}.service" >/dev/null 2>&1; then
+  echo "==> Reiniciando serviço systemd: ${SERVICE_NAME}.service"
+  systemctl restart "${SERVICE_NAME}.service"
 fi
 
 echo "==> OK: build gerada em $TARGET_DIR/dist"

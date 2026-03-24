@@ -2252,12 +2252,14 @@
 .course-lead-form__fields {
   display: grid;
   gap: 14px;
+  min-width: 0;
 }
 
 .course-lead-form__field-stack {
   display: grid;
   gap: 6px;
   min-width: 0;
+  width: 100%;
 }
 
 .course-lead-form__field-row {
@@ -2270,8 +2272,12 @@
 .course-lead-form__voucher-field {
   background: #e8e9ea;
   border: 1px solid rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
   border-radius: 8px;
+  max-width: 100%;
   min-height: 48px;
+  min-width: 0;
+  width: 100%;
 }
 
 .course-lead-form__field {
@@ -2286,20 +2292,28 @@
   appearance: none;
   background: transparent;
   border: 0;
+  box-sizing: border-box;
   color: #111;
   flex: 1;
   font: 400 16px/20px 'Liberation Sans', Arial, sans-serif;
+  max-width: 100%;
   min-width: 0;
   outline: none;
+  width: 100%;
 }
 
 .course-lead-form__field select {
   cursor: pointer;
+  display: block;
+  overflow: hidden;
   padding-right: 24px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .course-lead-form__field--select {
   justify-content: space-between;
+  overflow: hidden;
   position: relative;
 }
 

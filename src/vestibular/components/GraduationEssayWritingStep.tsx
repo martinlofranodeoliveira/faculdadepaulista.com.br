@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react'
+﻿import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, LoaderCircle } from 'lucide-react'
 
 import type { EssayThemeId } from './GraduationEssayThemeStep'
@@ -19,6 +19,43 @@ const MIN_ESSAY_BODY_LENGTH = 300
 const MAX_ESSAY_BODY_LENGTH = 5000
 const MIN_ESSAY_LINES = 15
 
+
+function measureVisualEssayLines(textarea: HTMLTextAreaElement, value: string) {
+  const styles = window.getComputedStyle(textarea)
+  const lineHeight = Number.parseFloat(styles.lineHeight)
+
+  if (!Number.isFinite(lineHeight) || lineHeight <= 0) {
+    return Math.max(1, value.split(/\r?\n/).length)
+  }
+
+  const mirror = document.createElement('div')
+  mirror.style.position = 'absolute'
+  mirror.style.visibility = 'hidden'
+  mirror.style.pointerEvents = 'none'
+  mirror.style.whiteSpace = 'pre-wrap'
+  mirror.style.wordBreak = 'break-word'
+  mirror.style.overflowWrap = 'break-word'
+  mirror.style.boxSizing = styles.boxSizing
+  mirror.style.width = `${textarea.clientWidth}px`
+  mirror.style.padding = styles.padding
+  mirror.style.border = styles.border
+  mirror.style.fontFamily = styles.fontFamily
+  mirror.style.fontSize = styles.fontSize
+  mirror.style.fontWeight = styles.fontWeight
+  mirror.style.fontStyle = styles.fontStyle
+  mirror.style.letterSpacing = styles.letterSpacing
+  mirror.style.lineHeight = styles.lineHeight
+  mirror.style.textTransform = styles.textTransform
+  mirror.textContent = value.length > 0 ? value : ' '
+
+  document.body.appendChild(mirror)
+  const height = mirror.getBoundingClientRect().height
+  mirror.remove()
+
+  return Math.max(1, Math.round(height / lineHeight))
+}
+
+
 export function GraduationEssayWritingStep({
   onBack,
   onFinish,
@@ -30,6 +67,7 @@ export function GraduationEssayWritingStep({
 }: Props) {
   const [essayTitle, setEssayTitle] = useState(initialTitle)
   const [essay, setEssay] = useState(initialEssay)
+  const [essayLineCount, setEssayLineCount] = useState(1)
   const [hasTriedFinish, setHasTriedFinish] = useState(false)
   const titleRef = useRef<HTMLInputElement | null>(null)
   const essayRef = useRef<HTMLTextAreaElement | null>(null)
@@ -42,12 +80,27 @@ export function GraduationEssayWritingStep({
     setEssay(initialEssay)
   }, [initialEssay])
 
+  const syncEssayLineCount = useCallback(() => {
+    const textarea = essayRef.current
+    if (!textarea) return
+    setEssayLineCount(measureVisualEssayLines(textarea, essay))
+  }, [essay])
+
+  useLayoutEffect(() => {
+    syncEssayLineCount()
+  }, [syncEssayLineCount])
+
+  useEffect(() => {
+    const handleResize = () => {
+      syncEssayLineCount()
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [syncEssayLineCount])
+
   const titleCharacterCount = useMemo(() => essayTitle.trim().length, [essayTitle])
   const essayCharacterCount = useMemo(() => essay.trim().length, [essay])
-  const essayLineCount = useMemo(
-    () => essay.split(/\r?\n/).filter((line) => line.trim().length > 0).length,
-    [essay],
-  )
 
   const isTitleValid =
     titleCharacterCount >= MIN_ESSAY_TITLE_LENGTH &&

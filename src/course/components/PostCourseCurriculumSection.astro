@@ -36,7 +36,7 @@ const hasDownload = Boolean(initialDownloadHref)
             data-curriculum-download
           >
             <span class="course-page__download-icon" aria-hidden="true"></span>
-            Baixar matriz completa
+            <span data-download-label>Baixar matriz completa</span>
           </a>
         ) : null
       }
@@ -120,7 +120,7 @@ const hasDownload = Boolean(initialDownloadHref)
                   data-curriculum-download
                 >
                   <span class="course-page__download-icon" aria-hidden="true"></span>
-                  Baixar matriz completa
+                  <span data-download-label>Baixar matriz completa</span>
                 </a>
               ) : null
             }
@@ -147,13 +147,34 @@ const hasDownload = Boolean(initialDownloadHref)
 
     const syncDownloads = (panel) => {
       const href = panel?.dataset.downloadHref || ''
-      const filename = panel?.dataset.downloadFilename || 'matriz-curricular.pdf'
+      const filename = panel?.dataset.downloadFilename || 'matriz-curricular.txt'
 
       downloadLinks.forEach((link) => {
         link.setAttribute('href', href)
         link.setAttribute('download', filename)
       })
     }
+
+    const setDownloadLoading = (loading) => {
+      downloadLinks.forEach((link) => {
+        const label = link.querySelector('[data-download-label]')
+        if (!label) return
+
+        const defaultLabel = link.dataset.defaultLabel || label.textContent?.trim() || 'Baixar matriz completa'
+        link.dataset.defaultLabel = defaultLabel
+        link.classList.toggle('is-loading', loading)
+        label.textContent = loading ? 'Preparando arquivo...' : defaultLabel
+      })
+    }
+
+    downloadLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        setDownloadLoading(true)
+        window.setTimeout(() => {
+          setDownloadLoading(false)
+        }, 5000)
+      })
+    })
 
     const syncExpandedState = () => {
       toggleButton.setAttribute('aria-expanded', expanded ? 'true' : 'false')

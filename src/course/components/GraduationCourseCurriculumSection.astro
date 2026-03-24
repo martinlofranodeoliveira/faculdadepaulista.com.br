@@ -24,9 +24,10 @@ const hasDownload = Boolean(curriculumDownloadHref)
             class="course-page__grad-curriculum-download"
             target="_blank"
             rel="noopener noreferrer"
+            data-curriculum-download
           >
             <span class="course-page__download-icon" aria-hidden="true"></span>
-            Baixar matriz completa
+            <span data-download-label>Baixar matriz completa</span>
           </a>
         ) : null
       }
@@ -83,3 +84,31 @@ const hasDownload = Boolean(curriculumDownloadHref)
     ) : null}
   </div>
 </section>
+
+<script is:inline>
+  document.querySelectorAll('[data-grad-curriculum-root]').forEach((root) => {
+    const downloadLinks = Array.from(root.querySelectorAll('[data-curriculum-download]'))
+    if (!downloadLinks.length) return
+
+    const setDownloadLoading = (loading) => {
+      downloadLinks.forEach((link) => {
+        const label = link.querySelector('[data-download-label]')
+        if (!label) return
+
+        const defaultLabel = link.dataset.defaultLabel || label.textContent?.trim() || 'Baixar matriz completa'
+        link.dataset.defaultLabel = defaultLabel
+        link.classList.toggle('is-loading', loading)
+        label.textContent = loading ? 'Preparando arquivo...' : defaultLabel
+      })
+    }
+
+    downloadLinks.forEach((link) => {
+      link.addEventListener('click', () => {
+        setDownloadLoading(true)
+        window.setTimeout(() => {
+          setDownloadLoading(false)
+        }, 5000)
+      })
+    })
+  })
+</script>

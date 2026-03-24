@@ -492,6 +492,13 @@
   min-width: 286px;
 }
 
+.course-page__curriculum-download.is-loading,
+.course-page__grad-curriculum-download.is-loading {
+  cursor: progress;
+  opacity: 0.78;
+  pointer-events: none;
+}
+
 .course-page__curriculum-download--outline {
   background: transparent;
   border: 2px solid rgba(195, 7, 7, 0.9);

@@ -3,7 +3,7 @@ import {
   buildCurriculumPdfFilename,
   createCurriculumPdfBuffer,
 } from '@/course/curriculumPdf'
-import { getGraduationCoursePages, getPostCoursePages } from '@/lib/courseCatalog'
+import { getGraduationCoursePageBySlug, getPostCoursePageBySlug } from '@/lib/courseCatalog'
 import type { CourseType } from '@/lib/catalogApi'
 
 export const prerender = false
@@ -22,8 +22,10 @@ export async function GET({ url }: { url: URL }) {
     return new Response('Parâmetros inválidos.', { status: 400 })
   }
 
-  const courses = typeParam === 'graduacao' ? await getGraduationCoursePages() : await getPostCoursePages()
-  const course = courses.find((entry) => entry.slug === slug)
+  const course =
+    typeParam === 'graduacao'
+      ? await getGraduationCoursePageBySlug(slug)
+      : await getPostCoursePageBySlug(slug)
 
   if (!course) {
     return new Response('Curso não encontrado.', { status: 404 })
@@ -65,7 +67,7 @@ export async function GET({ url }: { url: URL }) {
   return new Response(new Uint8Array(pdf), {
     status: 200,
     headers: {
-      'Content-Type': 'application/pdf',
+      'Content-Type': 'text/plain; charset=utf-8',
       'Content-Disposition': `attachment; filename="${filename}"`,
       'Cache-Control': 'no-store',
     },

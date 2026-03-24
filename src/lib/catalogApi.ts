@@ -936,6 +936,7 @@ function buildCatalogCourseSummary(
   institution: InstitutionConfig,
   course: ApiCourseListItem,
   courseType: CourseType,
+  media: ApiCourseMedia | null = null,
 ): CatalogCourseSummary {
   const seo = pickSeoFields(course.seo)
   const rawLabel = normalizeText(course.name)
@@ -963,6 +964,18 @@ function buildCatalogCourseSummary(
   const currentInstallmentPriceMonthly = totalPriceCents
     ? formatFixed18MonthlyLabel(totalPriceCents)
     : fallbackCurrentPrice.monthly
+  const resolvedImage = resolveCourseImage(
+    courseType,
+    value,
+    media
+      ? {
+          ...media,
+          main_image_url: firstNonEmpty(media.main_image_url, course.main_image_url),
+        }
+      : {
+          main_image_url: course.main_image_url,
+        },
+  ).image
 
   return {
     institutionId: institution.id,
@@ -975,10 +988,7 @@ function buildCatalogCourseSummary(
     path,
     title,
     rawLabel,
-    image:
-      toAbsoluteMediaUrl(seo.ogImageUrl) ||
-      toAbsoluteMediaUrl(course.main_image_url) ||
-      getCourseFallbackImage(courseType, value),
+    image: toAbsoluteMediaUrl(seo.ogImageUrl) || resolvedImage,
     currentInstallmentPrice,
     currentInstallmentPriceMonthly,
     oldInstallmentPrice: getFallbackOldInstallmentPrice(courseType, modality),
@@ -988,6 +998,21 @@ function buildCatalogCourseSummary(
     primaryAreaLabel,
     fixedInstallments: false,
   }
+}
+
+async function getCourseMedia(
+  institution: InstitutionConfig,
+  courseId: number,
+  force = false,
+): Promise<ApiCourseMedia | null> {
+  return withCache(`course-media:${institution.id}:${courseId}`, async () => {
+    const envelope = await optionalApiFetch<ApiCourseMedia>(
+      `/api/v1/public/courses/${courseId}/media`,
+      institution,
+    )
+
+    return envelope?.data ?? null
+  }, force)
 }
 
 function dedupeCatalogCourseSummaries(courses: CatalogCourseSummary[]): CatalogCourseSummary[] {
@@ -1275,9 +1300,18 @@ export async function getCatalogCourseSummaries(
             ? items.filter((course) => normalizeText(course.level).toLowerCase() === 'graduacao')
             : items
 
-          return filteredItems.map((course) =>
-            buildCatalogCourseSummary(institution, course, courseType),
-          )
+          return mapWithConcurrency(filteredItems, 8, async (course) => {
+            const courseId = Number(course.id ?? 0)
+            const hasListImage =
+              Boolean(normalizeText(course.main_image_url)) ||
+              Boolean(pickSeoFields(course.seo).ogImageUrl)
+            const media =
+              courseId > 0 && !hasListImage
+                ? await getCourseMedia(institution, courseId, force)
+                : null
+
+            return buildCatalogCourseSummary(institution, course, courseType, media)
+          })
         } catch (error) {
           console.error(
             `Erro ao carregar resumo do catálogo ${courseType} da instituição ${institution.name}:`,
@@ -1301,30 +1335,28 @@ export async function getCatalogCourseBySlug(
     const normalizedSlug = normalizeText(slug)
     if (!normalizedSlug) return null
 
-    const summary = (await getCatalogCourseSummaries(courseType, force)).find(
-      (entry) => entry.slug === normalizedSlug,
-    )
+    for (const institution of getInstitutionConfigs()) {
+      const courseList = await getInstitutionCourseList(institution, courseType, force)
+      const course = courseList.find((entry) => {
+        const summary = buildCatalogCourseSummary(institution, entry, courseType)
+        return summary.slug === normalizedSlug
+      })
 
-    if (!summary) return null
+      if (!course) {
+        continue
+      }
 
-    const institution = getInstitutionConfigs().find((entry) => entry.id === summary.institutionId)
-    if (!institution) return null
+      let bundle: Awaited<ReturnType<typeof getCourseBundle>> | null = null
+      try {
+        bundle = await getCourseBundle(institution, Number(course.id ?? 0), force)
+      } catch (error) {
+        console.error(`Erro ao carregar bundle do curso ${course.id} (${institution.name}):`, error)
+      }
 
-    const courseList = await getInstitutionCourseList(institution, courseType, force)
-    const course = courseList.find((entry) => Number(entry.id ?? 0) === summary.courseId)
-
-    if (!course) {
-      return (await getCatalogCourses(courseType, force)).find((entry) => entry.slug === normalizedSlug) ?? null
+      return mapCatalogCourse(institution, course, bundle, courseType)
     }
 
-    let bundle: Awaited<ReturnType<typeof getCourseBundle>> | null = null
-    try {
-      bundle = await getCourseBundle(institution, summary.courseId, force)
-    } catch (error) {
-      console.error(`Erro ao carregar bundle do curso ${summary.courseId} (${institution.name}):`, error)
-    }
-
-    return mapCatalogCourse(institution, course, bundle, courseType)
+    return (await getCatalogCourses(courseType, force)).find((entry) => entry.slug === normalizedSlug) ?? null
   }, force)
 }
 

@@ -108,7 +108,7 @@ function mapPostCurriculumVariants(course: CatalogCourse, pageHeading: string): 
       variant.totalHours || curriculum.reduce((sum, item) => sum + parseHoursValue(item.hours), 0)
     const chipLabel = totalHours ? `${totalHours}H` : variant.name.toUpperCase()
     const option = totalHours ? `${totalHours} Horas` : variant.name
-    const filename = `${slugifyFilePart(pageHeading)}-${slugifyFilePart(chipLabel)}-matriz-curricular.pdf`
+    const filename = `${slugifyFilePart(pageHeading)}-${slugifyFilePart(chipLabel)}-matriz-curricular.txt`
 
     return {
       id: String(variant.id || chipLabel.toLowerCase()),
@@ -172,10 +172,10 @@ export async function getCoursePageViewModel({
   const curriculumDownloadFilename =
     courseType === 'graduacao'
       ? ((courseData?.teachingPlanUrl ? courseData.teachingPlanUrl.split('/').pop() || '' : '') ||
-        `${slugifyFilePart(pageHeading)}-matriz-curricular.pdf`)
+        `${slugifyFilePart(pageHeading)}-matriz-curricular.txt`)
       : activeCurriculumVariant?.downloadFilename ??
         ((courseData?.teachingPlanUrl ? courseData.teachingPlanUrl.split('/').pop() || '' : '') ||
-          `${slugifyFilePart(pageHeading)}-matriz-curricular.pdf`)
+          `${slugifyFilePart(pageHeading)}-matriz-curricular.txt`)
 
   return {
     categoryLabel,

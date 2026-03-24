@@ -4,6 +4,7 @@ import { splitDifferentials, type CatalogCourse, type CourseType } from '@/lib/c
 export type CoursePresentation = {
   image: string
   imageAlt: string
+  modality: 'ead' | 'semipresencial' | 'presencial'
   modalityLabel: string
   graduationHero: {
     mediaImage: string
@@ -475,6 +476,7 @@ function buildSalary(title: string, areaLabel: string, courseType: CourseType): 
 
 export function getCoursePagePresentation({ course, courseType, title, area }: Input): CoursePresentation {
   const isPost = courseType === 'pos'
+  const modality = course?.modality || 'ead'
   const modalityLabel = course?.modalityLabel || 'EAD'
   const description = course?.description || buildGeneratedDescription(courseType, title)
   const paymentPlanGroups = isPost ? buildPostPaymentPlanGroups(course) : []
@@ -493,6 +495,7 @@ export function getCoursePagePresentation({ course, courseType, title, area }: I
   return {
     image: course?.image || (isPost ? '/course/hero-post.webp' : getGraduationFallbackImage(course)),
     imageAlt: `Imagem de destaque do curso ${title}`,
+    modality,
     modalityLabel,
     graduationHero: {
       mediaImage: course?.image || getGraduationFallbackImage(course),

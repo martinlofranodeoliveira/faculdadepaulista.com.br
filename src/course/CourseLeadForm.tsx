@@ -30,10 +30,12 @@ import { storePostThankYouLead } from '@/thankyou/postThankYouState'
 import { storeGraduationVestibularLead } from '@/vestibular/graduationVestibularState'
 
 type CourseType = 'graduacao' | 'pos'
+type CourseModality = 'ead' | 'semipresencial' | 'presencial'
 type Step = 1 | 2
 
 type Props = {
   courseType: CourseType
+  courseModality?: CourseModality
   courseTitle: string
   courseLabel: string
   courseValue?: string
@@ -349,6 +351,7 @@ function buildResumeOption(
 
 export function CourseLeadForm({
   courseType,
+  courseModality = 'ead',
   courseTitle,
   courseLabel,
   courseValue,
@@ -1150,7 +1153,11 @@ export function CourseLeadForm({
       : 'PREENCHA O FORMULÁRIO E SAIBA MAIS'
   const showPriceCard = Boolean(visibleCurrentInstallmentText)
   const promoBannerSrc =
-    courseType === 'pos' ? '/course/topo-form-pos-grad.webp' : '/course/topo-form-grad.webp'
+    courseType === 'pos'
+      ? '/course/topo-form-pos-grad.webp'
+      : courseModality === 'presencial'
+        ? '/course/topo-form-grad.webp'
+        : '/course/topo-form-grad-ead.webp'
   const promoBannerWidth = courseType === 'pos' ? 513 : 510
   const fullNamePlaceholder = courseType === 'graduacao' ? 'Nome completo' : 'Nome'
   const phonePlaceholder = courseType === 'graduacao' ? 'Telefone' : 'WhatsApp'

@@ -1636,6 +1636,7 @@ section[id] {
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 20.6px 1px rgba(0, 0, 0, 0.1);
+  color: inherit;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -1643,6 +1644,7 @@ section[id] {
   grid-row: 2;
   min-height: 0;
   padding: 32px;
+  text-decoration: none;
 }
 
 .lp-future__reclame-face {

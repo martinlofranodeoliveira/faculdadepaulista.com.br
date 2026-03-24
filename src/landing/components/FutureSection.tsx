@@ -63,9 +63,9 @@ export function FutureSection() {
                   <circle cx="12" cy="10" r="3" fill="#C50002" />
                 </svg>
               </span>
-              <h3>METRO SAÚDE</h3>
+              <h3>METRÔ SANTA CRUZ</h3>
               <p>
-              Estude ao lado do Metrô Saúde, com fácil acesso para todas as regiões de São Paulo.
+              Estude ao lado do Metrô Santa Cruz, com fácil acesso para todas as regiões de São Paulo.
               </p>
             </div>
           </article>
@@ -89,7 +89,13 @@ export function FutureSection() {
             />
           </article>
 
-          <article className="lp-future__reclame">
+          <a
+            className="lp-future__reclame"
+            href="https://www.reclameaqui.com.br/empresa/fasulmg-faculdade-sulmineira/"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Abrir perfil da FASUL no Reclame AQUI"
+          >
             <img
               src="/landing/future/reclame-face.webp"
               alt=""
@@ -110,7 +116,7 @@ export function FutureSection() {
               decoding="async"
             />
             <p>Corpo docente formado por mestres e doutores atuantes no mercado.</p>
-          </article>
+          </a>
 
           <article className="lp-future__history">
             <img

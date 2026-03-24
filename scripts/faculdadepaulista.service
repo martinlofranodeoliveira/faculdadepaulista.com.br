@@ -9,7 +9,7 @@ WorkingDirectory=/www/wwwroot/faculdadepaulista.com.br
 Environment=HOST=127.0.0.1
 Environment=PORT=4321
 EnvironmentFile=-/www/wwwroot/faculdadepaulista.com.br/.env
-ExecStart=/usr/bin/node /www/wwwroot/faculdadepaulista.com.br/dist/server/entry.mjs
+ExecStart=/root/.nvm/versions/node/v23.9.0/bin/node /www/wwwroot/faculdadepaulista.com.br/dist/server/entry.mjs
 Restart=always
 RestartSec=5
 KillSignal=SIGINT

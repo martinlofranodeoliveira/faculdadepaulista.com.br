@@ -2,6 +2,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { getCoursePath } from '@/lib/courseRoutes'
+import { openCourseLeadModal } from '../coursePrefill'
 import type { LandingGraduationCourseCard } from '../landingModels'
 
 type Props = {
@@ -255,6 +256,16 @@ export function AllGraduationsCarouselSection({ courses }: Props) {
                     courseLabel: course.courseLabel,
                   })}
                   className="lp-all-grad-card__cta"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    openCourseLeadModal({
+                      courseType: 'graduacao',
+                      courseModality: course.modality,
+                      courseValue: course.courseValue,
+                      courseLabel: course.courseLabel,
+                      courseId: course.courseId,
+                    })
+                  }}
                 >
                   SAIBA MAIS
                 </a>
@@ -275,4 +286,3 @@ export function AllGraduationsCarouselSection({ courses }: Props) {
     </section>
   )
 }
-

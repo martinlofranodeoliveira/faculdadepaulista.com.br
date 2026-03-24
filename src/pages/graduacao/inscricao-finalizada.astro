@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { ThankYouPage } from '@/thankyou/ThankYouPage'
+import { GraduationThankYouPage } from '@/thankyou/GraduationThankYouPage'
 
 const title = 'Inscrição finalizada | Graduação | Faculdade Paulista'
 const description = 'Recebemos sua inscrição para a graduação.'
@@ -12,5 +12,5 @@ const description = 'Recebemos sua inscrição para a graduação.'
   canonicalPath="/graduacao/inscricao-finalizada"
   noindex={true}
 >
-  <ThankYouPage />
+  <GraduationThankYouPage client:load />
 </BaseLayout>

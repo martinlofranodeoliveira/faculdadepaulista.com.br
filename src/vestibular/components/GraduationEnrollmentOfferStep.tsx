@@ -1,47 +1,38 @@
-﻿import { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { ArrowLeft, LoaderCircle } from 'lucide-react'
 
 import type { AdmissionOptionId } from '../GraduationVestibularPage'
+import type { GraduationOfferRow } from '../graduationOffer'
 
 type Props = {
   admissionOptionId: AdmissionOptionId
+  offerRows: GraduationOfferRow[]
+  isOfferLoading?: boolean
+  offerError?: string
   onBack: () => void
   onFinish: () => Promise<void> | void
   isSubmitting?: boolean
   submitError?: string
 }
 
-type InstallmentRow = {
-  dueDate: string
-  installment: string
-  value: string
-}
-
-const MOCK_ROWS: InstallmentRow[] = [
-  { installment: '1ª Mensalidade', value: 'R$ 139,00', dueDate: '15/04/2026' },
-  { installment: '2ª Mensalidade', value: 'R$ 139,00', dueDate: '15/05/2026' },
-  { installment: '3ª Mensalidade', value: 'R$ 139,00', dueDate: '15/06/2026' },
-  { installment: '4ª Mensalidade', value: 'R$ 139,00', dueDate: '15/07/2026' },
-  { installment: '5ª Mensalidade', value: 'R$ 139,00', dueDate: '15/08/2026' },
-  { installment: '6ª Mensalidade', value: 'R$ 139,00', dueDate: '15/09/2026' },
-  { installment: '7ª Mensalidade', value: 'R$ 139,00', dueDate: '15/10/2026' },
-]
-
 function getOptionTitle(admissionOptionId: AdmissionOptionId) {
   switch (admissionOptionId) {
     case 'segunda-graduacao':
-      return '2° Graduação'
+      return '2? Gradua??o'
     case 'transferencia':
-      return 'Transferência'
+      return 'Transfer?ncia'
     case 'enem':
       return 'ENEM'
     default:
-      return '2° Graduação'
+      return '2? Gradua??o'
   }
 }
 
 export function GraduationEnrollmentOfferStep({
   admissionOptionId,
+  offerRows,
+  isOfferLoading = false,
+  offerError,
   onBack,
   onFinish,
   isSubmitting = false,
@@ -75,21 +66,30 @@ export function GraduationEnrollmentOfferStep({
         <div className="vestibular-offer__card">
           <p className="vestibular-offer__headline">
             Aproveite esta oportunidade!<br />
-            Para começar a estudar, basta concluir sua matrícula agora!!!
+            Para come?ar a estudar, basta concluir sua matr?cula agora!!!
           </p>
 
           <div className="vestibular-offer__table-box">
-            <table className="vestibular-offer__table">
-              <tbody>
-                {MOCK_ROWS.map((row) => (
-                  <tr key={row.installment}>
-                    <td>{row.installment}</td>
-                    <td>{row.value}</td>
-                    <td>{row.dueDate}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            {isOfferLoading ? (
+              <div className="vestibular-offer__loading">
+                <LoaderCircle size={20} className="is-spinning" />
+                <span>Carregando mensalidades...</span>
+              </div>
+            ) : offerError ? (
+              <p className="vestibular-step__validation-error vestibular-offer__table-error">{offerError}</p>
+            ) : (
+              <table className="vestibular-offer__table">
+                <tbody>
+                  {offerRows.map((row) => (
+                    <tr key={`${row.installment}-${row.dueDate}`}>
+                      <td>{row.installment}</td>
+                      <td>{row.value}</td>
+                      <td>{row.dueDate}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
 
           <label className="vestibular-offer__contract">
@@ -105,7 +105,7 @@ export function GraduationEnrollmentOfferStep({
                 className="vestibular-offer__contract-link"
                 onClick={() => setIsContractModalOpen(true)}
               >
-                contrato de prestação de serviços educacionais
+                contrato de presta??o de servi?os educacionais
               </button>{' '}
               deste site
             </span>
@@ -119,7 +119,7 @@ export function GraduationEnrollmentOfferStep({
             type="button"
             className="vestibular-offer__finish"
             onClick={handleFinish}
-            disabled={!hasAcceptedContract || isSubmitting}
+            disabled={!hasAcceptedContract || isSubmitting || isOfferLoading || Boolean(offerError)}
           >
             {isSubmitting ? <LoaderCircle size={18} className="is-spinning" /> : null}
             FINALIZAR
@@ -141,25 +141,25 @@ export function GraduationEnrollmentOfferStep({
             onClick={(event) => event.stopPropagation()}
           >
             <div className="vestibular-offer__modal-header">
-              <h3 id="vestibular-contract-title">Contrato de prestação de serviços educacionais</h3>
+              <h3 id="vestibular-contract-title">Contrato de presta??o de servi?os educacionais</h3>
               <button
                 type="button"
                 className="vestibular-offer__modal-close"
                 aria-label="Fechar contrato"
                 onClick={() => setIsContractModalOpen(false)}
               >
-                ×
+                ?
               </button>
             </div>
 
             <div className="vestibular-offer__modal-body">
               <p>
-                Este é um conteúdo mockado do contrato. O texto definitivo será carregado
-                dinamicamente conforme a instituição responsável pelo curso.
+                Este ? um conte?do mockado do contrato. O texto definitivo ser? carregado
+                dinamicamente conforme a institui??o respons?vel pelo curso.
               </p>
               <p>
-                Nesta etapa, o modal já está pronto para exibir título, descrição e conteúdo
-                completo assim que a API estiver disponível.
+                Nesta etapa, o modal j? est? pronto para exibir t?tulo, descri??o e conte?do
+                completo assim que a API estiver dispon?vel.
               </p>
             </div>
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { clearJourneyProgress, saveJourneyProgress } from '@/course/journeyProgress'
 import { finalizeJourney, updateJourneyStep3 } from '@/lib/journeyClient'
+import { storeGraduationThankYouLead } from '@/thankyou/graduationThankYouState'
 
 import { GraduationAdmissionSection } from './components/GraduationAdmissionSection'
 import { GraduationEnrollmentOfferStep } from './components/GraduationEnrollmentOfferStep'
@@ -10,6 +11,7 @@ import { GraduationEssayThemeStep, type EssayThemeId } from './components/Gradua
 import { GraduationSimplifiedStep } from './components/GraduationSimplifiedStep'
 import { GraduationVestibularHero } from './components/GraduationVestibularHero'
 import { VestibularHeader } from './components/VestibularHeader'
+import type { GraduationOfferRow } from './graduationOffer'
 import {
   clearGraduationVestibularLead,
   readGraduationVestibularLead,
@@ -32,6 +34,13 @@ type Identity = {
   courseId: number | null
   courseLabel: string
   courseValue?: string
+}
+
+type GraduationOfferResponse = {
+  data?: {
+    rows?: GraduationOfferRow[]
+  }
+  message?: string
 }
 
 type VestibularStep =
@@ -100,6 +109,9 @@ export function GraduationVestibularPage() {
   const [resumeEssayText, setResumeEssayText] = useState('')
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [offerRows, setOfferRows] = useState<GraduationOfferRow[]>([])
+  const [isOfferLoading, setIsOfferLoading] = useState(false)
+  const [offerError, setOfferError] = useState('')
 
   useEffect(() => {
     const storedLead = readGraduationVestibularLead()
@@ -158,6 +170,56 @@ export function GraduationVestibularPage() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!identity.courseId) return
+
+    let cancelled = false
+
+    async function loadOffer() {
+      setIsOfferLoading(true)
+      setOfferError('')
+
+      try {
+        const response = await fetch(`/api/graduation-offer?courseId=${identity.courseId}`, {
+          method: 'GET',
+          headers: {
+            Accept: 'application/json',
+          },
+        })
+
+        const payload = (await response.json().catch(() => null)) as GraduationOfferResponse | null
+        if (!response.ok) {
+          throw new Error(
+            payload?.message || 'N?o foi poss?vel carregar as mensalidades do curso agora.',
+          )
+        }
+
+        if (cancelled) return
+
+        setOfferRows(Array.isArray(payload?.data?.rows) ? payload.data.rows : [])
+      } catch (error) {
+        if (cancelled) return
+
+        setOfferRows([])
+        setOfferError(
+          error instanceof Error
+            ? error.message
+            : 'N?o foi poss?vel carregar as mensalidades do curso agora.',
+        )
+      } finally {
+        if (!cancelled) {
+          setIsOfferLoading(false)
+        }
+      }
+    }
+
+    void loadOffer()
+
+    return () => {
+      cancelled = true
+    }
+  }, [identity.courseId])
+
   function handleSelectOption(optionId: AdmissionOptionId) {
     setSubmitError('')
     setSelectedOptionId(optionId)
@@ -189,7 +251,7 @@ export function GraduationVestibularPage() {
 
   async function finalizeGraduationFlow(step3Payload: Record<string, unknown>) {
     if (!identity.journeyId || !identity.courseId) {
-      setSubmitError('Jornada não encontrada. Volte para a página do curso e reinicie a inscrição.')
+      setSubmitError('Jornada n?o encontrada. Volte para a p?gina do curso e reinicie a inscri??o.')
       return
     }
 
@@ -210,15 +272,19 @@ export function GraduationVestibularPage() {
       })
 
       await finalizeJourney(identity.journeyId)
+      storeGraduationThankYouLead({
+        fullName: identity.fullName,
+        email: identity.email,
+      })
       clearJourneyProgress()
       clearGraduationVestibularLead()
       window.location.assign('/graduacao/inscricao-finalizada')
     } catch (error) {
-      console.error('Erro ao finalizar jornada da graduação:', error)
+      console.error('Erro ao finalizar jornada da gradua??o:', error)
       setSubmitError(
         error instanceof Error
           ? error.message
-          : 'Não foi possível concluir sua inscrição agora. Tente novamente em instantes.',
+          : 'N?o foi poss?vel concluir sua inscri??o agora. Tente novamente em instantes.',
       )
     } finally {
       setIsSubmitting(false)
@@ -305,6 +371,9 @@ export function GraduationVestibularPage() {
         {step === 'enrollment-offer' ? (
           <GraduationEnrollmentOfferStep
             admissionOptionId={selectedOptionId}
+            offerRows={offerRows}
+            isOfferLoading={isOfferLoading}
+            offerError={offerError}
             onBack={() => setStep('selection')}
             onFinish={handleEnrollmentFinish}
             isSubmitting={isSubmitting}
@@ -315,4 +384,3 @@ export function GraduationVestibularPage() {
     </main>
   )
 }
-

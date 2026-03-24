@@ -134,6 +134,7 @@ export function PresentialGraduationSection({ courses }: Props) {
                       event.preventDefault()
                       openCourseLeadModal({
                         courseType: 'graduacao',
+                        courseModality: 'presencial',
                         courseValue: course.courseValue,
                         courseLabel: course.courseLabel,
                         courseId: course.courseId,

@@ -87,6 +87,7 @@ function buildGraduationCard(course: CatalogCourse): LandingGraduationCourseCard
     courseValue: course.value,
     courseLabel: course.rawLabel,
     courseId: course.courseId,
+    modality: course.modality,
     title: getCourseDisplayTitle({
       courseType: 'graduacao',
       courseValue: course.value,
@@ -116,6 +117,7 @@ function buildFixedPresentialCourses(graduationCourses: CatalogCourse[]): Landin
       courseValue: dynamicCourse?.value || fixedCourse.fallbackCourseValue,
       courseLabel: dynamicCourse?.rawLabel || fixedCourse.fallbackCourseLabel,
       courseId: dynamicCourse?.courseId ?? 0,
+      courseModality: 'presencial',
       title: fixedCourse.title,
       mode: fixedCourse.mode,
       image: fixedCourse.image,
@@ -136,6 +138,7 @@ function buildPostCourse(course: CatalogCourse): LandingPostCourse {
     courseValue: course.value,
     courseLabel: course.rawLabel,
     courseId: course.courseId,
+    courseModality: course.modality,
     title: course.title,
     area: course.primaryAreaLabel,
     currentInstallmentPrice: course.currentInstallmentPrice,

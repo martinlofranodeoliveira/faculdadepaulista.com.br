@@ -13,6 +13,7 @@ export type CatalogPriceItem = {
   workloadName: string
   totalHours: number
   modality: string
+  validFrom: string
 }
 
 export type CatalogCurriculumDiscipline = {
@@ -152,6 +153,7 @@ type ApiCourseDetail = {
   main_image_url?: string | null
   seo?: ApiSeoBundle | null
   course_disciplines?: ApiCourseDiscipline[] | null
+  featured_pricing_options?: ApiPricingItem[] | null
 }
 
 type ApiCourseDiscipline = {
@@ -213,6 +215,7 @@ type ApiPricingItem = {
   workload_name?: string | null
   total_hours?: number | null
   modality?: string | null
+  valid_from?: string | null
 }
 
 type ApiCurriculumVariant = {
@@ -522,6 +525,7 @@ function normalizePricingItems(items: ApiPricingItem[] | null | undefined): Cata
       workloadName: normalizeText(item.workload_name),
       totalHours: Number(item.total_hours ?? 0),
       modality: normalizeText(item.modality),
+      validFrom: normalizeText(item.valid_from),
     }))
     .filter((item) => item.amountCents > 0)
     .sort((a, b) => {
@@ -529,6 +533,36 @@ function normalizePricingItems(items: ApiPricingItem[] | null | undefined): Cata
       if (a.totalHours !== b.totalHours) return a.totalHours - b.totalHours
       return a.installmentsMax - b.installmentsMax
     })
+}
+
+function buildApiCourseListItemFromDetail(
+  detail: ApiCourseDetail,
+  pricingItems: ApiPricingItem[],
+): ApiCourseListItem {
+  return {
+    id: detail.id,
+    code: detail.code,
+    name: detail.name,
+    level: detail.level,
+    description: detail.description,
+    offering_modality: detail.offering_modality,
+    titulation: detail.titulation,
+    labor_market: detail.labor_market,
+    target_audience: detail.target_audience,
+    competencies_benefits: detail.competencies_benefits,
+    competitive_differentials: detail.competitive_differentials,
+    teaching_plan_path: detail.teaching_plan_path,
+    teaching_plan_mime: detail.teaching_plan_mime,
+    main_image_url: detail.main_image_url,
+    area_names: detail.area_names,
+    seo: detail.seo,
+    duration_months: detail.duration_months,
+    duration_continuous_months: detail.duration_continuous_months,
+    semester_count: detail.semester_count,
+    featured_pricing_options:
+      pricingItems.length > 0 ? pricingItems : (detail.featured_pricing_options ?? null),
+    course_disciplines: detail.course_disciplines,
+  }
 }
 
 function getCourseTotalPriceCents(
@@ -1360,6 +1394,33 @@ export async function getCatalogCourseBySlug(
   }, force)
 }
 
+export async function getCatalogCourseById(
+  courseType: CourseType,
+  courseId: number,
+  force = false,
+): Promise<CatalogCourse | null> {
+  return withCache(`catalog-course-by-id:${courseType}:${courseId}`, async () => {
+    if (!Number.isInteger(courseId) || courseId <= 0) return null
+
+    for (const institution of getInstitutionConfigs()) {
+      try {
+        const bundle = await getCourseBundle(institution, courseId, force)
+        const course = buildApiCourseListItemFromDetail(bundle.detail, bundle.pricingItems)
+
+        if (normalizeText(course.level).toLowerCase() !== courseType) {
+          continue
+        }
+
+        return mapCatalogCourse(institution, course, bundle, courseType)
+      } catch (error) {
+        console.error(`Erro ao carregar curso ${courseId} (${institution.name}):`, error)
+      }
+    }
+
+    return (await getCatalogCourses(courseType, force)).find((entry) => entry.courseId === courseId) ?? null
+  }, force)
+}
+
 export async function getGraduationCatalogCourses(force = false) {
   return getCatalogCourses('graduacao', force)
 }
@@ -1374,6 +1435,14 @@ export async function getGraduationCatalogCourseBySlug(slug: string, force = fal
 
 export async function getPostCatalogCourseBySlug(slug: string, force = false) {
   return getCatalogCourseBySlug('pos', slug, force)
+}
+
+export async function getGraduationCatalogCourseById(courseId: number, force = false) {
+  return getCatalogCourseById('graduacao', courseId, force)
+}
+
+export async function getPostCatalogCourseById(courseId: number, force = false) {
+  return getCatalogCourseById('pos', courseId, force)
 }
 
 export async function getGraduationCatalogCourseSummaries(force = false) {

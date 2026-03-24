@@ -608,9 +608,19 @@ export function CourseLeadForm({
       setResumeEmail(matchesCurrentJourney.email)
     }
 
+    const searchParams = new URLSearchParams(window.location.search)
+
+    if (leadSubmitted && matchesCurrentDraft && hasSecondStep && !matchesCurrentJourney) {
+      setAgreementAccepted(true)
+      setStep(2)
+      window.setTimeout(() => {
+        cpfInputRef.current?.focus()
+      }, 60)
+      return
+    }
+
     if (!matchesCurrentJourney) return
 
-    const searchParams = new URLSearchParams(window.location.search)
     if (searchParams.get('resume') !== '1') return
 
     if (
@@ -648,7 +658,7 @@ export function CourseLeadForm({
 
     hydrateResumeIntoCurrentCourse(matchesCurrentJourney)
     window.history.replaceState({}, '', `${window.location.pathname}${window.location.hash}`)
-  }, [courseId, courseLabel, courseType, courseValue, hasSecondStep, paymentPlanGroups])
+  }, [courseId, courseLabel, courseType, courseValue, hasSecondStep, leadSubmitted, paymentPlanGroups])
 
   useEffect(() => {
     if (courseType !== 'graduacao') return

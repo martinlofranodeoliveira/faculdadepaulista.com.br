@@ -3,6 +3,7 @@
 import { getCourseDisplayTitle, getCoursePath } from '@/lib/courseRoutes'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
 import { saveCourseLeadDraft } from '@/course/courseLeadDraft'
+import { storeGraduationThankYouLead } from '@/thankyou/graduationThankYouState'
 
 import type { CoursePrefillDetail } from '../coursePrefill'
 
@@ -160,7 +161,9 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
   const displayCourseLabel = selection ? getCourseDisplayTitle(selection) : courseLabel
   const modalHeaderImage = isPostGraduation
     ? '/landing/bgmodal-pos.webp'
-    : '/landing/bgmodal.webp'
+    : selection?.courseModality === 'presencial'
+      ? '/landing/bgmodal.webp'
+      : '/landing/bgmodal-ead.webp'
 
   const firstErrorMessage = useMemo(() => {
     return errors.fullName ?? errors.email ?? errors.phone ?? ''
@@ -303,6 +306,13 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
           },
           { leadSubmitted: true },
         )
+
+      if (redirectPath === '/graduacao/inscricao-finalizada') {
+        storeGraduationThankYouLead({
+          fullName: fullName.trim(),
+          email: email.trim(),
+        })
+      }
 
       closeTimer.current = window.setTimeout(() => {
         window.location.assign(redirectPath)

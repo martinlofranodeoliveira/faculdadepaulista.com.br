@@ -1,6 +1,7 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { getCoursePath } from '@/lib/courseRoutes'
+import { openCourseLeadModal } from '../coursePrefill'
 import type { LandingPostCourse } from '../landingModels'
 
 const ALL_AREAS = '__all_areas__'
@@ -199,6 +200,16 @@ export function GraduationCarouselSection({ courses }: Props) {
                           courseLabel: course.courseLabel,
                         })}
                         className="lp-grad-carousel__cta"
+                        onClick={(event) => {
+                          event.preventDefault()
+                          openCourseLeadModal({
+                            courseType: 'pos',
+                            courseModality: course.courseModality,
+                            courseValue: course.courseValue,
+                            courseLabel: course.courseLabel,
+                            courseId: course.courseId,
+                          })
+                        }}
                       >
                         SAIBA MAIS
                       </a>
@@ -264,4 +275,3 @@ export function GraduationCarouselSection({ courses }: Props) {
     </section>
   )
 }
-

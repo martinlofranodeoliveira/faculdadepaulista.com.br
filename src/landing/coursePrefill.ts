@@ -1,5 +1,6 @@
 export type CoursePrefillDetail = {
   courseType: 'graduacao' | 'pos'
+  courseModality?: 'ead' | 'semipresencial' | 'presencial'
   courseValue?: string
   courseLabel: string
   courseId?: number

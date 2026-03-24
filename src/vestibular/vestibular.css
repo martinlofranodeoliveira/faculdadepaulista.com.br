@@ -447,15 +447,35 @@
   border: 1px solid #111111;
   border-radius: 24px;
   margin: 10px auto 0;
+  max-height: 397px;
   max-width: 454px;
   min-height: 397px;
+  overflow: auto;
   padding: 21px 15px 18px;
   width: 100%;
+}
+
+.vestibular-offer__loading {
+  align-items: center;
+  color: #161616;
+  display: flex;
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  gap: 10px;
+  justify-content: center;
+  min-height: 100%;
+  text-align: center;
 }
 
 .vestibular-offer__table {
   border-collapse: collapse;
   width: 100%;
+}
+
+.vestibular-offer__table-error {
+  margin: 0;
+  text-align: center;
 }
 
 .vestibular-offer__table td {

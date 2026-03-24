@@ -8,6 +8,7 @@ export type LandingGraduationCourseCard = {
   courseValue: string
   courseLabel: string
   courseId: number
+  modality: 'ead' | 'semipresencial' | 'presencial'
   title: string
   image: string
   imagePosition?: string
@@ -22,6 +23,7 @@ export type LandingPresentialCourse = {
   courseValue: string
   courseLabel: string
   courseId: number
+  courseModality?: 'ead' | 'semipresencial' | 'presencial'
   title: string
   mode: string
   image: string
@@ -40,6 +42,7 @@ export type LandingPostCourse = {
   courseValue: string
   courseLabel: string
   courseId: number
+  courseModality?: 'ead' | 'semipresencial' | 'presencial'
   title: string
   area: string
   currentInstallmentPrice: string

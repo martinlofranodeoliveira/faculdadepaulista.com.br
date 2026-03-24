@@ -2,13 +2,12 @@
 import CoursePagePos from '@/course/CoursePagePos.astro'
 import NotFoundPage from '@/components/NotFoundPage.astro'
 import BaseLayout from '@/layouts/BaseLayout.astro'
-import { getPostCoursePages } from '@/lib/courseCatalog'
+import { getPostCoursePageBySlug } from '@/lib/courseCatalog'
 
 export const prerender = false
 
 const { slug = '' } = Astro.params
-const courses = await getPostCoursePages()
-const course = courses.find((entry) => entry.slug === slug)
+const course = await getPostCoursePageBySlug(slug)
 const leadSubmitted = Astro.url.searchParams.get('lead') === '1'
 
 if (!course) {

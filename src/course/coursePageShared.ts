@@ -1,5 +1,9 @@
 ﻿import type { CatalogCourse } from '@/lib/catalogApi'
-import { getGraduationCoursePages, getPostCoursePages, type CoursePageEntry } from '@/lib/courseCatalog'
+import {
+  getGraduationCoursePageSummaries,
+  getPostCoursePageSummaries,
+  type CoursePageSummaryEntry,
+} from '@/lib/courseCatalog'
 
 import { getCourseFaqItems } from './courseFaqData'
 import { getCoursePagePresentation, type CoursePresentation } from './coursePageData'
@@ -98,14 +102,14 @@ function buildBreadcrumbCurrentLabel(courseType: CourseType, title: string, rawL
   return `Graduação EAD em ${title}`
 }
 
-function mapRelatedCourses(pool: CoursePageEntry[], currentPath: string | undefined) {
+function mapRelatedCourses(pool: CoursePageSummaryEntry[], currentPath: string | undefined) {
   return pool
     .filter((entry) => entry.path !== currentPath)
     .slice(0, 4)
     .map((entry) => ({
       path: entry.path,
       title: entry.title,
-      description: entry.seoDescription || entry.description,
+      description: '',
       image: entry.image,
       courseType: entry.courseType,
     }))
@@ -161,7 +165,7 @@ export async function getCoursePageViewModel({
   const courseFaqItems = getCourseFaqItems({ courseType })
 
   const relatedPool =
-    courseType === 'pos' ? await getPostCoursePages() : await getGraduationCoursePages()
+    courseType === 'pos' ? await getPostCoursePageSummaries() : await getGraduationCoursePageSummaries()
 
   const relatedCourses = mapRelatedCourses(relatedPool, currentPath)
   const whatsappHref = 'https://wa.me/553598060604'

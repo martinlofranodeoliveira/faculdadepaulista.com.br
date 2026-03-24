@@ -1018,6 +1018,144 @@ function dedupeCatalogCourses(courses: CatalogCourse[]): CatalogCourse[] {
   return [...deduped.values()]
 }
 
+function mapCatalogCourse(
+  institution: InstitutionConfig,
+  course: ApiCourseListItem,
+  bundle: {
+    detail: ApiCourseDetail
+    media: ApiCourseMedia | null
+    pricingItems: ApiPricingItem[]
+    curriculumVariants: ApiCurriculumVariant[]
+  } | null,
+  courseType: CourseType,
+): CatalogCourse {
+  const detail = bundle?.detail
+  const seo = pickSeoFields(detail?.seo ?? course.seo)
+  const rawLabel = firstNonEmpty(detail?.name, course.name)
+  const title = getCourseDisplayTitle({
+    courseType,
+    courseLabel: seo.courseName || rawLabel,
+  })
+  const slug = toSlug(seo.slug || title || rawLabel || `curso-${course.id}`)
+  const value = `${courseType}-${slug}`
+  const path = getCoursePath({
+    courseType,
+    courseValue: value,
+    courseLabel: rawLabel,
+  })
+
+  const priceItems = normalizePricingItems(bundle?.pricingItems)
+  const normalizedCurriculumVariants = normalizeCurriculumVariants(bundle?.curriculumVariants)
+  const fallbackCurriculumVariants = normalizeCourseDisciplinesFallback(
+    course.course_disciplines ?? detail?.course_disciplines,
+  )
+  const curriculumVariants =
+    normalizedCurriculumVariants.length > 0 ? normalizedCurriculumVariants : fallbackCurriculumVariants
+  const workloadNames = Array.from(
+    new Set(
+      [
+        ...priceItems.map((item) => item.totalHours && `${item.totalHours} Horas`),
+        ...curriculumVariants.map((variant) => variant.totalHours && `${variant.totalHours} Horas`),
+      ].filter(Boolean) as string[],
+    ),
+  ).sort((a, b) => {
+    const aNumber = Number.parseInt(a, 10)
+    const bNumber = Number.parseInt(b, 10)
+    return aNumber - bNumber
+  })
+
+  const rawModalityValues = [
+    course.modalities ?? '',
+    course.offering_modality ?? '',
+    ...priceItems.map((item) => item.modality),
+    detail?.offering_modality ?? '',
+  ]
+  const modality = resolvePrimaryModality(rawModalityValues)
+  const { image, galleryImages } = resolveCourseImage(
+    courseType,
+    value,
+    bundle?.media
+      ? {
+          ...bundle.media,
+          main_image_url: firstNonEmpty(
+            bundle.media.main_image_url,
+            detail?.main_image_url,
+            course.main_image_url,
+          ),
+        }
+      : {
+          main_image_url: firstNonEmpty(detail?.main_image_url, course.main_image_url),
+        },
+  )
+  const areaLabels = (detail?.area_names ?? course.area_names ?? []).map((item) => normalizeText(item)).filter(Boolean)
+  const primaryAreaLabel = buildPrimaryAreaLabel(areaLabels)
+  const description =
+    normalizeRichText(firstNonEmpty(detail?.description, course.description, seo.description)) ||
+    buildGeneratedDescription(courseType, title)
+  const seoDescription =
+    normalizeRichText(firstNonEmpty(seo.description, detail?.description, course.description)) ||
+    buildGeneratedDescription(courseType, title)
+  const teachingPlanUrl =
+    resolveDocumentUrl(bundle?.media?.teaching_plan?.teaching_plan_path) ||
+    resolveDocumentUrl(detail?.teaching_plan_path) ||
+    resolveDocumentUrl(course.teaching_plan_path)
+  const totalPriceCents = getCourseTotalPriceCents(courseType, course, priceItems)
+  const fallbackCurrentPrice = getFallbackCurrentPriceLabels(courseType, title, modality)
+  const currentInstallmentPrice = totalPriceCents
+    ? formatFixed18InstallmentLabel(totalPriceCents)
+    : fallbackCurrentPrice.installment
+  const currentInstallmentPriceMonthly = totalPriceCents
+    ? formatFixed18MonthlyLabel(totalPriceCents)
+    : fallbackCurrentPrice.monthly
+
+  return {
+    institutionId: institution.id,
+    institutionName: institution.name,
+    institutionSlug: institution.slug,
+    courseType,
+    courseId: Number(course.id ?? 0),
+    code: firstNonEmpty(detail?.code, course.code),
+    slug,
+    value,
+    path,
+    title,
+    rawLabel,
+    description,
+    seoDescription,
+    areaLabels,
+    primaryAreaLabel,
+    areaSlug: buildAreaSlug(primaryAreaLabel),
+    modality,
+    modalityLabel: getPageModalityLabel(modality),
+    modalityBadge: getModalityLabel(courseType, modality),
+    image: toAbsoluteMediaUrl(seo.ogImageUrl) || image,
+    galleryImages,
+    currentInstallmentPrice,
+    currentInstallmentPriceMonthly,
+    oldInstallmentPrice: getFallbackOldInstallmentPrice(courseType, modality),
+    pixText: '',
+    fixedInstallments: false,
+    teachingPlanUrl,
+    priceItems,
+    workloadOptions: workloadNames,
+    curriculumVariants,
+    targetAudience: normalizeRichText(detail?.target_audience ?? course.target_audience),
+    competenciesBenefits: normalizeRichText(
+      detail?.competencies_benefits ?? course.competencies_benefits,
+    ),
+    competitiveDifferentials: normalizeRichText(
+      detail?.competitive_differentials ?? course.competitive_differentials,
+    ),
+    durationMonths: Number(detail?.duration_months ?? course.duration_months ?? 0),
+    durationContinuousMonths: Number(
+      detail?.duration_continuous_months ?? course.duration_continuous_months ?? 0,
+    ),
+    semesterCount: Number(detail?.semester_count ?? course.semester_count ?? 0),
+    titulation: normalizeText(detail?.titulation),
+    laborMarket: normalizeRichText(detail?.labor_market ?? course.labor_market),
+  } satisfies CatalogCourse
+}
+
 export async function getCatalogCourses(courseType: CourseType, force = false): Promise<CatalogCourse[]> {
   return withCache(`catalog-courses:${courseType}`, async () => {
     const institutions = getInstitutionConfigs()
@@ -1060,135 +1198,9 @@ export async function getCatalogCourses(courseType: CourseType, force = false): 
 
     const flatItems = perInstitution.flat()
 
-    const mappedCourses = flatItems.map(({ institution, course, bundle }) => {
-      const detail = bundle?.detail
-      const seo = pickSeoFields(detail?.seo ?? course.seo)
-      const rawLabel = firstNonEmpty(detail?.name, course.name)
-      const title = getCourseDisplayTitle({
-        courseType,
-        courseLabel: seo.courseName || rawLabel,
-      })
-      const slug = toSlug(seo.slug || title || rawLabel || `curso-${course.id}`)
-      const value = `${courseType}-${slug}`
-      const path = getCoursePath({
-        courseType,
-        courseValue: value,
-        courseLabel: rawLabel,
-      })
-
-      const priceItems = normalizePricingItems(bundle?.pricingItems)
-      const normalizedCurriculumVariants = normalizeCurriculumVariants(bundle?.curriculumVariants)
-      const fallbackCurriculumVariants = normalizeCourseDisciplinesFallback(
-        course.course_disciplines ?? detail?.course_disciplines,
-      )
-      const curriculumVariants =
-        normalizedCurriculumVariants.length > 0 ? normalizedCurriculumVariants : fallbackCurriculumVariants
-      const workloadNames = Array.from(
-        new Set(
-          [
-            ...priceItems.map((item) => item.totalHours && `${item.totalHours} Horas`),
-            ...curriculumVariants.map(
-              (variant) => variant.totalHours && `${variant.totalHours} Horas`,
-            ),
-          ].filter(Boolean) as string[],
-        ),
-      ).sort((a, b) => {
-        const aNumber = Number.parseInt(a, 10)
-        const bNumber = Number.parseInt(b, 10)
-        return aNumber - bNumber
-      })
-
-      const rawModalityValues = [
-        course.modalities ?? '',
-        course.offering_modality ?? '',
-        ...priceItems.map((item) => item.modality),
-        detail?.offering_modality ?? '',
-      ]
-      const modality = resolvePrimaryModality(rawModalityValues)
-      const { image, galleryImages } = resolveCourseImage(
-        courseType,
-        value,
-        bundle?.media
-          ? {
-              ...bundle.media,
-              main_image_url: firstNonEmpty(
-                bundle.media.main_image_url,
-                detail?.main_image_url,
-                course.main_image_url,
-              ),
-            }
-          : {
-              main_image_url: firstNonEmpty(detail?.main_image_url, course.main_image_url),
-            },
-      )
-      const areaLabels = (detail?.area_names ?? course.area_names ?? []).map((item) => normalizeText(item)).filter(Boolean)
-      const primaryAreaLabel = buildPrimaryAreaLabel(areaLabels)
-      const description =
-        normalizeRichText(firstNonEmpty(detail?.description, course.description, seo.description)) ||
-        buildGeneratedDescription(courseType, title)
-      const seoDescription =
-        normalizeRichText(firstNonEmpty(seo.description, detail?.description, course.description)) ||
-        buildGeneratedDescription(courseType, title)
-      const teachingPlanUrl =
-        resolveDocumentUrl(bundle?.media?.teaching_plan?.teaching_plan_path) ||
-        resolveDocumentUrl(detail?.teaching_plan_path) ||
-        resolveDocumentUrl(course.teaching_plan_path)
-      const totalPriceCents = getCourseTotalPriceCents(courseType, course, priceItems)
-      const fallbackCurrentPrice = getFallbackCurrentPriceLabels(courseType, title, modality)
-      const currentInstallmentPrice = totalPriceCents
-        ? formatFixed18InstallmentLabel(totalPriceCents)
-        : fallbackCurrentPrice.installment
-      const currentInstallmentPriceMonthly = totalPriceCents
-        ? formatFixed18MonthlyLabel(totalPriceCents)
-        : fallbackCurrentPrice.monthly
-
-      return {
-        institutionId: institution.id,
-        institutionName: institution.name,
-        institutionSlug: institution.slug,
-        courseType,
-        courseId: Number(course.id ?? 0),
-        code: firstNonEmpty(detail?.code, course.code),
-        slug,
-        value,
-        path,
-        title,
-        rawLabel,
-        description,
-        seoDescription,
-        areaLabels,
-        primaryAreaLabel,
-        areaSlug: buildAreaSlug(primaryAreaLabel),
-        modality,
-        modalityLabel: getPageModalityLabel(modality),
-        modalityBadge: getModalityLabel(courseType, modality),
-        image: toAbsoluteMediaUrl(seo.ogImageUrl) || image,
-        galleryImages,
-        currentInstallmentPrice,
-        currentInstallmentPriceMonthly,
-        oldInstallmentPrice: getFallbackOldInstallmentPrice(courseType, modality),
-        pixText: '',
-        fixedInstallments: false,
-        teachingPlanUrl,
-        priceItems,
-        workloadOptions: workloadNames,
-        curriculumVariants,
-        targetAudience: normalizeRichText(detail?.target_audience ?? course.target_audience),
-        competenciesBenefits: normalizeRichText(
-          detail?.competencies_benefits ?? course.competencies_benefits,
-        ),
-        competitiveDifferentials: normalizeRichText(
-          detail?.competitive_differentials ?? course.competitive_differentials,
-        ),
-        durationMonths: Number(detail?.duration_months ?? course.duration_months ?? 0),
-        durationContinuousMonths: Number(
-          detail?.duration_continuous_months ?? course.duration_continuous_months ?? 0,
-        ),
-        semesterCount: Number(detail?.semester_count ?? course.semester_count ?? 0),
-        titulation: normalizeText(detail?.titulation),
-        laborMarket: normalizeRichText(detail?.labor_market ?? course.labor_market),
-      } satisfies CatalogCourse
-    })
+    const mappedCourses = flatItems.map(({ institution, course, bundle }) =>
+      mapCatalogCourse(institution, course, bundle, courseType),
+    )
 
     return dedupeCatalogCourses(mappedCourses)
   }, force)
@@ -1233,12 +1245,56 @@ export async function getCatalogCourseSummaries(
   }, force)
 }
 
+export async function getCatalogCourseBySlug(
+  courseType: CourseType,
+  slug: string,
+  force = false,
+): Promise<CatalogCourse | null> {
+  return withCache(`catalog-course-by-slug:${courseType}:${slug}`, async () => {
+    const normalizedSlug = normalizeText(slug)
+    if (!normalizedSlug) return null
+
+    const summary = (await getCatalogCourseSummaries(courseType, force)).find(
+      (entry) => entry.slug === normalizedSlug,
+    )
+
+    if (!summary) return null
+
+    const institution = getInstitutionConfigs().find((entry) => entry.id === summary.institutionId)
+    if (!institution) return null
+
+    const courseList = await getInstitutionCourseList(institution, courseType, force)
+    const course = courseList.find((entry) => Number(entry.id ?? 0) === summary.courseId)
+
+    if (!course) {
+      return (await getCatalogCourses(courseType, force)).find((entry) => entry.slug === normalizedSlug) ?? null
+    }
+
+    let bundle: Awaited<ReturnType<typeof getCourseBundle>> | null = null
+    try {
+      bundle = await getCourseBundle(institution, summary.courseId, force)
+    } catch (error) {
+      console.error(`Erro ao carregar bundle do curso ${summary.courseId} (${institution.name}):`, error)
+    }
+
+    return mapCatalogCourse(institution, course, bundle, courseType)
+  }, force)
+}
+
 export async function getGraduationCatalogCourses(force = false) {
   return getCatalogCourses('graduacao', force)
 }
 
 export async function getPostCatalogCourses(force = false) {
   return getCatalogCourses('pos', force)
+}
+
+export async function getGraduationCatalogCourseBySlug(slug: string, force = false) {
+  return getCatalogCourseBySlug('graduacao', slug, force)
+}
+
+export async function getPostCatalogCourseBySlug(slug: string, force = false) {
+  return getCatalogCourseBySlug('pos', slug, force)
 }
 
 export async function getGraduationCatalogCourseSummaries(force = false) {

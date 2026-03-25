@@ -2125,12 +2125,13 @@
   box-shadow: 0 4px 21px rgba(0, 0, 0, 0.18);
   display: grid;
   gap: 16px;
-  padding: 21px;
+  overflow: hidden;
+  padding: 0 21px 21px;
 }
 
 .course-lead-form__promo {
   background: linear-gradient(83deg, #d50000 11.6%, #ed0909 108.88%);
-  border-radius: 15px;
+  border-radius: 15px 15px 0 0;
   display: grid;
   grid-template-columns: 74px minmax(0, 1fr);
   min-height: 82px;
@@ -2141,6 +2142,7 @@
   background: none;
   display: block;
   grid-template-columns: none;
+  margin: 0 -21px;
   min-height: 0;
 }
 
@@ -2278,8 +2280,8 @@
 
 .course-lead-form__field,
 .course-lead-form__voucher-field {
-  background: #e8e9ea;
-  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  border: 1px solid rgba(33, 33, 33, 0.6);
   box-sizing: border-box;
   border-radius: 8px;
   max-width: 100%;
@@ -2308,6 +2310,12 @@
   min-width: 0;
   outline: none;
   width: 100%;
+}
+
+.course-lead-form__field input::placeholder,
+.course-lead-form__voucher-field input::placeholder {
+  color: rgba(0, 0, 0, 0.75);
+  opacity: 1;
 }
 
 .course-lead-form__field input:disabled,
@@ -2340,7 +2348,8 @@
 }
 
 .course-lead-form__field.is-disabled {
-  background: #989898;
+  background: #f4f4f4;
+  border-color: rgba(33, 33, 33, 0.25);
 }
 
 .course-lead-form__field.is-invalid,
@@ -2421,10 +2430,10 @@
 
 .course-lead-form__submit {
   align-items: center;
-  background: linear-gradient(180deg, #fe0000 0%, #c50002 100%);
-  border: 1px solid transparent;
+  background: #fe0000;
+  border: 1px solid #fe0000;
   border-radius: 12px;
-  box-shadow: 0 10px 15px -8px rgba(254, 0, 0, 0.25);
+  box-shadow: none;
   color: #fff;
   cursor: pointer;
   display: inline-flex;
@@ -2446,12 +2455,12 @@
 }
 
 .course-lead-form__price-card {
-  background: #fff8b0;
-  border: 1px solid #eedd9c;
-  border-radius: 12px;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   display: grid;
-  gap: 10px;
-  padding: 12px;
+  gap: 8px;
+  padding: 0;
 }
 
 .course-lead-form__price-badges {
@@ -2462,12 +2471,12 @@
 
 .course-lead-form__price-tag,
 .course-lead-form__price-offer {
-  border-radius: 5px;
+  border-radius: 7px;
   display: inline-flex;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
   line-height: 1.14;
-  padding: 4px 8px;
+  padding: 3px 7px;
 }
 
 .course-lead-form__price-tag {
@@ -2482,11 +2491,8 @@
 }
 
 .course-lead-form__price-values {
-  align-items: baseline;
-  column-gap: 12px;
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: 6px;
+  display: grid;
+  gap: 2px;
 }
 
 .course-lead-form__price-old,
@@ -3974,11 +3980,15 @@
 
   .course-lead-form {
     border-radius: 24px;
-    padding: 18px;
+    padding: 0 18px 18px;
   }
 
   .course-lead-form__promo {
     grid-template-columns: 64px minmax(0, 1fr);
+  }
+
+  .course-lead-form__promo--image {
+    margin: 0 -18px;
   }
 
   .course-lead-form__promo-body {
@@ -4019,7 +4029,11 @@
   .course-lead-form--pos {
     border-radius: 20px;
     gap: 12px;
-    padding: 14.951px;
+    padding: 0 14.951px 14.951px;
+  }
+
+  .course-lead-form--pos .course-lead-form__promo--image {
+    margin: 0 -14.951px;
   }
 
   .course-lead-form--pos .course-lead-form__resume {
@@ -4086,9 +4100,8 @@
   }
 
   .course-lead-form--pos .course-lead-form__price-card {
-    border-radius: 10px;
     gap: 6px;
-    padding: 8px 10px;
+    padding: 0;
   }
 
   .course-lead-form--pos .course-lead-form__price-badges {
@@ -4263,7 +4276,11 @@
   .course-lead-form--graduation {
     border-radius: 20px;
     gap: 12px;
-    padding: 14.951px;
+    padding: 0 14.951px 14.951px;
+  }
+
+  .course-lead-form--graduation .course-lead-form__promo--image {
+    margin: 0 -14.951px;
   }
 
   .course-lead-form--graduation .course-lead-form__resume {
@@ -4324,9 +4341,8 @@
   }
 
   .course-lead-form--graduation .course-lead-form__price-card {
-    border-radius: 10px;
     gap: 6px;
-    padding: 8px 10px;
+    padding: 0;
   }
 
   .course-lead-form--graduation .course-lead-form__price-badges {

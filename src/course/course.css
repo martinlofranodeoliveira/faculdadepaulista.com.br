@@ -1219,6 +1219,12 @@
   margin: 0;
 }
 
+.course-page__grad-related-price-old {
+  color: rgba(1, 1, 1, 0.32);
+  font-weight: 700;
+  text-decoration: line-through;
+}
+
 .course-page__grad-related-price strong {
   color: #010101;
   font: 700 16px/1.1 'Kumbh Sans', sans-serif;

@@ -1,10 +1,12 @@
----
+﻿---
 type RelatedCourse = {
   path: string
   title: string
   description: string
   image: string
   courseType: 'graduacao' | 'pos'
+  oldInstallmentPrice: string
+  currentInstallmentPriceMonthly: string
 }
 
 interface Props {
@@ -12,8 +14,6 @@ interface Props {
 }
 
 const { courses } = Astro.props as Props
-
-const mockPriceLabel = 'R$ 129,00 por mês'
 ---
 
 <section class="course-page__grad-related" aria-labelledby="course-related-title">
@@ -53,8 +53,8 @@ const mockPriceLabel = 'R$ 129,00 por mês'
             <h3>{course.title}</h3>
 
             <div class="course-page__grad-related-price">
-              <span>A partir de</span>
-              <strong>{mockPriceLabel}</strong>
+              <span class="course-page__grad-related-price-old">{course.oldInstallmentPrice}</span>
+              <strong>Por: {course.currentInstallmentPriceMonthly}</strong>
             </div>
           </div>
 

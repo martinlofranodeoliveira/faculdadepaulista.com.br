@@ -48,6 +48,8 @@ export interface CoursePageViewModel {
     description: string
     image: string
     courseType: CourseType
+    oldInstallmentPrice: string
+    currentInstallmentPriceMonthly: string
   }>
   whatsappHref: string
   curriculumTotalHours: number
@@ -96,6 +98,8 @@ function mapRelatedCourses(pool: CoursePageSummaryEntry[], currentPath: string |
       description: '',
       image: entry.image,
       courseType: entry.courseType,
+      oldInstallmentPrice: entry.oldInstallmentPrice,
+      currentInstallmentPriceMonthly: entry.currentInstallmentPriceMonthly,
     }))
 }
 

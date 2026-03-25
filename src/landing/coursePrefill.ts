@@ -70,7 +70,7 @@ export function openCourseLeadModal(detail: CoursePrefillDetail) {
   if (typeof window === 'undefined') return
 
   const storedLead = readLandingLeadSession()
-  if (storedLead) {
+  if (storedLead && !detail.redirectPath) {
     saveCourseLeadDraft({
       courseType: detail.courseType,
       courseValue: detail.courseValue,

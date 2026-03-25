@@ -5,7 +5,11 @@ import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
 import { saveCourseLeadDraft } from '@/course/courseLeadDraft'
 import { storeGraduationThankYouLead } from '@/thankyou/graduationThankYouState'
 
-import { saveLandingLeadSession, type CoursePrefillDetail } from '../coursePrefill'
+import {
+  readLandingLeadSession,
+  saveLandingLeadSession,
+  type CoursePrefillDetail,
+} from '../coursePrefill'
 
 const CRM_LEAD_ENDPOINT =
   import.meta.env.VITE_CRM_LEAD_ENDPOINT ??
@@ -121,9 +125,10 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
   useEffect(() => {
     if (!isOpen) return
 
-    setFullName('')
-    setEmail('')
-    setPhone('')
+    const storedLead = readLandingLeadSession()
+    setFullName(storedLead?.fullName ?? '')
+    setEmail(storedLead?.email ?? '')
+    setPhone(storedLead?.phone ?? '')
     setErrors({})
     setSubmitStatus('idle')
     setSubmitMessage('')

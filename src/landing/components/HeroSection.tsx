@@ -13,7 +13,12 @@ import { getCoursePath } from '@/lib/courseRoutes'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
 import { saveCourseLeadDraft } from '@/course/courseLeadDraft'
 
-import { COURSE_PREFILL_EVENT, type CoursePrefillDetail } from '../coursePrefill'
+import {
+  COURSE_PREFILL_EVENT,
+  readLandingLeadSession,
+  saveLandingLeadSession,
+  type CoursePrefillDetail,
+} from '../coursePrefill'
 
 const CRM_LEAD_ENDPOINT =
   import.meta.env.VITE_CRM_LEAD_ENDPOINT ??
@@ -402,6 +407,37 @@ export function HeroSection({ graduationOptions, postOptions }: HeroSectionProps
     })
   }, [])
 
+  const redirectWithStoredLead = useCallback(() => {
+    const storedLead = readLandingLeadSession()
+    if (!storedLead) return false
+
+    const selectedCourseOption = courseOptionsLookup.get(course)
+    const courseLabel = (courseLookup.get(course) ?? courseSearch.trim()) || course
+    const isPostGraduation = courseType === 'pos' || isPostGraduationCourse(course)
+
+    saveCourseLeadDraft({
+      courseType: isPostGraduation ? 'pos' : 'graduacao',
+      courseValue: course,
+      courseLabel,
+      courseId: selectedCourseOption?.courseId,
+      fullName: storedLead.fullName,
+      email: storedLead.email,
+      phone: storedLead.phone,
+    })
+
+    const redirectPath = getCoursePath(
+      {
+        courseType: isPostGraduation ? 'pos' : 'graduacao',
+        courseValue: course,
+        courseLabel,
+      },
+      { leadSubmitted: true },
+    )
+
+    window.location.assign(redirectPath)
+    return true
+  }, [course, courseLookup, courseOptionsLookup, courseSearch, courseType])
+
   const handleCourseTypeChange = (nextType: CourseType | '') => {
     setCourseType(nextType)
     setCourse('')
@@ -485,6 +521,10 @@ export function HeroSection({ graduationOptions, postOptions }: HeroSectionProps
 
     if (from === 1) {
       setIsCourseSearchOpen(false)
+
+      if (redirectWithStoredLead()) {
+        return
+      }
     }
 
     runStepTransition((Math.min(from + 1, 2) as FormStep), 'forward')
@@ -639,6 +679,11 @@ export function HeroSection({ graduationOptions, postOptions }: HeroSectionProps
 
       setSubmitStatus('success')
       setSubmitMessage('Cadastro enviado com sucesso.')
+      saveLandingLeadSession({
+        fullName: fullName.trim(),
+        email: email.trim(),
+        phone,
+      })
       saveCourseLeadDraft({
         courseType: isPostGraduation ? 'pos' : 'graduacao',
         courseValue: course,

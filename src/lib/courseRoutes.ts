@@ -39,6 +39,16 @@ export function stripPostGraduationPrefix(label: string): string {
   return trimmed
 }
 
+export function isMbaCourseTitle(label: string): boolean {
+  const normalized = normalizeComparableText(label)
+  return normalized === 'mba' || normalized.startsWith('mba ')
+}
+
+export function formatPostCourseHeading(label: string): string {
+  const title = stripPostGraduationPrefix(label)
+  return isMbaCourseTitle(title) ? title : `Pós-graduação em ${title}`
+}
+
 export function getCourseDisplayTitle(input: CourseRouteInput): string {
   if (input.courseType === 'graduacao') {
     return stripGraduationModality(input.courseLabel)

@@ -4,6 +4,7 @@ import {
   getPostCoursePageSummaries,
   type CoursePageSummaryEntry,
 } from '@/lib/courseCatalog'
+import { formatPostCourseHeading } from '@/lib/courseRoutes'
 
 import { getCourseFaqItems } from './courseFaqData'
 import { getCoursePagePresentation, type CoursePresentation } from './coursePageData'
@@ -76,7 +77,7 @@ function slugifyFilePart(value: string): string {
 }
 
 function buildBreadcrumbCurrentLabel(courseType: CourseType, title: string, rawLabel?: string) {
-  if (courseType === 'pos') return `Pós-graduação em ${title}`
+  if (courseType === 'pos') return formatPostCourseHeading(title)
 
   const normalized = (rawLabel ?? '').toLowerCase()
 
@@ -136,7 +137,7 @@ export async function getCoursePageViewModel({
   const categoryLabel = courseType === 'pos' ? 'Pós-graduação' : 'Graduação'
   const categoryPath = courseType === 'pos' ? '/pos-graduacao' : '/graduacao'
   const pageHeading =
-    courseType === 'pos' ? `PÓS-GRADUAÇÃO EM ${title}` : `GRADUAÇÃO EM ${title}`
+    courseType === 'pos' ? formatPostCourseHeading(title).toUpperCase() : `GRADUAÇÃO EM ${title}`
   const breadcrumbCurrentLabel = buildBreadcrumbCurrentLabel(courseType, title, rawLabel)
   const presentation = getCoursePagePresentation({
     course: courseData,

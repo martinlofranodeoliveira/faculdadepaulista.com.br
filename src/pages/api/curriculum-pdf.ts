@@ -5,6 +5,7 @@ import {
 } from '@/course/curriculumPdf'
 import { getGraduationCoursePageBySlug, getPostCoursePageBySlug } from '@/lib/courseCatalog'
 import type { CourseType } from '@/lib/catalogApi'
+import { formatPostCourseHeading } from '@/lib/courseRoutes'
 
 export const prerender = false
 
@@ -34,7 +35,7 @@ export async function GET({ url }: { url: URL }) {
   const pageHeading =
     typeParam === 'graduacao'
       ? `GRADUAÇÃO EM ${course.title}`
-      : `PÓS-GRADUAÇÃO EM ${course.title}`
+      : formatPostCourseHeading(course.title)
 
   const selectedVariant =
     typeParam === 'pos' && Number.isFinite(variantId)

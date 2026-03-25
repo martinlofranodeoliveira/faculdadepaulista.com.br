@@ -13,7 +13,6 @@ interface Props {
 
 const { courses } = Astro.props as Props
 
-const mockHoursLabel = '360 a 720 horas'
 const mockPriceLabel = 'R$ 129,00 por mês'
 ---
 
@@ -42,27 +41,12 @@ const mockPriceLabel = 'R$ 129,00 por mês'
               loading="lazy"
               decoding="async"
             />
-
-            <span class="course-page__grad-related-video-badge">
-              <img
-                src="/course/related/video-dicas.svg"
-                alt=""
-                width="13"
-                height="13"
-                loading="lazy"
-                decoding="async"
-              />
-              <span>Com videodicas</span>
-            </span>
           </a>
 
           <div class="course-page__grad-related-body">
             <div class="course-page__grad-related-tags">
               <span class="course-page__grad-related-tag course-page__grad-related-tag--outlined">
                 <strong>Reconhecido</strong> MEC
-              </span>
-              <span class="course-page__grad-related-tag course-page__grad-related-tag--plain">
-                {mockHoursLabel}
               </span>
             </div>
 

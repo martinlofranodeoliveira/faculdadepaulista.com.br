@@ -1,4 +1,4 @@
-import type { CatalogCourse, CatalogPriceItem } from '@/lib/catalogApi'
+﻿import type { CatalogCourse, CatalogPriceItem } from '@/lib/catalogApi'
 
 export type GraduationOfferRow = {
   dueDate: string
@@ -42,20 +42,47 @@ function getSelectedPriceItem(course: CatalogCourse | null): CatalogPriceItem | 
   return course.priceItems[0] ?? null
 }
 
-function buildBaseDate(validFrom: string): Date | null {
-  if (!validFrom) return null
+function getSemesterCount(course: CatalogCourse | null, selectedPriceItem: CatalogPriceItem | null): number {
+  const directSemesterCount = Number(course?.semesterCount ?? 0)
+  if (Number.isFinite(directSemesterCount) && directSemesterCount > 0) {
+    return directSemesterCount
+  }
 
-  const parsed = new Date(`${validFrom}T00:00:00`)
-  return Number.isNaN(parsed.getTime()) ? null : parsed
+  const durationMonths = Number(course?.durationMonths ?? 0)
+  if (Number.isFinite(durationMonths) && durationMonths > 0) {
+    return Math.max(1, Math.ceil(durationMonths / 6))
+  }
+
+  const continuousDurationMonths = Number(course?.durationContinuousMonths ?? 0)
+  if (Number.isFinite(continuousDurationMonths) && continuousDurationMonths > 0) {
+    return Math.max(1, Math.ceil(continuousDurationMonths / 6))
+  }
+
+  const installmentsMax = Number(selectedPriceItem?.installmentsMax ?? 0)
+  if (Number.isFinite(installmentsMax) && installmentsMax > 0) {
+    return Math.max(1, Math.ceil(installmentsMax / 6))
+  }
+
+  return 3
 }
 
-function formatDueDate(baseDate: Date | null, offsetMonths: number): string {
-  if (!baseDate) return 'Consulte a oferta'
+function buildFirstDueDate() {
+  const currentDate = new Date()
+  const dueDay = currentDate.getDate() <= 15 ? 10 : 15
 
-  const nextDate = new Date(baseDate)
-  nextDate.setMonth(nextDate.getMonth() + offsetMonths)
+  return {
+    dueDay,
+    baseYear: currentDate.getFullYear(),
+    baseMonth: currentDate.getMonth() + 1,
+  }
+}
 
-  return nextDate.toLocaleDateString('pt-BR', {
+function formatDueDate(
+  schedule: { dueDay: number; baseYear: number; baseMonth: number },
+  offsetMonths: number,
+): string {
+  const targetDate = new Date(schedule.baseYear, schedule.baseMonth + offsetMonths, schedule.dueDay)
+  return targetDate.toLocaleDateString('pt-BR', {
     timeZone: 'America/Sao_Paulo',
   })
 }
@@ -73,11 +100,12 @@ export function buildGraduationOfferData(course: CatalogCourse | null): Graduati
     parseCurrencyTextToCents(course.currentInstallmentPriceMonthly) ||
     parseCurrencyTextToCents(course.currentInstallmentPrice)
 
-  const installmentsMax = Math.max(1, Math.min(selectedPriceItem?.installmentsMax || 18, 24))
+  const semesterCount = getSemesterCount(course, selectedPriceItem)
+  const installmentsMax = Math.max(1, semesterCount * 6)
   const currentInstallmentValue = installmentValueCents
     ? formatCurrencyFromCents(installmentValueCents)
     : course.currentInstallmentPriceMonthly.replace(/\/.*/u, '').trim()
-  const baseDate = buildBaseDate(selectedPriceItem?.validFrom ?? '')
+  const dueDateSchedule = buildFirstDueDate()
 
   return {
     courseId: course.courseId,
@@ -86,7 +114,7 @@ export function buildGraduationOfferData(course: CatalogCourse | null): Graduati
     rows: Array.from({ length: installmentsMax }, (_, index) => ({
       installment: getInstallmentLabel(index),
       value: currentInstallmentValue,
-      dueDate: formatDueDate(baseDate, index),
+      dueDate: formatDueDate(dueDateSchedule, index),
     })),
   }
 }

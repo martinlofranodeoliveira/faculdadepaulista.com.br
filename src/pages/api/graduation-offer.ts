@@ -1,4 +1,4 @@
-import type { APIRoute } from 'astro'
+﻿import type { APIRoute } from 'astro'
 
 import { getGraduationCatalogCourseById } from '@/lib/catalogApi'
 import { buildGraduationOfferData } from '@/vestibular/graduationOffer'

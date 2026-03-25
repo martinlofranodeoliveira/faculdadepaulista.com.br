@@ -36,7 +36,11 @@ const {
       </figure>
 
       <div class="course-page__grad-rating-badge" aria-label={presentation.graduationHero.ratingLabel}>
-        <span class="course-page__grad-rating-stars" aria-hidden="true">★★★★☆</span>
+        {presentation.graduationHero.ratingStars ? (
+          <span class="course-page__grad-rating-stars" aria-hidden="true">
+            {String.fromCharCode(9733).repeat(presentation.graduationHero.ratingStars)}
+          </span>
+        ) : null}
         <span class="course-page__grad-rating-text">{presentation.graduationHero.ratingLabel}</span>
       </div>
 
@@ -62,28 +66,28 @@ const {
         ))}
       </div>
 
-      <div class="course-page__grad-info-stack">
-        {presentation.infoCards.map((card, index) => (
-          <article class="course-page__grad-info-card">
-            <img
-              src={
-                index === 0
-                  ? '/course/graduation/icon-support.svg'
-                  : index === 1
-                    ? '/course/graduation/icon-internship.svg'
-                    : '/course/graduation/icon-lab.svg'
-              }
-              alt=""
-              width="38"
-              height="38"
-              loading="lazy"
-              decoding="async"
-              class="course-page__grad-info-icon"
-            />
-            <h2>{card.title}</h2>
-            <p>{card.description}</p>
-          </article>
-        ))}
+      {presentation.graduationPortarias.length ? (
+        <section class="course-page__grad-portarias" aria-labelledby="graduation-portarias-title">
+          <h2 id="graduation-portarias-title">Portarias</h2>
+          <div class="course-page__grad-portarias-list">
+            {presentation.graduationPortarias.map((item) => (
+              <article class="course-page__grad-portaria-item">
+                <p>
+                  <strong>{item.label}:</strong> {item.description}
+                </p>
+                {item.href ? (
+                  <a href={item.href} class="course-page__grad-portaria-link" target="_blank" rel="noreferrer">
+                    Abrir
+                  </a>
+                ) : null}
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <div class="course-page__grad-profile-inline">
+        <slot />
       </div>
 
     </div>
@@ -106,14 +110,8 @@ const {
           showInternshipInfoLink={presentation.showInternshipInfoLink}
         />
       </div>
+
     </aside>
 
-    <div class="course-page__grad-profile-band">
-      <div class="course-page__grad-profile-shell">
-        <div class="course-page__grad-profile-lane">
-          <slot />
-        </div>
-      </div>
-    </div>
   </section>
 </div>

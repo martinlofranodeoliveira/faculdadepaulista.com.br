@@ -50,6 +50,7 @@ export type CatalogCourse = {
   modality: CourseModality
   modalityLabel: string
   modalityBadge: string
+  offeringModalityText: string
   image: string
   galleryImages: string[]
   posPriceCents: number
@@ -68,6 +69,10 @@ export type CatalogCourse = {
   durationMonths: number
   durationContinuousMonths: number
   semesterCount: number
+  durationText: string
+  mecOrdinance: string
+  mecScore: number | null
+  tccRequired: boolean | null
   titulation: string
   laborMarket: string
 }
@@ -130,6 +135,22 @@ type ApiCourseListItem = {
   min_amount_cents?: number | string | null
   max_amount_cents?: number | string | null
   pos_price_cents?: number | string | null
+  duration?: string | null
+  mec_ordinance?: string | null
+  mec_score?: number | string | null
+  mec_rating?: number | string | null
+  mec_note?: number | string | null
+  mec_grade?: number | string | null
+  mec_concept?: number | string | null
+  nota_mec?: number | string | null
+  conceito_mec?: number | string | null
+  concept_mec?: number | string | null
+  course_concept?: number | string | null
+  concept?: number | string | null
+  tcc_required?: boolean | null
+  requires_tcc?: boolean | null
+  has_tcc?: boolean | null
+  has_course_completion_work?: boolean | null
   featured_pricing_options?: ApiPricingItem[] | null
   course_disciplines?: ApiCourseDiscipline[] | null
 }
@@ -150,6 +171,22 @@ type ApiCourseDetail = {
   duration_continuous_months?: number | null
   semester_count?: number | null
   pos_price_cents?: number | string | null
+  duration?: string | null
+  mec_ordinance?: string | null
+  mec_score?: number | string | null
+  mec_rating?: number | string | null
+  mec_note?: number | string | null
+  mec_grade?: number | string | null
+  mec_concept?: number | string | null
+  nota_mec?: number | string | null
+  conceito_mec?: number | string | null
+  concept_mec?: number | string | null
+  course_concept?: number | string | null
+  concept?: number | string | null
+  tcc_required?: boolean | null
+  requires_tcc?: boolean | null
+  has_tcc?: boolean | null
+  has_course_completion_work?: boolean | null
   area_names?: string[] | null
   teaching_plan_path?: string | null
   teaching_plan_mime?: string | null
@@ -562,11 +599,134 @@ function buildApiCourseListItemFromDetail(
     duration_months: detail.duration_months,
     duration_continuous_months: detail.duration_continuous_months,
     semester_count: detail.semester_count,
+    duration: detail.duration,
+    mec_ordinance: detail.mec_ordinance,
+    mec_score: detail.mec_score,
+    mec_rating: detail.mec_rating,
+    mec_note: detail.mec_note,
+    mec_grade: detail.mec_grade,
+    mec_concept: detail.mec_concept,
+    nota_mec: detail.nota_mec,
+    conceito_mec: detail.conceito_mec,
+    concept_mec: detail.concept_mec,
+    course_concept: detail.course_concept,
+    concept: detail.concept,
+    tcc_required: detail.tcc_required,
+    requires_tcc: detail.requires_tcc,
+    has_tcc: detail.has_tcc,
+    has_course_completion_work: detail.has_course_completion_work,
     pos_price_cents: detail.pos_price_cents,
     featured_pricing_options:
       pricingItems.length > 0 ? pricingItems : (detail.featured_pricing_options ?? null),
     course_disciplines: detail.course_disciplines,
   }
+}
+
+function resolveTccRequired(
+  course: Pick<
+    ApiCourseListItem,
+    'tcc_required' | 'requires_tcc' | 'has_tcc' | 'has_course_completion_work'
+  >,
+  detail?: Pick<
+    ApiCourseDetail,
+    'tcc_required' | 'requires_tcc' | 'has_tcc' | 'has_course_completion_work'
+  > | null,
+): boolean | null {
+  const candidates = [
+    detail?.tcc_required,
+    detail?.requires_tcc,
+    detail?.has_tcc,
+    detail?.has_course_completion_work,
+    course.tcc_required,
+    course.requires_tcc,
+    course.has_tcc,
+    course.has_course_completion_work,
+  ]
+
+  for (const candidate of candidates) {
+    if (typeof candidate === 'boolean') return candidate
+  }
+
+  return null
+}
+
+function parseMecScoreValue(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    const rounded = Math.round(value)
+    return rounded >= 1 && rounded <= 5 ? rounded : null
+  }
+
+  if (typeof value === 'string') {
+    const match = value.match(/\d+(?:[.,]\d+)?/)
+    if (!match) return null
+
+    const parsed = Number.parseFloat(match[0].replace(',', '.'))
+    if (!Number.isFinite(parsed)) return null
+
+    const rounded = Math.round(parsed)
+    return rounded >= 1 && rounded <= 5 ? rounded : null
+  }
+
+  return null
+}
+
+function resolveMecScore(
+  course: Pick<
+    ApiCourseListItem,
+    | 'mec_score'
+    | 'mec_rating'
+    | 'mec_note'
+    | 'mec_grade'
+    | 'mec_concept'
+    | 'nota_mec'
+    | 'conceito_mec'
+    | 'concept_mec'
+    | 'course_concept'
+    | 'concept'
+  >,
+  detail?: Pick<
+    ApiCourseDetail,
+    | 'mec_score'
+    | 'mec_rating'
+    | 'mec_note'
+    | 'mec_grade'
+    | 'mec_concept'
+    | 'nota_mec'
+    | 'conceito_mec'
+    | 'concept_mec'
+    | 'course_concept'
+    | 'concept'
+  > | null,
+): number | null {
+  const candidates = [
+    detail?.mec_score,
+    detail?.mec_rating,
+    detail?.mec_note,
+    detail?.mec_grade,
+    detail?.mec_concept,
+    detail?.nota_mec,
+    detail?.conceito_mec,
+    detail?.concept_mec,
+    detail?.course_concept,
+    detail?.concept,
+    course.mec_score,
+    course.mec_rating,
+    course.mec_note,
+    course.mec_grade,
+    course.mec_concept,
+    course.nota_mec,
+    course.conceito_mec,
+    course.concept_mec,
+    course.course_concept,
+    course.concept,
+  ]
+
+  for (const candidate of candidates) {
+    const score = parseMecScoreValue(candidate)
+    if (score) return score
+  }
+
+  return null
 }
 
 function getCourseTotalPriceCents(
@@ -1250,6 +1410,7 @@ function mapCatalogCourse(
     modality,
     modalityLabel: getPageModalityLabel(modality),
     modalityBadge: getModalityLabel(courseType, modality),
+    offeringModalityText: normalizeText(detail?.offering_modality ?? course.offering_modality),
     image: toAbsoluteMediaUrl(seo.ogImageUrl) || image,
     galleryImages,
     posPriceCents: courseType === 'pos' ? totalPriceCents : 0,
@@ -1274,6 +1435,10 @@ function mapCatalogCourse(
       detail?.duration_continuous_months ?? course.duration_continuous_months ?? 0,
     ),
     semesterCount: Number(detail?.semester_count ?? course.semester_count ?? 0),
+    durationText: normalizeText(detail?.duration ?? course.duration),
+    mecOrdinance: normalizeRichText(detail?.mec_ordinance ?? course.mec_ordinance),
+    mecScore: resolveMecScore(course, detail),
+    tccRequired: resolveTccRequired(course, detail),
     titulation: normalizeText(detail?.titulation),
     laborMarket: normalizeRichText(detail?.labor_market ?? course.labor_market),
   } satisfies CatalogCourse

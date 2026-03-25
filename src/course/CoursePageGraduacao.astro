@@ -9,8 +9,8 @@ import GraduationProfileSection from './components/GraduationProfileSection.astr
 import GraduationSalarySection from './components/GraduationSalarySection.astro'
 import GraduationCourseCurriculumSection from './components/GraduationCourseCurriculumSection.astro'
 import GraduationCourseLabsSection from './components/GraduationCourseLabsSection.astro'
-import GraduationCareerSection from './components/GraduationCareerSection.astro'
 import GraduationRelatedCoursesSection from './components/GraduationRelatedCoursesSection.astro'
+import GraduationEadBenefitsSection from './components/GraduationEadBenefitsSection.astro'
 import { getCoursePageViewModel, type CoursePageProps } from './coursePageShared'
 import './course.css'
 
@@ -23,6 +23,8 @@ const normalizedTitle = props.title
 const showLabsSection =
   props.courseData?.modality === 'presencial' &&
   (normalizedTitle.includes('enfermagem') || normalizedTitle.includes('psicologia'))
+const showEadBenefitsSection =
+  viewModel.presentation.modality === 'ead' || viewModel.presentation.modality === 'semipresencial'
 ---
 
 <Header client:load />
@@ -50,7 +52,7 @@ const showLabsSection =
 
   <GraduationSalarySection presentation={viewModel.presentation} />
   {showLabsSection ? <GraduationCourseLabsSection presentation={viewModel.presentation} /> : null}
-  <GraduationCareerSection presentation={viewModel.presentation} />
+  {showEadBenefitsSection ? <GraduationEadBenefitsSection presentation={viewModel.presentation} /> : null}
 
   <GraduationCourseCurriculumSection
     presentation={viewModel.presentation}

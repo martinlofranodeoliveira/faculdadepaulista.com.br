@@ -6,12 +6,30 @@ interface Props {
 }
 
 const { presentation } = Astro.props
+
+const iconByTitle: Record<string, string> = {
+  'Público-Alvo': '/course/graduation/figma-info-icons/radar.svg',
+  Qualificações: '/course/graduation/figma-info-icons/cognition_2.svg',
+  'Mercado de Trabalho': '/course/graduation/figma-info-icons/work.svg',
+}
 ---
 
-<article class="course-page__grad-profile-card">
-  <div class="course-page__grad-profile-accent" aria-hidden="true"></div>
-  <div class="course-page__grad-profile-copy">
-    <h2 id="course-grad-profile-title">{presentation.graduationProfile.title}</h2>
-    <p>{presentation.graduationProfile.description}</p>
-  </div>
-</article>
+<div class="course-page__grad-profile-stack">
+  {presentation.infoCards.map((card) => (
+    <article class="course-page__grad-profile-card">
+      <div class="course-page__grad-profile-head">
+        <img
+          src={iconByTitle[card.title]}
+          alt=""
+          width="38"
+          height="38"
+          loading="lazy"
+          decoding="async"
+          class="course-page__grad-profile-icon"
+        />
+        <h2>{card.title}</h2>
+      </div>
+      <p>{card.description}</p>
+    </article>
+  ))}
+</div>

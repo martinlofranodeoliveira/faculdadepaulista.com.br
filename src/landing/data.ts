@@ -397,7 +397,7 @@ export const faqItems: FaqItem[] = [
   {
     question: 'Quais são as formas de pagamento?',
     answer:
-      'Oferecemos total conveniência financeira para viabilizar seus estudos. Você pode optar pelo pagamento via **PIX, boleto bancário ou cartão de crédito**. Para maior tranquilidade, disponibilizamos o **crédito recorrente**, uma modalidade que debita a mensalidade mensalmente sem comprometer o limite total do seu cartão.',
+      'Oferecemos total conveniência financeira para viabilizar seus estudos. Você pode optar pelo pagamento via PIX, boleto bancário ou cartão de crédito. Para maior tranquilidade, disponibilizamos o crédito recorrente, uma modalidade que debita a mensalidade mensalmente sem comprometer o limite total do seu cartão.',
   },
   {
     question: 'Quem pode se inscrever nos cursos de Graduação?',

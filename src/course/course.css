@@ -120,15 +120,19 @@
 }
 
 .course-page__grad-highlights {
+  align-items: center;
+  background: transparent;
+  border-radius: 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: 32px;
+  gap: 20px;
+  justify-content: space-between;
+  padding: 0;
 }
 
 .course-page__grad-highlight-item {
   align-items: center;
   display: flex;
-  gap: 11px;
+  gap: 10px;
 }
 
 .course-page__grad-highlight-icon-wrap {
@@ -151,25 +155,22 @@
 .course-page__grad-highlight-copy {
   color: #070707;
   display: grid;
-  gap: 2px;
+  gap: 5px;
 }
 
 .course-page__grad-highlight-copy strong {
-  font: 700 16px/25px 'Liberation Sans', Arial, sans-serif;
+  font: 700 14px/25px 'Kumbh Sans', sans-serif;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 .course-page__grad-highlight-copy p {
   color: rgba(7, 7, 7, 0.75);
-  font: 400 16px/25px 'Liberation Sans', Arial, sans-serif;
+  font: 400 14px/16px 'Liberation Sans', Arial, sans-serif;
   margin: 0;
 }
 
-.course-page__grad-info-stack {
-  display: grid;
-  gap: 20px;
-}
-
-.course-page__grad-info-card {
+.course-page__grad-portarias {
   background: #fff;
   border-radius: 25px;
   box-shadow: 0 12px 30px rgba(10, 8, 8, 0.04);
@@ -178,24 +179,57 @@
   padding: 25px;
 }
 
-.course-page__grad-info-icon {
-  display: block;
-  height: 38px;
-  width: 38px;
-}
-
-.course-page__grad-info-card h2 {
-  color: #0b111f;
-  font: 700 22px/1.13 'Kumbh Sans', sans-serif;
-  letter-spacing: -0.02em;
+.course-page__grad-portarias h2 {
+  color: #040404;
+  font: 400 22px/1.2 'Kumbh Sans', sans-serif;
   margin: 0;
   text-transform: uppercase;
 }
 
-.course-page__grad-info-card p {
-  color: #0b111f;
-  font: 400 18px/1.36 'Liberation Sans', Arial, sans-serif;
+.course-page__grad-portarias-list {
+  display: grid;
+}
+
+.course-page__grad-portaria-item {
+  align-items: center;
+  border-top: 1px solid #d9d9d9;
+  display: grid;
+  gap: 18px 45px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 19px 0 0;
+}
+
+.course-page__grad-portaria-item + .course-page__grad-portaria-item {
+  margin-top: 19px;
+}
+
+.course-page__grad-portaria-item:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.course-page__grad-portaria-item p {
+  color: #000;
+  font: 400 16px/1.35 'Montserrat', 'Kumbh Sans', sans-serif;
   margin: 0;
+}
+
+.course-page__grad-portaria-item strong {
+  font-weight: 600;
+}
+
+.course-page__grad-portaria-link {
+  align-items: center;
+  background: rgba(22, 113, 206, 0.1);
+  border-radius: 30px;
+  color: #1671ce;
+  display: inline-flex;
+  font: 500 14px/1 'Kumbh Sans', sans-serif;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 102px;
+  text-decoration: none;
+  text-transform: uppercase;
 }
 
 .course-page__grad-profile-band {
@@ -412,6 +446,10 @@
 .course-page__form-sticky--post,
 .course-page__form-sticky--graduation {
   position: sticky;
+}
+
+.course-page__grad-profile-inline {
+  display: grid;
 }
 
 .course-page__curriculum {
@@ -911,6 +949,73 @@
   text-decoration: none;
 }
 
+.course-page__grad-benefits {
+  padding: 50px 0;
+}
+
+.course-page__grad-benefits-inner {
+  display: grid;
+  gap: 38px;
+  justify-items: stretch;
+  margin: 0 auto;
+  max-width: 1024px;
+  width: 100%;
+}
+
+.course-page__grad-benefits-inner h2 {
+  color: #161616;
+  font: 800 40px/1.25 'Kumbh Sans', sans-serif;
+  justify-self: start;
+  margin: 0;
+  max-width: max-content;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.course-page__grad-benefits-grid {
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 100%;
+}
+
+.course-page__grad-benefits-card {
+  align-self: stretch;
+  background: #fff;
+  border-radius: 18px;
+  display: grid;
+  gap: 14px;
+  min-height: 148px;
+  padding: 20px 30px;
+}
+
+.course-page__grad-benefits-card h3 {
+  color: #161616;
+  font: 800 16px/1.3 'Kumbh Sans', sans-serif;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.course-page__grad-benefits-card p {
+  color: #000;
+  font: 400 14px/1.3 'Montserrat', 'Kumbh Sans', sans-serif;
+  margin: 0;
+}
+
+.course-page__grad-benefits-cta {
+  align-items: center;
+  background: #fe0000;
+  border-radius: 12px;
+  color: #fff;
+  display: inline-flex;
+  font: 800 18px/24px 'Kumbh Sans', sans-serif;
+  justify-content: center;
+  min-height: 62px;
+  padding: 19px 26px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
 .course-page__grad-curriculum-list {
   display: grid;
   gap: 13px;
@@ -1253,47 +1358,44 @@
   display: inline-block;
 }
 
-.course-page__grad-profile-card {
-  background: #161616;
-  border-radius: 25px;
-  margin-top: 0;
-  min-height: 357px;
-  overflow: hidden;
-  padding: 34px 50px;
-  position: relative;
-}
-
-.course-page__grad-profile-accent {
-  background: linear-gradient(79.49deg, #fe0000 5.5%, #fe0066 105.68%);
-  border-radius: 999px;
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 9px;
-}
-
-.course-page__grad-profile-copy {
-  color: #fff;
+.course-page__grad-profile-stack {
   display: grid;
-  gap: 20px;
-  max-width: 559px;
+  gap: 25px;
 }
 
-.course-page__grad-profile-copy h2 {
-  color: #fff;
-  font-size: clamp(30px, 3vw, 40px);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1;
+.course-page__grad-profile-card {
+  background: #fff;
+  border-radius: 25px;
+  display: grid;
+  gap: 19px;
+  overflow: hidden;
+  padding: 25px;
+}
+
+.course-page__grad-profile-head {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  width: 100%;
+}
+
+.course-page__grad-profile-icon {
+  display: block;
+  flex: 0 0 auto;
+  height: 38px;
+  width: 38px;
+}
+
+.course-page__grad-profile-card h2 {
+  color: #ff013a;
+  font: 800 22px/1.2 'Kumbh Sans', sans-serif;
   margin: 0;
   text-transform: uppercase;
 }
 
-.course-page__grad-profile-copy p {
-  color: #fff;
-  font: 400 20px/1.36 'Liberation Sans', Arial, sans-serif;
-  letter-spacing: -0.02em;
+.course-page__grad-profile-card p {
+  color: #000;
+  font: 400 18px/1.35 'Montserrat', 'Kumbh Sans', sans-serif;
   margin: 0;
 }
 
@@ -2286,8 +2388,8 @@
 
 .course-lead-form__field,
 .course-lead-form__voucher-field {
-  background: #fff;
-  border: 1px solid rgba(33, 33, 33, 0.6);
+  background: #f4f4f4;
+  border: 0;
   box-sizing: border-box;
   border-radius: 8px;
   max-width: 100%;
@@ -2299,7 +2401,7 @@
 .course-lead-form__field {
   align-items: center;
   display: flex;
-  padding: 0 12px;
+  padding: 0 16px;
 }
 
 .course-lead-form__field input,
@@ -2309,9 +2411,9 @@
   background: transparent;
   border: 0;
   box-sizing: border-box;
-  color: #111;
+  color: rgba(0, 0, 0, 0.75);
   flex: 1;
-  font: 400 16px/20px 'Liberation Sans', Arial, sans-serif;
+  font: 400 14px/20px 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
   max-width: 100%;
   min-width: 0;
   outline: none;
@@ -2319,6 +2421,7 @@
 }
 
 .course-lead-form__field input::placeholder,
+.course-lead-form__field select,
 .course-lead-form__voucher-field input::placeholder {
   color: rgba(0, 0, 0, 0.75);
   opacity: 1;
@@ -2355,13 +2458,13 @@
 
 .course-lead-form__field.is-disabled {
   background: #f4f4f4;
-  border-color: rgba(33, 33, 33, 0.25);
+  opacity: 0.7;
 }
 
 .course-lead-form__field.is-invalid,
 .course-lead-form__agreement.is-invalid,
 .course-lead-form__voucher-field.is-invalid {
-  border-color: rgba(208, 26, 26, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(208, 26, 26, 0.7);
 }
 
 .course-lead-form__agreement {
@@ -2461,44 +2564,74 @@
 }
 
 .course-lead-form__price-card {
+  align-items: center;
   background: transparent;
   border: 0;
   border-radius: 0;
-  display: grid;
-  gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
   padding: 0;
 }
 
-.course-lead-form__price-badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.course-lead-form__price-highlight {
+  align-items: center;
+  background: #00a20b;
+  border-radius: 7px;
+  color: #fff;
+  display: inline-flex;
+  gap: 8px;
+  min-height: 42px;
+  padding: 6px 12px;
+  width: fit-content;
 }
 
 .course-lead-form__price-tag,
 .course-lead-form__price-offer {
-  border-radius: 7px;
-  display: inline-flex;
-  font-size: 14px;
-  font-weight: 800;
-  line-height: 1.14;
-  padding: 3px 7px;
+  align-items: flex-start;
+  display: grid;
+  gap: 0;
+  line-height: 1;
 }
 
-.course-lead-form__price-tag {
-  background: rgba(0, 140, 47, 0.05);
-  border: 1px solid #008c2f;
-  color: #003813;
-}
-
-.course-lead-form__price-offer {
-  background: #329e00;
+.course-lead-form__price-offer strong,
+.course-lead-form__price-offer span,
+.course-lead-form__price-tag strong,
+.course-lead-form__price-tag span {
   color: #fff;
+}
+
+.course-lead-form__price-offer strong {
+  font: 900 14px/1 'Kumbh Sans', sans-serif;
+}
+
+.course-lead-form__price-offer span {
+  font: 300 14px/1 'Kumbh Sans', sans-serif;
+}
+
+.course-lead-form__price-divider {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 999px;
+  display: block;
+  flex: 0 0 auto;
+  height: 26px;
+  width: 1px;
+}
+
+.course-lead-form__price-tag strong,
+.course-lead-form__price-tag span {
+  font: 400 14px/1.2 'Kumbh Sans', sans-serif;
+}
+
+.course-lead-form__price-tag strong {
+  font-weight: 800;
 }
 
 .course-lead-form__price-values {
   display: grid;
-  gap: 2px;
+  flex: 1 1 0;
+  gap: 4px;
+  min-width: 0;
 }
 
 .course-lead-form__price-old,
@@ -2508,23 +2641,28 @@
 }
 
 .course-lead-form__price-old {
-  color: rgba(0, 0, 0, 0.22);
+  color: rgba(0, 0, 0, 0.35);
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 700;
   text-decoration: line-through;
 }
 
 .course-lead-form__price-current {
   color: #000;
-  font-size: 18px;
+  font: 400 22px/1.14 'Kumbh Sans', sans-serif;
+}
+
+.course-lead-form__price-current-prefix {
+  font: inherit;
 }
 
 .course-lead-form__price-current strong {
-  font-size: 19px;
+  font-size: 22px;
 }
 
 .course-lead-form__price-pix {
   color: rgba(0, 0, 0, 0.75);
+  flex-basis: 100%;
   font-size: 14px;
 }
 
@@ -2553,7 +2691,7 @@
   align-items: center;
   display: flex;
   gap: 12px;
-  padding: 0 12px;
+  padding: 0 16px;
 }
 
 .course-lead-form__voucher-field button {
@@ -3699,40 +3837,42 @@
     width: 100%;
   }
 
-  .course-page__grad-profile-card {
-    background: transparent;
-    border-radius: 14px;
-    margin-top: 0;
-    min-height: 0;
-    padding: 0 0 0 30px;
-  }
-
   .course-page__grad-profile-band {
     margin-top: 0;
     padding: 36px 0 18px;
   }
 
-  .course-page__grad-profile-accent {
-    width: 5.381px;
+  .course-page__grad-profile-stack {
+    gap: 16px;
   }
 
   .course-page__grad-salary-section {
     padding: 18px 0 58px;
   }
 
-  .course-page__grad-profile-copy {
+  .course-page__grad-profile-card {
+    border-radius: 15px;
+    gap: 16px;
+    padding: 20px 18px;
+  }
+
+  .course-page__grad-profile-head {
     gap: 12px;
-    max-width: none;
   }
 
-  .course-page__grad-profile-copy h2 {
-    font-size: 25px;
-    line-height: 23.915px;
+  .course-page__grad-profile-icon {
+    height: 32px;
+    width: 32px;
   }
 
-  .course-page__grad-profile-copy p {
-    font-size: 12px;
-    line-height: 1.4;
+  .course-page__grad-profile-card h2 {
+    font-size: 18px;
+    line-height: 1.15;
+  }
+
+  .course-page__grad-profile-card p {
+    font-size: 14px;
+    line-height: 1.35;
   }
 
   .course-page__grad-salary-card {
@@ -4106,37 +4246,54 @@
   }
 
   .course-lead-form--pos .course-lead-form__price-card {
+    align-items: center;
+    flex-wrap: nowrap;
     gap: 6px;
     padding: 0;
   }
 
-  .course-lead-form--pos .course-lead-form__price-badges {
-    gap: 8px;
+  .course-lead-form--pos .course-lead-form__price-highlight {
+    gap: 7px;
+    min-height: 36px;
+    padding: 5px 10px;
   }
 
-  .course-lead-form--pos .course-lead-form__price-tag,
-  .course-lead-form--pos .course-lead-form__price-offer {
+  .course-lead-form--pos .course-lead-form__price-offer strong,
+  .course-lead-form--pos .course-lead-form__price-offer span,
+  .course-lead-form--pos .course-lead-form__price-tag strong,
+  .course-lead-form--pos .course-lead-form__price-tag span {
     font-size: 12px;
-    padding: 2px 8px;
+  }
+
+  .course-lead-form--pos .course-lead-form__price-divider {
+    height: 22px;
   }
 
   .course-lead-form--pos .course-lead-form__price-values {
-    column-gap: 8px;
+    gap: 2px;
   }
 
-  .course-lead-form--pos .course-lead-form__price-old {
+  .course-lead-form__price-old {
+    color: rgba(0, 0, 0, 0.35);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: line-through;
+  }
+
+  .course-lead-form__price-current {
+    color: #000;
+    font: 400 12px/1.14 'Kumbh Sans', sans-serif;
+  }
+
+  .course-lead-form__price-current-prefix {
     font-size: 12px;
   }
 
-  .course-lead-form--pos .course-lead-form__price-current {
-    font-size: 12px;
-  }
-
-  .course-lead-form--pos .course-lead-form__price-current strong {
+  .course-lead-form__price-current strong {
     font-size: 15px;
   }
 
-  .course-lead-form--pos .course-lead-form__price-pix {
+  .course-lead-form__price-pix {
     font-size: 12px;
   }
 
@@ -4206,38 +4363,63 @@
   }
 
   .course-page__grad-highlights {
-    display: grid;
-    gap: 18px 22px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    justify-content: flex-start;
     order: 3;
+    padding: 0;
+    width: 100%;
   }
 
   .course-page__grad-highlight-item {
-    align-items: center;
-    gap: 7px;
-    width: auto;
+    align-items: flex-start;
+    display: flex;
+    gap: 7.5px;
+    min-width: 0;
+    width: 100%;
   }
 
   .course-page__grad-highlight-icon-wrap {
-    height: 36.572px;
-    width: 36.572px;
+    background: #f80000;
+    height: 28.17px;
+    width: 28.17px;
   }
 
   .course-page__grad-highlight-icon {
-    height: 16.915px;
-    width: 16.915px;
+    height: 12.5px;
+    width: 12.5px;
   }
 
   .course-page__grad-highlight-copy {
-    gap: 0;
+    gap: 2.5px;
+    min-width: 0;
   }
 
   .course-page__grad-highlight-copy strong {
-    font: 700 12.967px/20.274px 'Liberation Sans', Arial, sans-serif;
+    font: 700 12px/14px 'Kumbh Sans', sans-serif;
   }
 
   .course-page__grad-highlight-copy p {
-    font: 400 12.967px/20.274px 'Liberation Sans', Arial, sans-serif;
+    font: 400 12px/12px 'Liberation Sans', Arial, sans-serif;
+  }
+
+  .course-page__grad-highlight-item:first-child {
+    width: 100%;
+  }
+
+  .course-page__grad-highlight-item:nth-child(2) {
+    width: 100%;
+  }
+
+  .course-page__grad-highlight-item:nth-child(2) .course-page__grad-highlight-icon {
+    height: 13.03px;
+    width: 13.03px;
+  }
+
+  .course-page__grad-highlight-item:nth-child(3) {
+    width: 100%;
   }
 
   .course-page__form-column--graduation {
@@ -4249,34 +4431,77 @@
     top: auto;
   }
 
-  .course-page__grad-info-stack {
+  .course-page__grad-portarias {
     gap: 12px;
     order: 5;
+    padding: 18px;
   }
 
-  .course-page__grad-info-card {
-    border-radius: 20px;
-    gap: 11px;
-    padding: 14.795px;
+  .course-page__grad-portarias h2 {
+    font-size: 18px;
   }
 
-  .course-page__grad-info-icon {
-    height: 22.5px;
-    width: 22.5px;
+  .course-page__grad-portaria-item {
+    gap: 12px;
+    grid-template-columns: 1fr;
+    padding-top: 14px;
   }
 
-  .course-page__grad-info-card h2 {
-    font-size: 15px;
-    line-height: 1;
-  }
-
-  .course-page__grad-info-card p {
+  .course-page__grad-portaria-item p {
     font-size: 12px;
     line-height: 1.36;
   }
 
-  .course-page__grad-profile-band {
+  .course-page__grad-portaria-link {
+    min-height: 40px;
+    min-width: 96px;
+  }
+
+  .course-page__grad-profile-inline {
     order: 6;
+  }
+
+  .course-page__grad-benefits {
+    padding: 32px 0;
+  }
+
+  .course-page__grad-benefits-inner {
+    gap: 24px;
+    justify-items: stretch;
+  }
+
+  .course-page__grad-benefits-inner h2 {
+    font-size: 25px;
+    line-height: 1.16;
+    max-width: none;
+  }
+
+  .course-page__grad-benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .course-page__grad-benefits-card {
+    gap: 12px;
+    min-height: 0;
+    padding: 18px;
+  }
+
+  .course-page__grad-benefits-card h3 {
+    font-size: 14px;
+    line-height: 1.25;
+  }
+
+  .course-page__grad-benefits-card p {
+    font-size: 12px;
+    line-height: 1.33;
+  }
+
+  .course-page__grad-benefits-cta {
+    font-size: 16px;
+    line-height: 1.2;
+    min-height: 54px;
+    padding: 16px 22px;
+    width: 100%;
   }
 
   .course-lead-form--graduation {
@@ -4347,32 +4572,31 @@
   }
 
   .course-lead-form--graduation .course-lead-form__price-card {
+    align-items: center;
+    flex-wrap: nowrap;
     gap: 6px;
     padding: 0;
   }
 
-  .course-lead-form--graduation .course-lead-form__price-badges {
-    gap: 8px;
+  .course-lead-form--graduation .course-lead-form__price-highlight {
+    gap: 6px;
+    min-height: 32px;
+    padding: 4px 8px;
   }
 
-  .course-lead-form--graduation .course-lead-form__price-tag,
-  .course-lead-form--graduation .course-lead-form__price-offer {
-    font-size: 12px;
-    padding: 2px 8px;
+  .course-lead-form--graduation .course-lead-form__price-offer strong,
+  .course-lead-form--graduation .course-lead-form__price-offer span,
+  .course-lead-form--graduation .course-lead-form__price-tag strong,
+  .course-lead-form--graduation .course-lead-form__price-tag span {
+    font-size: 10px;
+  }
+
+  .course-lead-form--graduation .course-lead-form__price-divider {
+    height: 18px;
   }
 
   .course-lead-form--graduation .course-lead-form__price-values {
-    column-gap: 8px;
-  }
-
-  .course-lead-form--graduation .course-lead-form__price-old,
-  .course-lead-form--graduation .course-lead-form__price-current,
-  .course-lead-form--graduation .course-lead-form__price-pix {
-    font-size: 12px;
-  }
-
-  .course-lead-form--graduation .course-lead-form__price-current strong {
-    font-size: 15px;
+    gap: 2px;
   }
 
   .course-lead-form--graduation .course-lead-form__voucher-toggle,

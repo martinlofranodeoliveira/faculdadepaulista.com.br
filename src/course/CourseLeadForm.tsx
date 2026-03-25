@@ -1638,6 +1638,35 @@ export function CourseLeadForm({
               </div>
             </div>
 
+            {courseType === 'graduacao' ? (
+              <>
+                <div className="course-lead-form__voucher-toggle">
+                  <button type="button" onClick={() => setVoucherOpen((current) => !current)}>
+                    <span>Código VOUCHER</span>
+                    <ChevronDown
+                      size={16}
+                      strokeWidth={2}
+                      className={voucherOpen ? 'is-open' : ''}
+                    />
+                  </button>
+                </div>
+
+                {voucherOpen ? (
+                  <label className="course-lead-form__field course-lead-form__voucher-field">
+                    <input
+                      type="text"
+                      placeholder="Digite aqui o Voucher caso tenha"
+                      value={voucherCode}
+                      onChange={(event) => setVoucherCode(event.target.value)}
+                    />
+                    <button type="button" onClick={() => setVoucherCode('')}>
+                      Remover
+                    </button>
+                  </label>
+                ) : null}
+              </>
+            ) : null}
+
             {courseType === 'pos' ? (
               <>
                 <label className="course-lead-form__field course-lead-form__field--select">
@@ -1650,6 +1679,31 @@ export function CourseLeadForm({
                   </select>
                   <ChevronDown size={18} strokeWidth={2} />
                 </label>
+
+                <div className="course-lead-form__voucher-toggle">
+                  <button type="button" onClick={() => setVoucherOpen((current) => !current)}>
+                    <span>Código VOUCHER</span>
+                    <ChevronDown
+                      size={16}
+                      strokeWidth={2}
+                      className={voucherOpen ? 'is-open' : ''}
+                    />
+                  </button>
+                </div>
+
+                {voucherOpen ? (
+                  <label className="course-lead-form__field course-lead-form__voucher-field">
+                    <input
+                      type="text"
+                      placeholder="Digite aqui o Voucher caso tenha"
+                      value={voucherCode}
+                      onChange={(event) => setVoucherCode(event.target.value)}
+                    />
+                    <button type="button" onClick={() => setVoucherCode('')}>
+                      Remover
+                    </button>
+                  </label>
+                ) : null}
 
                 {showInternshipInfoLink ? (
                   <a
@@ -1714,6 +1768,31 @@ export function CourseLeadForm({
                   </select>
                   <ChevronDown size={18} strokeWidth={2} />
                 </label>
+
+                <div className="course-lead-form__voucher-toggle">
+                  <button type="button" onClick={() => setVoucherOpen((current) => !current)}>
+                    <span>Código VOUCHER</span>
+                    <ChevronDown
+                      size={16}
+                      strokeWidth={2}
+                      className={voucherOpen ? 'is-open' : ''}
+                    />
+                  </button>
+                </div>
+
+                {voucherOpen ? (
+                  <label className="course-lead-form__field course-lead-form__voucher-field">
+                    <input
+                      type="text"
+                      placeholder="Digite aqui o Voucher caso tenha"
+                      value={voucherCode}
+                      onChange={(event) => setVoucherCode(event.target.value)}
+                    />
+                    <button type="button" onClick={() => setVoucherCode('')}>
+                      Remover
+                    </button>
+                  </label>
+                ) : null}
 
                 {showInternshipInfoLink ? (
                   <a
@@ -1842,6 +1921,32 @@ export function CourseLeadForm({
         )}
       </div>
 
+      {showPriceCard ? (
+        <div className="course-lead-form__price-card">
+          <div className="course-lead-form__price-highlight" aria-hidden="true">
+            <span className="course-lead-form__price-offer">
+              <strong>30%</strong>
+              <span>OFF</span>
+            </span>
+            <span className="course-lead-form__price-divider" />
+            <span className="course-lead-form__price-tag">
+              <strong>Desconto</strong>
+              <span>Pontualidade</span>
+            </span>
+          </div>
+
+          <div className="course-lead-form__price-values">
+            <p className="course-lead-form__price-old">{pricing.oldInstallmentText}</p>
+            <p className="course-lead-form__price-current">
+              <span className="course-lead-form__price-current-prefix">Por:</span>{' '}
+              <strong>{visibleCurrentInstallmentText.toUpperCase()}</strong>
+            </p>
+          </div>
+
+          <p className="course-lead-form__price-pix">{pricing.pixText}</p>
+        </div>
+      ) : null}
+
       <div className={`course-lead-form__actions ${step === 2 ? 'is-advanced' : ''}`}>
         {step === 2 ? (
           <button type="button" className="course-lead-form__back" onClick={handleBack}>
@@ -1862,49 +1967,6 @@ export function CourseLeadForm({
           )}
         </button>
       </div>
-
-      {showPriceCard ? (
-        <div className="course-lead-form__price-card">
-          <div className="course-lead-form__price-badges">
-            <span className="course-lead-form__price-tag">Desconto Pontualidade</span>
-            <span className="course-lead-form__price-offer">30% OFF</span>
-          </div>
-
-          <div className="course-lead-form__price-values">
-            <p className="course-lead-form__price-old">{pricing.oldInstallmentText}</p>
-            <p className="course-lead-form__price-current">
-              Por: <strong>{visibleCurrentInstallmentText.toUpperCase()}</strong>
-            </p>
-          </div>
-
-          <p className="course-lead-form__price-pix">{pricing.pixText}</p>
-        </div>
-      ) : null}
-
-      <div className="course-lead-form__voucher-toggle">
-        <button type="button" onClick={() => setVoucherOpen((current) => !current)}>
-          <span>Código VOUCHER</span>
-          <ChevronDown
-            size={16}
-            strokeWidth={2}
-            className={voucherOpen ? 'is-open' : ''}
-          />
-        </button>
-      </div>
-
-      {voucherOpen ? (
-        <label className="course-lead-form__field course-lead-form__voucher-field">
-          <input
-            type="text"
-            placeholder="Digite aqui o Voucher caso tenha"
-            value={voucherCode}
-            onChange={(event) => setVoucherCode(event.target.value)}
-          />
-          <button type="button" onClick={() => setVoucherCode('')}>
-            Remover
-          </button>
-        </label>
-      ) : null}
 
       {submitMessage ? (
         <p className={`course-lead-form__feedback is-${submitStatus}`}>{submitMessage}</p>

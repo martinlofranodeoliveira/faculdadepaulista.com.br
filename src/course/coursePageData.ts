@@ -1,4 +1,4 @@
-import { assets, graduationCarouselCourseConfigs } from '@/landing/data'
+﻿import { assets, graduationCarouselCourseConfigs } from '@/landing/data'
 import { splitDifferentials, type CatalogCourse, type CourseType } from '@/lib/catalogApi'
 
 export type CoursePresentation = {
@@ -10,12 +10,18 @@ export type CoursePresentation = {
     mediaImage: string
     mediaAlt: string
     ratingLabel: string
+    ratingStars: number | null
     highlights: Array<{
       icon: string
       title: string
       text: string
     }>
   }
+  graduationPortarias: Array<{
+    label: string
+    description: string
+    href?: string
+  }>
   graduationProfile: {
     title: string
     description: string
@@ -218,16 +224,16 @@ function buildGraduationInfoCards(course: CatalogCourse | undefined, title: stri
 
   return [
     {
-      title: 'Descrição do curso',
-      description: course?.description || fallback,
-    },
-    {
-      title: 'Público-alvo',
+      title: 'Público-Alvo',
       description: course?.targetAudience || fallback,
     },
     {
-      title: 'Competências desenvolvidas',
+      title: 'Qualificações',
       description: course?.competenciesBenefits || fallback,
+    },
+    {
+      title: 'Mercado de Trabalho',
+      description: course?.laborMarket || course?.competitiveDifferentials || fallback,
     },
   ]
 }
@@ -283,16 +289,93 @@ function buildPostHeroFacts(course: CatalogCourse | undefined, workloadOptions: 
 }
 
 function buildGraduationHighlights(course: CatalogCourse | undefined) {
+  const semesterCount = course?.semesterCount
+    ? course.semesterCount
+    : course?.durationContinuousMonths
+      ? Math.ceil(course.durationContinuousMonths / 6)
+      : course?.durationMonths
+        ? Math.ceil(course.durationMonths / 6)
+        : 0
+  const durationText = semesterCount
+    ? `${semesterCount} ${semesterCount === 1 ? 'semestre' : 'semestres'}`
+    : course?.durationText || 'Consulte a matriz curricular'
+
+  const modalityTitle =
+    course?.modality === 'semipresencial'
+      ? 'Modalidade Híbrida'
+      : course?.modality === 'presencial'
+        ? 'Modalidade Presencial'
+        : 'Modalidade EAD'
+
+  const modalityText =
+    course?.offeringModalityText ||
+    (course?.modality === 'semipresencial'
+      ? 'Aulas EAD + prática presencial'
+      : course?.modality === 'presencial'
+        ? 'Aulas presenciais'
+        : 'Aulas EAD')
+
+  const tccTitle =
+    course?.tccRequired === true ? 'Com TCC' : course?.tccRequired === false ? 'Sem TCC' : 'TCC'
+  const tccText =
+    course?.tccRequired === true
+      ? 'Conclua seu curso com Trabalho de Conclusão'
+      : course?.tccRequired === false
+        ? 'Conclua seu curso sem TCC'
+        : 'Consulte a matriz curricular'
+
   return [
     {
-      icon: '/course/graduation/icon-calendar.svg',
-      title: 'Titulação:',
-      text: course?.titulation || 'Graduação',
+      icon: '/course/graduation/figma-icons/alarm_on.svg',
+      title: 'Duração',
+      text: durationText,
     },
     {
-      icon: '/course/graduation/icon-modality.svg',
-      title: 'Modalidade:',
-      text: course?.modalityLabel || 'EAD',
+      icon: '/course/graduation/figma-icons/ink_pen.svg',
+      title: modalityTitle,
+      text: modalityText,
+    },
+    {
+      icon: '/course/graduation/figma-icons/hourglass_top.svg',
+      title: tccTitle,
+      text: tccText,
+    },
+  ]
+}
+
+function extractHref(value: string): string | undefined {
+  const match = value.match(/(https?:\/\/\S+|\/uploads\/\S+)/iu)
+  return match?.[1]
+}
+
+function buildGraduationPortarias(course: CatalogCourse | undefined) {
+  const ordinanceText = (course?.mecOrdinance || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+  if (!ordinanceText) return []
+
+  const labeledMatches = [...ordinanceText.matchAll(/(Autorização|Reconhecimento)\s*:\s*/giu)]
+
+  if (labeledMatches.length > 0) {
+    return labeledMatches
+      .map((match, index) => {
+        const label = match[1]
+        const start = match.index! + match[0].length
+        const end = labeledMatches[index + 1]?.index ?? ordinanceText.length
+        const description = ordinanceText.slice(start, end).trim().replace(/\s*[\|;]\s*$/u, '')
+
+        return {
+          label,
+          description,
+          href: extractHref(description),
+        }
+      })
+      .filter((entry) => entry.description)
+  }
+
+  return [
+    {
+      label: 'Portaria do MEC',
+      description: ordinanceText,
+      href: extractHref(ordinanceText),
     },
   ]
 }
@@ -317,8 +400,8 @@ function buildGraduationCurriculum(course: CatalogCourse | undefined) {
 
     const totalHours = chunk.reduce((sum, discipline) => sum + discipline.hours, 0)
     groups.push({
-      label: `${index + 1}? semestre`,
-      title: semesterCount > 1 ? `Disciplinas do ${index + 1}? semestre` : 'Disciplinas do curso',
+      label: `${index + 1}º semestre`,
+      title: semesterCount > 1 ? `Disciplinas do ${index + 1}º semestre` : 'Disciplinas do curso',
       hours: `${totalHours}h`,
       open: index === 0,
       disciplines: chunk.map((discipline) => discipline.name),
@@ -383,14 +466,14 @@ function buildGraduationCareer(course: CatalogCourse | undefined, title: string)
 
 function buildDifferentials() {
   const defaults = [
-      {
-        icon: '/course/differentials/ava.svg',
-        title: 'Ambiente Virtual de Aprendizagem',
-        description:
-          'Ambiente Virtual de Aprendizagem (AVA) moderno e intuitivo, com acesso 24 horas por dia, via aplicativo ou web, garantindo flexibilidade para estudar no seu ritmo, de onde estiver.',
-      },
-      {
-        icon: '/course/differentials/biblioteca.svg',
+    {
+      icon: '/course/differentials/ava.svg',
+      title: 'Ambiente Virtual de Aprendizagem',
+      description:
+        'Ambiente Virtual de Aprendizagem (AVA) moderno e intuitivo, com acesso 24 horas por dia, via aplicativo ou web, garantindo flexibilidade para estudar no seu ritmo, de onde estiver.',
+    },
+    {
+      icon: '/course/differentials/biblioteca.svg',
       title: 'Biblioteca digital',
       description: 'Acervo digital com livros, artigos científicos e conteúdos de apoio ao longo do curso.',
     },
@@ -411,13 +494,13 @@ function buildDifferentials() {
       description: 'Integra teoria e prática, favorecendo o raciocínio crítico e a tomada de decisão profissional.',
       wide: true,
     },
-    ]
+  ]
 
-    return {
-      title: 'Principais diferenciais do curso',
-      items: defaults,
-    }
+  return {
+    title: 'Principais diferenciais do curso',
+    items: defaults,
   }
+}
 
 function buildSalary(title: string, areaLabel: string, courseType: CourseType): CoursePresentation['salary'] {
   const salaryArea = (areaLabel || title).toUpperCase()
@@ -476,11 +559,21 @@ function buildSalary(title: string, areaLabel: string, courseType: CourseType): 
   }
 }
 
+function buildGraduationRating(course: CatalogCourse | undefined) {
+  const ratingStars = course?.mecScore ?? null
+
+  return {
+    ratingLabel: ratingStars ? `Conceito Nota ${ratingStars} no MEC` : 'Curso reconhecido pelo MEC',
+    ratingStars,
+  }
+}
+
 export function getCoursePagePresentation({ course, courseType, title, area }: Input): CoursePresentation {
   const isPost = courseType === 'pos'
   const modality = course?.modality || 'ead'
   const modalityLabel = course?.modalityLabel || 'EAD'
   const description = course?.description || buildGeneratedDescription(courseType, title)
+  const graduationRating = buildGraduationRating(course)
   const paymentPlanGroups = isPost ? buildPostPaymentPlanGroups(course) : []
   const workloadOptions =
     paymentPlanGroups.length > 0
@@ -502,9 +595,11 @@ export function getCoursePagePresentation({ course, courseType, title, area }: I
     graduationHero: {
       mediaImage: course?.image || getGraduationFallbackImage(course),
       mediaAlt: `Imagem do curso de ${title}`,
-      ratingLabel: 'Curso reconhecido pelo MEC',
+      ratingLabel: graduationRating.ratingLabel,
+      ratingStars: graduationRating.ratingStars,
       highlights: buildGraduationHighlights(course),
     },
+    graduationPortarias: buildGraduationPortarias(course),
     graduationProfile: {
       title: 'Perfil do Profissional',
       description: course?.competenciesBenefits || description,
@@ -558,3 +653,4 @@ export function getCoursePagePresentation({ course, courseType, title, area }: I
     showInternshipInfoLink: isPost && course?.modality === 'presencial',
   }
 }
+

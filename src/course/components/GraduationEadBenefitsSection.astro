@@ -1,0 +1,46 @@
+---
+import type { CoursePresentation } from '../coursePageData'
+
+interface Props {
+  presentation: CoursePresentation
+}
+
+const { presentation } = Astro.props
+
+const isSemi = presentation.modality === 'semipresencial'
+const heading = isSemi
+  ? 'POR QUE A GRADUAÇÃO SEMIPRESENCIAL NA FACULDADE PAULISTA É A ESCOLHA CERTA PARA VOCÊ?'
+  : 'POR QUE A GRADUAÇÃO EAD NA FACULDADE PAULISTA É A ESCOLHA CERTA PARA VOCÊ?'
+
+const items = [
+  {
+    title: 'Estude onde e quando quiser:',
+    text: 'Conteúdo acessível para se adaptar ao seu ritmo. Você tem a liberdade de organizar seus horários e estudar de onde estiver, perfeito para sua rotina.',
+  },
+  {
+    title: 'Suporte Humanizado:',
+    text: 'Você nunca está sozinho; nossa equipe acadêmica oferece auxílio individualizado. Você conta com suporte em cada etapa, garantindo que as suas dúvidas sejam sanadas.',
+  },
+  {
+    title: 'Diploma de Peso:',
+    text: 'Certificação reconhecida pelo MEC, garantindo a validade das suas competências em todo o território nacional.',
+  },
+]
+---
+
+<section class="course-page__grad-benefits" aria-labelledby="graduation-ead-benefits-title">
+  <div class="course-page__shell">
+    <div class="course-page__grad-benefits-inner">
+      <h2 id="graduation-ead-benefits-title">{heading}</h2>
+
+      <div class="course-page__grad-benefits-grid">
+        {items.map((item) => (
+          <article class="course-page__grad-benefits-card">
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

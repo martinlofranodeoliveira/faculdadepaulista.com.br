@@ -18,13 +18,13 @@ type Props = {
 function getOptionTitle(admissionOptionId: AdmissionOptionId) {
   switch (admissionOptionId) {
     case 'segunda-graduacao':
-      return '2? Gradua??o'
+      return '2° Graduação'
     case 'transferencia':
-      return 'Transfer?ncia'
+      return 'Transferência'
     case 'enem':
       return 'ENEM'
     default:
-      return '2? Gradua??o'
+      return '2° Graduação'
   }
 }
 
@@ -66,7 +66,7 @@ export function GraduationEnrollmentOfferStep({
         <div className="vestibular-offer__card">
           <p className="vestibular-offer__headline">
             Aproveite esta oportunidade!<br />
-            Para come?ar a estudar, basta concluir sua matr?cula agora!!!
+            Para começar a estudar, basta concluir sua matrícula agora!!!
           </p>
 
           <div className="vestibular-offer__table-box">
@@ -105,7 +105,7 @@ export function GraduationEnrollmentOfferStep({
                 className="vestibular-offer__contract-link"
                 onClick={() => setIsContractModalOpen(true)}
               >
-                contrato de presta??o de servi?os educacionais
+                contrato de prestação de serviços educacionais
               </button>{' '}
               deste site
             </span>
@@ -141,25 +141,25 @@ export function GraduationEnrollmentOfferStep({
             onClick={(event) => event.stopPropagation()}
           >
             <div className="vestibular-offer__modal-header">
-              <h3 id="vestibular-contract-title">Contrato de presta??o de servi?os educacionais</h3>
+              <h3 id="vestibular-contract-title">Contrato de prestação de serviços educacionais</h3>
               <button
                 type="button"
                 className="vestibular-offer__modal-close"
                 aria-label="Fechar contrato"
                 onClick={() => setIsContractModalOpen(false)}
               >
-                ?
+                ×
               </button>
             </div>
 
             <div className="vestibular-offer__modal-body">
               <p>
-                Este ? um conte?do mockado do contrato. O texto definitivo ser? carregado
-                dinamicamente conforme a institui??o respons?vel pelo curso.
+                Este é um conteúdo mockado do contrato. O texto definitivo será carregado
+                dinamicamente conforme a instituição responsável pelo curso.
               </p>
               <p>
-                Nesta etapa, o modal j? est? pronto para exibir t?tulo, descri??o e conte?do
-                completo assim que a API estiver dispon?vel.
+                Nesta etapa, o modal já está pronto para exibir título, descrição e conteúdo
+                completo assim que a API estiver disponível.
               </p>
             </div>
 

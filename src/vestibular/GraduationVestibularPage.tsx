@@ -190,7 +190,7 @@ export function GraduationVestibularPage() {
         const payload = (await response.json().catch(() => null)) as GraduationOfferResponse | null
         if (!response.ok) {
           throw new Error(
-            payload?.message || 'N?o foi poss?vel carregar as mensalidades do curso agora.',
+            payload?.message || 'Não foi possível carregar as mensalidades do curso agora.',
           )
         }
 
@@ -204,7 +204,7 @@ export function GraduationVestibularPage() {
         setOfferError(
           error instanceof Error
             ? error.message
-            : 'N?o foi poss?vel carregar as mensalidades do curso agora.',
+            : 'Não foi possível carregar as mensalidades do curso agora.',
         )
       } finally {
         if (!cancelled) {
@@ -251,7 +251,7 @@ export function GraduationVestibularPage() {
 
   async function finalizeGraduationFlow(step3Payload: Record<string, unknown>) {
     if (!identity.journeyId || !identity.courseId) {
-      setSubmitError('Jornada n?o encontrada. Volte para a p?gina do curso e reinicie a inscri??o.')
+      setSubmitError('Jornada não encontrada. Volte para a página do curso e reinicie a inscrição.')
       return
     }
 
@@ -280,11 +280,11 @@ export function GraduationVestibularPage() {
       clearGraduationVestibularLead()
       window.location.assign('/graduacao/inscricao-finalizada')
     } catch (error) {
-      console.error('Erro ao finalizar jornada da gradua??o:', error)
+      console.error('Erro ao finalizar jornada da graduação:', error)
       setSubmitError(
         error instanceof Error
           ? error.message
-          : 'N?o foi poss?vel concluir sua inscri??o agora. Tente novamente em instantes.',
+          : 'Não foi possível concluir sua inscrição agora. Tente novamente em instantes.',
       )
     } finally {
       setIsSubmitting(false)

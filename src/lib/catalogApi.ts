@@ -52,6 +52,7 @@ export type CatalogCourse = {
   modalityBadge: string
   image: string
   galleryImages: string[]
+  posPriceCents: number
   currentInstallmentPrice: string
   currentInstallmentPriceMonthly: string
   oldInstallmentPrice: string
@@ -128,6 +129,7 @@ type ApiCourseListItem = {
   semester_count?: number | null
   min_amount_cents?: number | string | null
   max_amount_cents?: number | string | null
+  pos_price_cents?: number | string | null
   featured_pricing_options?: ApiPricingItem[] | null
   course_disciplines?: ApiCourseDiscipline[] | null
 }
@@ -147,6 +149,7 @@ type ApiCourseDetail = {
   duration_months?: number | null
   duration_continuous_months?: number | null
   semester_count?: number | null
+  pos_price_cents?: number | string | null
   area_names?: string[] | null
   teaching_plan_path?: string | null
   teaching_plan_mime?: string | null
@@ -559,6 +562,7 @@ function buildApiCourseListItemFromDetail(
     duration_months: detail.duration_months,
     duration_continuous_months: detail.duration_continuous_months,
     semester_count: detail.semester_count,
+    pos_price_cents: detail.pos_price_cents,
     featured_pricing_options:
       pricingItems.length > 0 ? pricingItems : (detail.featured_pricing_options ?? null),
     course_disciplines: detail.course_disciplines,
@@ -570,6 +574,11 @@ function getCourseTotalPriceCents(
   course: ApiCourseListItem,
   priceItems: CatalogPriceItem[],
 ): number {
+  const postPrice = normalizeAmountCents(course.pos_price_cents)
+  if (courseType === 'pos' && postPrice) {
+    return postPrice
+  }
+
   const firstPriceItem = priceItems[0]
   if (firstPriceItem?.amountCents) {
     return firstPriceItem.amountCents
@@ -1205,7 +1214,14 @@ function mapCatalogCourse(
     resolveDocumentUrl(bundle?.media?.teaching_plan?.teaching_plan_path) ||
     resolveDocumentUrl(detail?.teaching_plan_path) ||
     resolveDocumentUrl(course.teaching_plan_path)
-  const totalPriceCents = getCourseTotalPriceCents(courseType, course, priceItems)
+  const totalPriceCents = getCourseTotalPriceCents(
+    courseType,
+    {
+      ...course,
+      pos_price_cents: detail?.pos_price_cents ?? course.pos_price_cents,
+    },
+    priceItems,
+  )
   const fallbackCurrentPrice = getFallbackCurrentPriceLabels(courseType, title, modality)
   const currentInstallmentPrice = totalPriceCents
     ? formatFixed18InstallmentLabel(totalPriceCents)
@@ -1236,6 +1252,7 @@ function mapCatalogCourse(
     modalityBadge: getModalityLabel(courseType, modality),
     image: toAbsoluteMediaUrl(seo.ogImageUrl) || image,
     galleryImages,
+    posPriceCents: courseType === 'pos' ? totalPriceCents : 0,
     currentInstallmentPrice,
     currentInstallmentPriceMonthly,
     oldInstallmentPrice: getFallbackOldInstallmentPrice(courseType, modality),

@@ -150,12 +150,14 @@ function buildPostPaymentPlanGroups(course: CatalogCourse | undefined) {
         : item.workloadName || `Carga ${grouped.size + 1}`
 
     const current = grouped.get(workload)
-    if (!current || item.amountCents < current.totalAmountCents) {
+    const totalAmountCents = course.posPriceCents || item.amountCents
+
+    if (!current || totalAmountCents < current.totalAmountCents) {
       grouped.set(workload, {
         workload,
         workloadVariantId: item.workloadVariantId,
         pricingId: item.id,
-        totalAmountCents: item.amountCents,
+        totalAmountCents,
         totalHours: item.totalHours,
       })
     }

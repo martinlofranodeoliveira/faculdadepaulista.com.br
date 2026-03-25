@@ -610,7 +610,13 @@ export function CourseLeadForm({
 
     const searchParams = new URLSearchParams(window.location.search)
 
-    if (leadSubmitted && matchesCurrentDraft && hasSecondStep && !matchesCurrentJourney) {
+    if (
+      leadSubmitted &&
+      courseType === 'graduacao' &&
+      matchesCurrentDraft &&
+      hasSecondStep &&
+      !matchesCurrentJourney
+    ) {
       setAgreementAccepted(true)
       setStep(2)
       window.setTimeout(() => {

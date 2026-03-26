@@ -33,6 +33,11 @@ export type GmailSendInput = {
   attachments?: GmailAttachmentInput[]
 }
 
+type GmailSendSuccess = {
+  id: string
+  threadId?: string
+}
+
 const GMAIL_SEND_SCOPE = 'https://www.googleapis.com/auth/gmail.send'
 const DEFAULT_FROM_NAME = 'Faculdade Paulista'
 
@@ -265,11 +270,18 @@ export async function sendGmailMessage(input: GmailSendInput) {
     body: JSON.stringify({ raw }),
   })
 
-  const payload = (await response.json()) as { id?: string; threadId?: string; error?: { message?: string } }
+  const payload = (await response.json()) as {
+    id?: string
+    threadId?: string
+    error?: { message?: string }
+  }
 
   if (!response.ok || !payload.id) {
     throw new Error(payload.error?.message || 'Falha ao enviar e-mail pelo Gmail.')
   }
 
-  return payload
+  return {
+    id: payload.id,
+    threadId: payload.threadId,
+  } satisfies GmailSendSuccess
 }

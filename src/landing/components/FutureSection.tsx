@@ -39,7 +39,8 @@ export function FutureSection() {
             A ESCOLHA CERTA PARA <span>SEU FUTURO</span>
           </h2>
           <p>
-          Escolha entre Cursos Presenciais, Semipresenciais ou EAD e acelere sua Carreira com ensino focado na prática e Especializações inclusas.
+            Escolha entre cursos presenciais, semipresenciais ou EAD e acelere sua carreira com
+            ensino focado na prática e especializações inclusas.
           </p>
         </header>
 
@@ -65,7 +66,8 @@ export function FutureSection() {
               </span>
               <h3>METRÔ SANTA CRUZ</h3>
               <p>
-              Estude ao lado do Metrô Santa Cruz, com fácil acesso para todas as regiões de São Paulo.
+                Estude ao lado do Metrô Santa Cruz, com fácil acesso para todas as regiões de São
+                Paulo.
               </p>
             </div>
           </article>
@@ -74,8 +76,8 @@ export function FutureSection() {
             <div className="lp-future__mec-content">
               <h3>NOTA MÁXIMA NO MEC</h3>
               <p>
-              Laboratórios de última geração, bibliotecas completas e espaços de
-              convivência projetados para maximizar seu aprendizado e networking.
+                Laboratórios de última geração, bibliotecas completas e espaços de convivência
+                projetados para maximizar seu aprendizado e networking.
               </p>
             </div>
             <img
@@ -97,61 +99,91 @@ export function FutureSection() {
             aria-label="Abrir perfil da FASUL no Reclame AQUI"
           >
             <img
-              src="/landing/future/reclame-face.webp"
+              src="/landing/future/reclame-face-figma.webp"
               alt=""
               aria-hidden="true"
-              className="lp-future__reclame-face"
-              width="56"
-              height="56"
+              className="lp-future__reclame-face lp-future__reclame-face--left"
+              width="102"
+              height="102"
               loading="lazy"
               decoding="async"
             />
             <img
-              src="/landing/future/reclame-aqui-logo.webp"
-              alt="Reclame AQUI"
-              className="lp-future__reclame-logo"
-              width="271"
-              height="47"
+              src="/landing/future/reclame-face-figma.webp"
+              alt=""
+              aria-hidden="true"
+              className="lp-future__reclame-face lp-future__reclame-face--top-left"
+              width="68"
+              height="68"
               loading="lazy"
               decoding="async"
             />
-            <p>Corpo docente formado por mestres e doutores atuantes no mercado.</p>
-          </a>
+            <img
+              src="/landing/future/reclame-face-figma.webp"
+              alt=""
+              aria-hidden="true"
+              className="lp-future__reclame-face lp-future__reclame-face--top-center"
+              width="82"
+              height="82"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              src="/landing/future/reclame-face-figma.webp"
+              alt=""
+              aria-hidden="true"
+              className="lp-future__reclame-face lp-future__reclame-face--top-right"
+              width="68"
+              height="68"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              src="/landing/future/reclame-face-figma.webp"
+              alt=""
+              aria-hidden="true"
+              className="lp-future__reclame-face lp-future__reclame-face--right"
+              width="102"
+              height="102"
+              loading="lazy"
+              decoding="async"
+            />
 
-          <article className="lp-future__history">
-            <img
-              src="/landing/future/history-star-top.png"
-              alt=""
-              aria-hidden="true"
-              className="lp-future__history-star lp-future__history-star--top"
-              width="46"
-              height="52"
-              loading="lazy"
-              decoding="async"
-            />
-            <img
-              src="/landing/future/history-star-bottom.png"
-              alt=""
-              aria-hidden="true"
-              className="lp-future__history-star lp-future__history-star--bottom"
-              width="56"
-              height="63"
-              loading="lazy"
-              decoding="async"
-            />
-            <div className="lp-future__history-mark" aria-hidden="true">
+            <div className="lp-future__reclame-head">
               <img
-                src="/landing/future/history-laurel-mask.webp"
+                src="/landing/future/reclame-face-figma.webp"
                 alt=""
-                width="173"
-                height="137"
+                aria-hidden="true"
+                className="lp-future__reclame-face lp-future__reclame-face--main"
+                width="82"
+                height="82"
                 loading="lazy"
                 decoding="async"
               />
-              <strong>27</strong>
+              <img
+                src="/landing/future/reclame-aqui-logo-figma.webp"
+                alt="Reclame AQUI"
+                className="lp-future__reclame-logo"
+                width="313"
+                height="54"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="lp-future__reclame-score">
+                <span className="lp-future__reclame-score-label">ÓTIMO</span>
+                <strong>8.3</strong>
+                <span>/10</span>
+              </div>
             </div>
-            <strong className="lp-future__history-title">27 ANOS DE HISTÓRIA</strong>
-          </article>
+
+            <div className="lp-future__reclame-ranking">
+              <span className="lp-future__reclame-badge">28º</span>
+              <div className="lp-future__reclame-ranking-copy">
+                <strong>ENTRE AS 2.500 MELHORES</strong>
+                <span>UNIVERSIDADES E FACULDADES</span>
+              </div>
+            </div>
+          </a>
         </div>
 
         <footer className="lp-future__partners">

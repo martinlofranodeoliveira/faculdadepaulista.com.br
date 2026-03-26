@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+﻿import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
 
 import { getCourseDisplayTitle, getCoursePath } from '@/lib/courseRoutes'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
@@ -176,7 +176,7 @@ export function CourseLeadModal({ selection, onClose }: CourseLeadModalProps) {
 
   if (!isOpen || !selection) return null
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const nextErrors: FieldErrors = {

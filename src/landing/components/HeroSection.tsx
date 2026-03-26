@@ -4,7 +4,7 @@
   useMemo,
   useRef,
   useState,
-  type FormEvent,
+  type SubmitEvent,
   type UIEventHandler,
 } from 'react'
 import { Search } from 'lucide-react'
@@ -548,7 +548,7 @@ export function HeroSection({ graduationOptions, postOptions }: HeroSectionProps
     }
   }
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     if (step === 1) {

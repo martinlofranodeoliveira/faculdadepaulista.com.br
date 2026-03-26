@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
 import { AlertCircle, ChevronDown, ChevronLeft, LoaderCircle } from 'lucide-react'
 
 import {
@@ -1131,7 +1131,7 @@ export function CourseLeadForm({
     setResumeMessage('')
   }
 
-  const handleResumeLookup = async (event: FormEvent<HTMLFormElement>) => {
+  const handleResumeLookup = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const nextErrors: ResumeFieldErrors = {
@@ -1241,7 +1241,7 @@ export function CourseLeadForm({
     }
   }
 
-  const handleResumeSelection = async (event: FormEvent<HTMLFormElement>) => {
+  const handleResumeSelection = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const selectedOption = resumeOptions.find(
@@ -1270,7 +1270,7 @@ export function CourseLeadForm({
     }
   }
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     if (hasSecondStep && step === 1) {

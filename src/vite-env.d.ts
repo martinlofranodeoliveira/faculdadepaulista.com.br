@@ -30,6 +30,8 @@ interface ImportMetaEnv {
   readonly GOOGLE_GMAIL_POS_ADDRESS?: string
   readonly GOOGLE_REFRESH_TOKEN_GRADUACAO?: string
   readonly GOOGLE_REFRESH_TOKEN_POSGRADUACAO?: string
+  readonly EMAIL_DISPATCH_WEBHOOK_TOKEN?: string
+  readonly EMAIL_DISPATCH_STORE_DIR?: string
 }
 
 interface ImportMeta {

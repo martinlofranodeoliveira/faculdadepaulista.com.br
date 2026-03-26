@@ -60,15 +60,6 @@ function SchoolIcon() {
   )
 }
 
-function VideoIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-      <circle cx="12" cy="12" r="12" fill="currentColor" />
-      <path d="M9.2 7.8 17 12l-7.8 4.2V7.8Z" fill="#fff" />
-    </svg>
-  )
-}
-
 function PaginationIcon({ direction }: { direction: 'prev' | 'next' }) {
   return (
     <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
@@ -327,10 +318,6 @@ export function PostCategoryExplorer({ courses }: Props) {
                       <span className="category-page__post-card-badge category-page__post-card-badge--school">
                         <SchoolIcon />
                         <span>Reconhecido MEC</span>
-                      </span>
-                      <span className="category-page__post-card-badge category-page__post-card-badge--video">
-                        <VideoIcon />
-                        <span>Com videoaulas</span>
                       </span>
                     </div>
 

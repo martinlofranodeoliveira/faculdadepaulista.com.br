@@ -182,7 +182,7 @@ function buildPostPaymentPlanGroups(course: CatalogCourse | undefined) {
       workloadVariantId: entry.workloadVariantId,
       pricingId: entry.pricingId,
       totalAmountCents: entry.totalAmountCents,
-      currentInstallmentText: `${formatCurrencyAmount(entry.totalAmountCents / 100 / 18).toUpperCase()}/MÊS`,
+      currentInstallmentText: `18X ${formatCurrencyAmount(entry.totalAmountCents / 100 / 18).toUpperCase()}/MÊS`,
       paymentPlanOptions: buildPaymentPlanOptionsFromTotal(entry.totalAmountCents),
     }))
 }

@@ -75,9 +75,17 @@ type FieldErrors = {
 type PoleOption = {
   id: number
   name: string
-  city: string
+}
+
+type PoleStateOption = {
+  id: number
   stateUf: string
   stateName: string
+}
+
+type PoleCityOption = {
+  id: number
+  name: string
 }
 
 type ResumeMode = 'default' | 'lookup' | 'select'
@@ -321,14 +329,40 @@ function readRecordBoolean(
   return undefined
 }
 
-async function fetchPoleOptions(): Promise<PoleOption[]> {
-  const response = await fetch('/api/poles')
+async function fetchPoleStates(): Promise<PoleStateOption[]> {
+  const response = await fetch('/api/pole-states')
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: { items?: PoleStateOption[] }; message?: string }
+    | null
+
+  if (!response.ok) {
+    throw new Error(payload?.message || 'N?o foi poss?vel carregar os estados agora.')
+  }
+
+  return Array.isArray(payload?.data?.items) ? payload.data.items : []
+}
+
+async function fetchPoleCities(stateId: number): Promise<PoleCityOption[]> {
+  const response = await fetch(`/api/pole-cities?stateId=${stateId}`)
+  const payload = (await response.json().catch(() => null)) as
+    | { data?: { items?: PoleCityOption[] }; message?: string }
+    | null
+
+  if (!response.ok) {
+    throw new Error(payload?.message || 'N?o foi poss?vel carregar as cidades agora.')
+  }
+
+  return Array.isArray(payload?.data?.items) ? payload.data.items : []
+}
+
+async function fetchPolesByCity(cityId: number): Promise<PoleOption[]> {
+  const response = await fetch(`/api/poles-by-city?cityId=${cityId}`)
   const payload = (await response.json().catch(() => null)) as
     | { data?: { items?: PoleOption[] }; message?: string }
     | null
 
   if (!response.ok) {
-    throw new Error(payload?.message || 'Não foi possível carregar os polos agora.')
+    throw new Error(payload?.message || 'N?o foi poss?vel carregar os polos agora.')
   }
 
   return Array.isArray(payload?.data?.items) ? payload.data.items : []
@@ -472,11 +506,15 @@ export function CourseLeadForm({
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [cpf, setCpf] = useState('')
+  const [graduationStateId, setGraduationStateId] = useState('')
   const [graduationStateUf, setGraduationStateUf] = useState('')
+  const [graduationCityId, setGraduationCityId] = useState('')
   const [graduationCity, setGraduationCity] = useState('')
   const [graduationPoleId, setGraduationPoleId] = useState('')
   const [graduationPcd, setGraduationPcd] = useState('')
   const [graduationPcdDetails, setGraduationPcdDetails] = useState('')
+  const [graduationStateOptions, setGraduationStateOptions] = useState<PoleStateOption[]>([])
+  const [graduationCityOptions, setGraduationCityOptions] = useState<PoleCityOption[]>([])
   const [poleOptions, setPoleOptions] = useState<PoleOption[]>([])
   const [polesLoading, setPolesLoading] = useState(courseType === 'graduacao')
   const [polesMessage, setPolesMessage] = useState('')
@@ -518,40 +556,6 @@ export function CourseLeadForm({
   const visibleCurrentInstallmentText =
     selectedPaymentPlanGroup?.currentInstallmentText || pricing.currentInstallmentText
 
-  const graduationStateOptions = useMemo(() => {
-    const stateMap = new Map<string, string>()
-    for (const pole of poleOptions) {
-      if (!pole.stateUf) continue
-      stateMap.set(pole.stateUf, pole.stateName || pole.stateUf)
-    }
-
-    return [...stateMap.entries()]
-      .map(([stateUf, stateName]) => ({ stateUf, stateName }))
-      .sort(
-        (left, right) =>
-          left.stateUf.localeCompare(right.stateUf, 'pt-BR') ||
-          left.stateName.localeCompare(right.stateName, 'pt-BR'),
-      )
-  }, [poleOptions])
-
-  const graduationCityOptions = useMemo(() => {
-    const cityMap = new Map<string, string>()
-    for (const pole of poleOptions) {
-      if (!graduationStateUf || pole.stateUf !== graduationStateUf || !pole.city) continue
-      cityMap.set(pole.city, pole.city)
-    }
-
-    return [...cityMap.values()].sort((left, right) => left.localeCompare(right, 'pt-BR'))
-  }, [graduationStateUf, poleOptions])
-
-  const filteredPoleOptions = useMemo(() => {
-    return poleOptions.filter((pole) => {
-      if (graduationStateUf && pole.stateUf !== graduationStateUf) return false
-      if (graduationCity && pole.city !== graduationCity) return false
-      return true
-    })
-  }, [graduationCity, graduationStateUf, poleOptions])
-
   const selectedGraduationPole = useMemo(() => {
     const normalizedPoleId = Number.parseInt(graduationPoleId, 10)
     if (!Number.isFinite(normalizedPoleId) || normalizedPoleId <= 0) return undefined
@@ -563,7 +567,9 @@ export function CourseLeadForm({
     if (progress.email) setEmail(progress.email)
     if (progress.phone) setPhone(formatPhoneMask(progress.phone))
     if (progress.cpf) setCpf(formatCpfMask(progress.cpf))
+    setGraduationStateId('')
     if (progress.stateUf) setGraduationStateUf(progress.stateUf)
+    setGraduationCityId('')
     if (progress.city) setGraduationCity(progress.city)
     if (progress.poleId) setGraduationPoleId(String(progress.poleId))
     if (typeof progress.pcd === 'boolean') setGraduationPcd(progress.pcd ? 'sim' : 'nao')
@@ -689,12 +695,122 @@ export function CourseLeadForm({
 
     let cancelled = false
 
+    const loadStates = async () => {
+      setPolesLoading(true)
+      setPolesMessage('')
+
+      try {
+        const items = await fetchPoleStates()
+        if (cancelled) return
+        setGraduationStateOptions(items)
+      } catch (error) {
+        if (cancelled) return
+        setPolesMessage(
+          error instanceof Error
+            ? error.message
+            : 'N?o foi poss?vel carregar os estados agora. Tente novamente em instantes.',
+        )
+      } finally {
+        if (!cancelled) setPolesLoading(false)
+      }
+    }
+
+    void loadStates()
+
+    return () => {
+      cancelled = true
+    }
+  }, [courseType])
+
+  useEffect(() => {
+    if (courseType !== 'graduacao') return
+    if (graduationStateId || !graduationStateUf || !graduationStateOptions.length) return
+
+    const normalizedState = graduationStateUf.trim().toLowerCase()
+    const matchedState = graduationStateOptions.find((option) => {
+      return (
+        option.stateUf.trim().toLowerCase() === normalizedState ||
+        option.stateName.trim().toLowerCase() === normalizedState
+      )
+    })
+
+    if (matchedState) {
+      setGraduationStateId(String(matchedState.id))
+      setGraduationStateUf(matchedState.stateUf)
+    }
+  }, [courseType, graduationStateId, graduationStateOptions, graduationStateUf])
+
+  useEffect(() => {
+    if (courseType !== 'graduacao') return
+
+    if (!graduationStateId) {
+      if (graduationCityId) setGraduationCityId('')
+      if (graduationCity) setGraduationCity('')
+      if (graduationPoleId) setGraduationPoleId('')
+      if (graduationCityOptions.length) setGraduationCityOptions([])
+      if (poleOptions.length) setPoleOptions([])
+      return
+    }
+
+    let cancelled = false
+
+    const loadCities = async () => {
+      setPolesLoading(true)
+      setPolesMessage('')
+
+      try {
+        const items = await fetchPoleCities(Number.parseInt(graduationStateId, 10))
+        if (cancelled) return
+        setGraduationCityOptions(items)
+      } catch (error) {
+        if (cancelled) return
+        setPolesMessage(
+          error instanceof Error
+            ? error.message
+            : 'N?o foi poss?vel carregar as cidades agora. Tente novamente em instantes.',
+        )
+      } finally {
+        if (!cancelled) setPolesLoading(false)
+      }
+    }
+
+    void loadCities()
+
+    return () => {
+      cancelled = true
+    }
+  }, [courseType, graduationStateId])
+
+  useEffect(() => {
+    if (courseType !== 'graduacao') return
+    if (graduationCityId || !graduationCity || !graduationCityOptions.length) return
+
+    const normalizedCity = graduationCity.trim().toLowerCase()
+    const matchedCity = graduationCityOptions.find((option) => option.name.trim().toLowerCase() === normalizedCity)
+
+    if (matchedCity) {
+      setGraduationCityId(String(matchedCity.id))
+      setGraduationCity(matchedCity.name)
+    }
+  }, [courseType, graduationCity, graduationCityId, graduationCityOptions])
+
+  useEffect(() => {
+    if (courseType !== 'graduacao') return
+
+    if (!graduationCityId) {
+      if (graduationPoleId) setGraduationPoleId('')
+      if (poleOptions.length) setPoleOptions([])
+      return
+    }
+
+    let cancelled = false
+
     const loadPoles = async () => {
       setPolesLoading(true)
       setPolesMessage('')
 
       try {
-        const items = await fetchPoleOptions()
+        const items = await fetchPolesByCity(Number.parseInt(graduationCityId, 10))
         if (cancelled) return
         setPoleOptions(items)
       } catch (error) {
@@ -702,7 +818,7 @@ export function CourseLeadForm({
         setPolesMessage(
           error instanceof Error
             ? error.message
-            : 'Não foi possível carregar os polos agora. Tente novamente em instantes.',
+            : 'N?o foi poss?vel carregar os polos agora. Tente novamente em instantes.',
         )
       } finally {
         if (!cancelled) setPolesLoading(false)
@@ -714,38 +830,17 @@ export function CourseLeadForm({
     return () => {
       cancelled = true
     }
-  }, [courseType])
+  }, [courseType, graduationCityId])
 
   useEffect(() => {
     if (courseType !== 'graduacao') return
-    if (polesLoading) return
+    if (!graduationPoleId || !poleOptions.length) return
 
-    if (!graduationStateUf) {
-      if (graduationCity) setGraduationCity('')
-      if (graduationPoleId) setGraduationPoleId('')
-      return
-    }
-
-    if (graduationCity && !graduationCityOptions.includes(graduationCity)) {
-      setGraduationCity('')
-      setGraduationPoleId('')
-    }
-  }, [courseType, graduationCity, graduationCityOptions, graduationPoleId, graduationStateUf, polesLoading])
-
-  useEffect(() => {
-    if (courseType !== 'graduacao') return
-    if (polesLoading) return
-
-    if (!graduationCity) {
-      if (graduationPoleId) setGraduationPoleId('')
-      return
-    }
-
-    const hasSelectedPole = filteredPoleOptions.some((pole) => String(pole.id) === graduationPoleId)
+    const hasSelectedPole = poleOptions.some((pole) => String(pole.id) === graduationPoleId)
     if (!hasSelectedPole) {
       setGraduationPoleId('')
     }
-  }, [courseType, filteredPoleOptions, graduationCity, graduationPoleId, polesLoading])
+  }, [courseType, graduationPoleId, poleOptions])
 
   useEffect(() => {
     if (graduationPcd !== 'sim' && graduationPcdDetails) {
@@ -1830,13 +1925,26 @@ export function CourseLeadForm({
                   <div className="course-lead-form__field-stack">
                     <label className={`course-lead-form__field course-lead-form__field--select ${errors.stateUf ? 'is-invalid' : ''}`}>
                       <select
-                        value={graduationStateUf}
-                        onChange={(event) => setGraduationStateUf(event.target.value)}
+                        value={graduationStateId}
+                        onChange={(event) => {
+                          const nextStateId = event.target.value
+                          const nextState = graduationStateOptions.find(
+                            (option) => String(option.id) === nextStateId,
+                          )
+
+                          setGraduationStateId(nextStateId)
+                          setGraduationStateUf(nextState?.stateUf ?? '')
+                          setGraduationCityId('')
+                          setGraduationCity('')
+                          setGraduationCityOptions([])
+                          setGraduationPoleId('')
+                          setPoleOptions([])
+                        }}
                         disabled={polesLoading || !graduationStateOptions.length}
                       >
                         <option value="">{polesLoading ? 'Carregando...' : 'Estado'}</option>
                         {graduationStateOptions.map((option) => (
-                          <option key={option.stateUf} value={option.stateUf}>
+                          <option key={option.id} value={option.id}>
                             {option.stateUf}
                           </option>
                         ))}
@@ -1849,14 +1957,24 @@ export function CourseLeadForm({
                   <div className="course-lead-form__field-stack">
                     <label className={`course-lead-form__field course-lead-form__field--select ${errors.city ? 'is-invalid' : ''}`}>
                       <select
-                        value={graduationCity}
-                        onChange={(event) => setGraduationCity(event.target.value)}
-                        disabled={polesLoading || !graduationStateUf || !graduationCityOptions.length}
+                        value={graduationCityId}
+                        onChange={(event) => {
+                          const nextCityId = event.target.value
+                          const nextCity = graduationCityOptions.find(
+                            (option) => String(option.id) === nextCityId,
+                          )
+
+                          setGraduationCityId(nextCityId)
+                          setGraduationCity(nextCity?.name ?? '')
+                          setGraduationPoleId('')
+                          setPoleOptions([])
+                        }}
+                        disabled={polesLoading || !graduationStateId || !graduationCityOptions.length}
                       >
                         <option value="">{polesLoading ? 'Carregando...' : 'Cidade'}</option>
                         {graduationCityOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
+                          <option key={option.id} value={option.id}>
+                            {option.name}
                           </option>
                         ))}
                       </select>
@@ -1871,10 +1989,10 @@ export function CourseLeadForm({
                     <select
                       value={graduationPoleId}
                       onChange={(event) => setGraduationPoleId(event.target.value)}
-                      disabled={polesLoading || !graduationCity || !filteredPoleOptions.length}
+                      disabled={polesLoading || !graduationCityId || !poleOptions.length}
                     >
                       <option value="">{polesLoading ? 'Carregando...' : 'Polo'}</option>
-                      {filteredPoleOptions.map((option) => (
+                      {poleOptions.map((option) => (
                         <option key={option.id} value={option.id}>
                           {option.name}
                         </option>
@@ -1943,7 +2061,7 @@ export function CourseLeadForm({
         <div className="course-lead-form__price-card">
           <div className="course-lead-form__price-highlight" aria-hidden="true">
             <span className="course-lead-form__price-offer">
-              <strong>30%</strong>
+              <strong>73,8%</strong>
               <span>OFF</span>
             </span>
             <span className="course-lead-form__price-divider" />

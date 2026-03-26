@@ -546,10 +546,11 @@ function formatFixed18InstallmentLabel(amountCents: number): string {
   return `18X DE ${formatCurrency(monthlyAmountCents)}`.toUpperCase()
 }
 
-function formatFixed18MonthlyLabel(amountCents: number): string {
+function formatFixed18MonthlyLabel(amountCents: number, includeInstallments = false): string {
   const monthlyAmountCents = getMonthlyAmountFromCourseTotal(amountCents)
   if (!monthlyAmountCents) return ''
-  return `${formatCurrency(monthlyAmountCents).toUpperCase()}/MÊS`
+  const priceLabel = `${formatCurrency(monthlyAmountCents).toUpperCase()}/MÊS`
+  return includeInstallments ? `18X ${priceLabel}` : priceLabel
 }
 
 function normalizePricingItems(items: ApiPricingItem[] | null | undefined): CatalogPriceItem[] {
@@ -779,7 +780,7 @@ function getFallbackCurrentPriceLabels(
   if (courseType === 'pos') {
     return {
       installment: '18X DE R$ 249,00',
-      monthly: 'R$ 249,00/MÊS',
+      monthly: '18X R$ 249,00/MÊS',
     }
   }
 
@@ -1165,7 +1166,7 @@ function buildCatalogCourseSummary(
     ? formatFixed18InstallmentLabel(totalPriceCents)
     : fallbackCurrentPrice.installment
   const currentInstallmentPriceMonthly = totalPriceCents
-    ? formatFixed18MonthlyLabel(totalPriceCents)
+    ? formatFixed18MonthlyLabel(totalPriceCents, courseType === 'pos')
     : fallbackCurrentPrice.monthly
   const resolvedImage = resolveCourseImage(
     courseType,
@@ -1387,7 +1388,7 @@ function mapCatalogCourse(
     ? formatFixed18InstallmentLabel(totalPriceCents)
     : fallbackCurrentPrice.installment
   const currentInstallmentPriceMonthly = totalPriceCents
-    ? formatFixed18MonthlyLabel(totalPriceCents)
+    ? formatFixed18MonthlyLabel(totalPriceCents, courseType === 'pos')
     : fallbackCurrentPrice.monthly
 
   return {

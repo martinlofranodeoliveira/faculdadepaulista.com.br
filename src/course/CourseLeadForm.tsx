@@ -196,9 +196,27 @@ function validatePhone(value: string): string | undefined {
 }
 
 function validateCpf(value: string): string | undefined {
-  const digits = normalizeCpf(value)
-  if (!digits) return 'Informe seu CPF.'
-  if (digits.length !== 11) return 'Digite um CPF válido.'
+  const rawDigits = value.replace(/[.\-\/\s]/g, '')
+  if (!rawDigits) return 'Informe seu CPF.'
+
+  const digits = rawDigits.padStart(11, '0')
+  if (digits.length !== 11) return 'Digite um CPF v?lido.'
+  if (/^(\d)\1{10}$/.test(digits)) return 'Digite um CPF v?lido.'
+
+  for (let t = 9; t < 11; t += 1) {
+    let d = 0
+
+    for (let c = 0; c < t; c += 1) {
+      d += Number.parseInt(digits[c] ?? '0', 10) * ((t + 1) - c)
+    }
+
+    d = ((10 * d) % 11) % 10
+
+    if (Number.parseInt(digits[t] ?? '0', 10) !== d) {
+      return 'Digite um CPF v?lido.'
+    }
+  }
+
   return undefined
 }
 

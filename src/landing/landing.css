@@ -3629,7 +3629,7 @@ section[id] {
 
 @media (max-width: 980px) {
   .lp-contact-channels {
-    background: #cd0204;
+    background: #cd0204 url('/landing/footer/background-contato-mobile.webp') center center / cover no-repeat;
     padding: 40px 0 48px;
   }
 

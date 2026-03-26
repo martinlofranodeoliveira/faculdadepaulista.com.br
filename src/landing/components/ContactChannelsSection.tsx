@@ -96,7 +96,7 @@ export function ContactChannelsSection() {
                   )}
                   <div className="lp-contact-card__phone">
                     <img
-                      src="/landing/footer/icon-phone.svg"
+                      src="/landing/footer/icon-phone-green.svg"
                       alt=""
                       aria-hidden="true"
                       width="18"

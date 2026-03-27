@@ -10,7 +10,7 @@
   --lp-brand-2: #ff3b1d;
   --lp-border: #e0d7d7;
   --lp-buttom-grad: linear-gradient(180deg, #FE0000 0%, #C50002 100%);
-  --lp-section-title-size: clamp(32px, 3.2vw, 42px);
+  --lp-section-title-size: clamp(65px, 3.2vw, 42px);
   --lp-section-title-line-height: 1.08;
   --lp-section-title-letter-spacing: -0.03em;
   --lp-section-title-size-mobile: clamp(25px, 8vw, 25px);

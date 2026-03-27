@@ -5206,7 +5206,7 @@ section[id] {
   }
 
   .lp-footer__reclame-badges img {
-    width: calc((100% - 8px) / 2);
+    width: auto;
   }
 
   .lp-footer__bottom {

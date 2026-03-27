@@ -3107,6 +3107,34 @@
     grid-template-columns: 1fr;
   }
 
+  .course-page__content-column--post {
+    display: contents;
+  }
+
+  .course-page__content-column--post .course-page__video-card {
+    display: contents;
+  }
+
+  .course-page__form-column--post {
+    order: 2;
+  }
+
+  .course-page__video-frame {
+    order: 1;
+  }
+
+  .course-page__fact-row.course-page__fact-row--post {
+    order: 3;
+  }
+
+  .course-page__regulation-note--post {
+    order: 4;
+  }
+
+  .course-page__info-stack--post {
+    order: 5;
+  }
+
   .course-page__grad-hero-grid {
     row-gap: 28px;
   }
@@ -3435,7 +3463,7 @@
 
   .course-page__video-card {
     gap: 18px;
-    order: 2;
+    order: 1;
   }
 
   .course-page__video-frame {
@@ -3492,7 +3520,7 @@
   }
 
   .course-page__form-column--post {
-    order: 1;
+    order: 2;
   }
 
   .course-page__info-stack--post {
@@ -4526,16 +4554,27 @@
   .course-lead-form--pos .course-lead-form__field,
   .course-lead-form--pos .course-lead-form__voucher-field {
     border-radius: 6px;
-    min-height: 34.174px;
-    padding-left: 8.5px;
-    padding-right: 8.5px;
+    min-height: 48px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .course-lead-form--pos .course-lead-form__field input,
   .course-lead-form--pos .course-lead-form__field select,
   .course-lead-form--pos .course-lead-form__voucher-field input {
     font-size: 14px;
-    line-height: 15px;
+    line-height: 20px;
+  }
+
+  .course-lead-form--pos .course-lead-form__select-wrapper,
+  .course-lead-form--pos .course-lead-form__select-trigger {
+    min-height: 48px;
+  }
+
+  .course-lead-form--pos .course-lead-form__select-trigger {
+    border-radius: 6px;
+    padding-left: 16px;
+    padding-right: 16px;
   }
 
   .course-lead-form--pos .course-lead-form__info-link--step1 {
@@ -4570,6 +4609,7 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: 6px;
+    justify-content: space-between;
     padding: 0;
   }
 
@@ -4592,6 +4632,11 @@
 
   .course-lead-form--pos .course-lead-form__price-values {
     gap: 2px;
+  }
+
+  .course-lead-form--pos .course-lead-form__price-old,
+  .course-lead-form--pos .course-lead-form__price-current {
+    white-space: nowrap;
   }
 
   .course-lead-form__price-old {

@@ -125,7 +125,7 @@ function formatCurrencyFromCents(value: number): string {
 
 function calculatePixAmountCents(totalAmountCents: number): number {
   if (!totalAmountCents) return 0
-  return Math.round((totalAmountCents * 0.9) / 10000) * 100
+  return Math.floor((totalAmountCents * 0.9) / 100) * 100
 }
 
 function buildPaymentPlanOptionsFromTotal(totalAmountCents: number): string[] {

@@ -123,15 +123,21 @@ function formatCurrencyFromCents(value: number): string {
   return formatCurrencyAmount(value / 100)
 }
 
+function calculatePixAmountCents(totalAmountCents: number): number {
+  if (!totalAmountCents) return 0
+  return Math.round((totalAmountCents * 0.9) / 10000) * 100
+}
+
 function buildPaymentPlanOptionsFromTotal(totalAmountCents: number): string[] {
   if (!totalAmountCents) return []
 
   return [1, 4, 6, 12, 18].map((installments) => {
     if (installments === 1) {
-      return `À vista ${formatCurrencyFromCents(totalAmountCents)}`
+      const pixAmountCents = calculatePixAmountCents(totalAmountCents)
+      return `1X ${formatCurrencyFromCents(totalAmountCents)} (${formatCurrencyFromCents(pixAmountCents)} à vista no PIX)`
     }
 
-    return `${installments}x ${formatCurrencyAmount(totalAmountCents / 100 / installments)}`
+    return `${installments}X ${formatCurrencyAmount(totalAmountCents / 100 / installments)}`
   })
 }
 

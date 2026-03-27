@@ -2233,7 +2233,7 @@
   box-shadow: 0 4px 21px rgba(0, 0, 0, 0.18);
   display: grid;
   gap: 16px;
-  overflow: hidden;
+  overflow: visible;
   padding: 0 21px 21px;
 }
 
@@ -2453,6 +2453,11 @@
 .course-lead-form__field--custom-select {
   overflow: visible;
   padding: 0;
+  z-index: 1;
+}
+
+.course-lead-form__field--custom-select.is-open {
+  z-index: 40;
 }
 
 .course-lead-form__field--select svg {
@@ -2548,7 +2553,7 @@
   position: absolute;
   right: 0;
   top: 100%;
-  z-index: 450;
+  z-index: 900;
 }
 
 .course-lead-form__select-option {

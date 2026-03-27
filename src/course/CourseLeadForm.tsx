@@ -69,6 +69,7 @@ type FieldErrors = {
   email?: string
   phone?: string
   cpf?: string
+  paymentPlan?: string
   stateUf?: string
   city?: string
   poleId?: string
@@ -224,7 +225,7 @@ function CourseFormSelect({
     <div
       className={`course-lead-form__field course-lead-form__field--select course-lead-form__field--custom-select ${
         invalid ? 'is-invalid' : ''
-      } ${disabled ? 'is-disabled' : ''}`}
+      } ${disabled ? 'is-disabled' : ''} ${open ? 'is-open' : ''}`}
       onBlur={(event) => {
         if (event.currentTarget.contains(event.relatedTarget as Node | null)) return
         setOpen(false)
@@ -630,7 +631,7 @@ export function CourseLeadForm({
   const [polesLoading, setPolesLoading] = useState(courseType === 'graduacao')
   const [polesMessage, setPolesMessage] = useState('')
   const [agreementAccepted, setAgreementAccepted] = useState(false)
-  const [paymentPlan, setPaymentPlan] = useState(paymentPlanOptions[0] ?? '')
+  const [paymentPlan, setPaymentPlan] = useState('')
   const [workload, setWorkload] = useState(workloadOptions[0] ?? '')
   const [voucherCode, setVoucherCode] = useState('')
   const [voucherOpen, setVoucherOpen] = useState(false)
@@ -820,7 +821,7 @@ export function CourseLeadForm({
         setPaymentPlan(
           progress.paymentPlanLabel && matchedGroup.paymentPlanOptions.includes(progress.paymentPlanLabel)
             ? progress.paymentPlanLabel
-            : (matchedGroup.paymentPlanOptions[0] ?? ''),
+            : '',
         )
       }
     }
@@ -1100,9 +1101,7 @@ export function CourseLeadForm({
   useEffect(() => {
     if (!hasSecondStep) return
 
-    setPaymentPlan((current) =>
-      visiblePaymentPlanOptions.includes(current) ? current : (visiblePaymentPlanOptions[0] ?? ''),
-    )
+    setPaymentPlan((current) => (visiblePaymentPlanOptions.includes(current) ? current : ''))
   }, [hasSecondStep, visiblePaymentPlanOptions])
 
   const openResumeFlow = () => {
@@ -1184,6 +1183,7 @@ export function CourseLeadForm({
 
     return {
       cpf: validateCpf(cpf),
+      paymentPlan: paymentPlan ? undefined : 'Selecione o plano de pagamento.',
     }
   }
 
@@ -1366,7 +1366,7 @@ export function CourseLeadForm({
 
       setAdvanceLoading(false)
       setStep(2)
-      setPaymentPlan((current) => current || visiblePaymentPlanOptions[0] || '')
+      setPaymentPlan((current) => (visiblePaymentPlanOptions.includes(current) ? current : ''))
       setWorkload((current) => current || workloadOptions[0] || '')
       window.setTimeout(() => {
         cpfInputRef.current?.focus()
@@ -2186,10 +2186,12 @@ export function CourseLeadForm({
                 <CourseFormSelect
                   value={paymentPlan}
                   options={paymentPlanSelectOptions}
-                  placeholder="Plano de pagamento"
+                  placeholder="SELECIONE"
                   menuLabel="Selecione o plano de pagamento"
+                  invalid={Boolean(errors.paymentPlan)}
                   onChange={setPaymentPlan}
                 />
+                {errors.paymentPlan ? <p className="course-lead-form__error">{errors.paymentPlan}</p> : null}
 
                 <div className="course-lead-form__voucher-toggle">
                   <button type="button" onClick={() => setVoucherOpen((current) => !current)}>

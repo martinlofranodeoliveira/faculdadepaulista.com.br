@@ -3435,7 +3435,7 @@
 
   .course-page__video-card {
     gap: 18px;
-    order: 1;
+    order: 2;
   }
 
   .course-page__video-frame {
@@ -3492,7 +3492,7 @@
   }
 
   .course-page__form-column--post {
-    order: 2;
+    order: 1;
   }
 
   .course-page__info-stack--post {

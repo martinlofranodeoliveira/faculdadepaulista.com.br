@@ -71,6 +71,9 @@ export type CatalogCourse = {
   semesterCount: number
   durationText: string
   mecOrdinance: string
+  mecOrdinanceDocumentUrl: string
+  recognition: string
+  recognitionDocumentUrl: string
   mecScore: number | null
   tccRequired: boolean | null
   titulation: string
@@ -137,6 +140,15 @@ type ApiCourseListItem = {
   pos_price_cents?: number | string | null
   duration?: string | null
   mec_ordinance?: string | null
+  mec_ordinance_document_path?: string | null
+  mec_ordinance_document_mime?: string | null
+  mec_ordinance_document_size_bytes?: number | null
+  mec_ordinance_document_updated_at?: string | null
+  recognition?: string | null
+  recognition_document_path?: string | null
+  recognition_document_mime?: string | null
+  recognition_document_size_bytes?: number | null
+  recognition_document_updated_at?: string | null
   mec_score?: number | string | null
   mec_rating?: number | string | null
   mec_note?: number | string | null
@@ -173,6 +185,15 @@ type ApiCourseDetail = {
   pos_price_cents?: number | string | null
   duration?: string | null
   mec_ordinance?: string | null
+  mec_ordinance_document_path?: string | null
+  mec_ordinance_document_mime?: string | null
+  mec_ordinance_document_size_bytes?: number | null
+  mec_ordinance_document_updated_at?: string | null
+  recognition?: string | null
+  recognition_document_path?: string | null
+  recognition_document_mime?: string | null
+  recognition_document_size_bytes?: number | null
+  recognition_document_updated_at?: string | null
   mec_score?: number | string | null
   mec_rating?: number | string | null
   mec_note?: number | string | null
@@ -602,6 +623,15 @@ function buildApiCourseListItemFromDetail(
     semester_count: detail.semester_count,
     duration: detail.duration,
     mec_ordinance: detail.mec_ordinance,
+    mec_ordinance_document_path: detail.mec_ordinance_document_path,
+    mec_ordinance_document_mime: detail.mec_ordinance_document_mime,
+    mec_ordinance_document_size_bytes: detail.mec_ordinance_document_size_bytes,
+    mec_ordinance_document_updated_at: detail.mec_ordinance_document_updated_at,
+    recognition: detail.recognition,
+    recognition_document_path: detail.recognition_document_path,
+    recognition_document_mime: detail.recognition_document_mime,
+    recognition_document_size_bytes: detail.recognition_document_size_bytes,
+    recognition_document_updated_at: detail.recognition_document_updated_at,
     mec_score: detail.mec_score,
     mec_rating: detail.mec_rating,
     mec_note: detail.mec_note,
@@ -1438,6 +1468,13 @@ function mapCatalogCourse(
     semesterCount: Number(detail?.semester_count ?? course.semester_count ?? 0),
     durationText: normalizeText(detail?.duration ?? course.duration),
     mecOrdinance: normalizeRichText(detail?.mec_ordinance ?? course.mec_ordinance),
+    mecOrdinanceDocumentUrl: resolveDocumentUrl(
+      detail?.mec_ordinance_document_path ?? course.mec_ordinance_document_path,
+    ),
+    recognition: normalizeRichText(detail?.recognition ?? course.recognition),
+    recognitionDocumentUrl: resolveDocumentUrl(
+      detail?.recognition_document_path ?? course.recognition_document_path,
+    ),
     mecScore: resolveMecScore(course, detail),
     tccRequired: resolveTccRequired(course, detail),
     titulation: normalizeText(detail?.titulation),

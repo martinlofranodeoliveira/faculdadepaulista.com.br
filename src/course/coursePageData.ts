@@ -356,7 +356,28 @@ function extractHref(value: string): string | undefined {
 
 function buildGraduationPortarias(course: CatalogCourse | undefined) {
   const ordinanceText = (course?.mecOrdinance || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
-  if (!ordinanceText) return []
+  const recognitionText = (course?.recognition || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+  const portarias: CoursePresentation['graduationPortarias'] = []
+
+  if (ordinanceText) {
+    portarias.push({
+      label: /^autoriza[cç][aã]o\b/iu.test(ordinanceText) ? 'Autorização' : 'Portaria do MEC',
+      description: ordinanceText,
+      href: course?.mecOrdinanceDocumentUrl || extractHref(ordinanceText),
+    })
+  }
+
+  if (recognitionText || course?.recognitionDocumentUrl) {
+    portarias.push({
+      label: 'Reconhecimento',
+      description: recognitionText || 'Documento de reconhecimento do curso.',
+      href: course?.recognitionDocumentUrl || extractHref(recognitionText),
+    })
+  }
+
+  if (portarias.length) {
+    return portarias
+  }
 
   const labeledMatches = [...ordinanceText.matchAll(/(Autorização|Reconhecimento)\s*:\s*/giu)]
 

@@ -2093,6 +2093,75 @@ section[id] {
   text-align: center;
 }
 
+.lp-presential__ordinances-band {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(255, 126, 126, 0.28), transparent 26%),
+    radial-gradient(circle at 100% 0%, rgba(255, 126, 126, 0.18), transparent 24%),
+    #fb0103;
+  margin-top: 36px;
+  width: 100%;
+}
+
+.lp-presential__ordinances {
+  align-items: center;
+  column-gap: 40px;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  overflow: hidden;
+  padding: 29px 32px 27px;
+  position: relative;
+}
+
+.lp-presential__ordinances-brand {
+  display: flex;
+  justify-content: center;
+}
+
+.lp-presential__ordinances-brand img {
+  display: block;
+  height: auto;
+  width: 243px;
+}
+
+.lp-presential__ordinances-divider {
+  align-self: stretch;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  width: 1px;
+}
+
+.lp-presential__ordinances-list {
+  column-gap: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lp-presential__ordinance {
+  display: grid;
+  gap: 12px;
+}
+
+.lp-presential__ordinance-tag {
+  align-items: center;
+  background: #fff;
+  border: 1px solid #ff9c9e;
+  border-radius: 5px;
+  color: #fb0103;
+  display: inline-flex;
+  font: 800 22px/1.28 'Kumbh Sans', sans-serif;
+  min-height: 40px;
+  padding: 0 12px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.lp-presential__ordinance p {
+  color: #fff;
+  font: 500 19px/1.28 'Kumbh Sans', sans-serif;
+  margin: 0;
+  max-width: 383px;
+}
+
 .lp-presential__grid {
   display: grid;
   column-gap: clamp(24px, 4vw, 42px);
@@ -2309,18 +2378,19 @@ section[id] {
 
 .lp-pos-banner {
   background: #ffffff;
-  padding: 0;
-  margin-bottom: 40px;
+  margin-bottom: 0;
+  padding: 79px 0;
 }
 
 .lp-pos-banner__inner {
   margin: 0 auto;
-  max-width: 1240px;
-  width: 100%;
+  max-width: 1351px;
+  width: min(calc(100% - 48px), 1351px);
 }
 
 .lp-pos-banner picture {
-  aspect-ratio: 1240 / 234;
+  aspect-ratio: 1351 / 377;
+  border-radius: 39px;
   display: block;
   overflow: hidden;
 }
@@ -3769,7 +3839,8 @@ section[id] {
   }
 
   .lp-pos-banner__inner {
-    max-width: 1100px;
+    max-width: none;
+    width: min(calc(100% - 40px), 1351px);
   }
 
   .lp-all-grad-card {
@@ -3789,6 +3860,28 @@ section[id] {
   .lp-presential__grid {
     gap: 20px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-presential__ordinances {
+    column-gap: 28px;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    padding: 24px 24px 22px;
+  }
+
+  .lp-presential__ordinances-brand img {
+    width: 208px;
+  }
+
+  .lp-presential__ordinances-list {
+    column-gap: 24px;
+  }
+
+  .lp-presential__ordinance-tag {
+    font-size: 18px;
+  }
+
+  .lp-presential__ordinance p {
+    font-size: 16px;
   }
 
   .lp-presential-card {
@@ -4268,8 +4361,18 @@ section[id] {
     aspect-ratio: 585 / 735;
   }
 
+  .lp-pos-banner {
+    padding: 40px 0;
+  }
+
+  .lp-pos-banner__inner {
+    max-width: none;
+    width: min(calc(100% - 32px), 391px);
+  }
+
   .lp-pos-banner picture {
-    aspect-ratio: 543 / 305;
+    aspect-ratio: 545 / 599;
+    border-radius: 32px;
   }
 
   .lp-header__inner {
@@ -4608,10 +4711,6 @@ section[id] {
     padding: 28px 0 32px;
   }
 
-  .lp-pos-banner {
-    padding-bottom: 0;
-  }
-
   .lp-all-grad__head {
     margin: 0 auto;
     max-width: 362px;
@@ -4763,6 +4862,51 @@ section[id] {
 
   .lp-presential__location {
     display: none;
+  }
+
+  .lp-presential__ordinances {
+    gap: 20px;
+    grid-template-columns: 1fr;
+    padding: 19px 15px 24px;
+  }
+
+  .lp-presential__ordinances-band {
+    margin-top: 24px;
+  }
+
+  .lp-presential__ordinances-brand {
+    justify-content: flex-start;
+  }
+
+  .lp-presential__ordinances-brand img {
+    width: 120px;
+  }
+
+  .lp-presential__ordinances-divider {
+    height: 1px;
+    width: 100%;
+  }
+
+  .lp-presential__ordinances-list {
+    gap: 22px;
+    grid-template-columns: 1fr;
+  }
+
+  .lp-presential__ordinance {
+    gap: 8px;
+  }
+
+  .lp-presential__ordinance-tag {
+    border-radius: 3px;
+    font-size: 14px;
+    min-height: 26px;
+    padding: 0 8px;
+  }
+
+  .lp-presential__ordinance p {
+    font-size: 12px;
+    line-height: 1.28;
+    max-width: 100%;
   }
 
   .lp-presential__grid {

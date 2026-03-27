@@ -7,6 +7,17 @@ type Props = {
   courses: LandingPresentialCourse[]
 }
 
+const PRESENTIAL_ORDINANCES = [
+  {
+    title: 'PORTARIA ENFERMAGEM',
+    description: 'Portaria nº 172, de 25/02/2021, publicado no D.O.U em 26/02/2021.',
+  },
+  {
+    title: 'PORTARIA PSICOLOGIA',
+    description: 'Portaria nº 172, de 25/02/2021, publicado no D.O.U em 26/02/2021.',
+  },
+] as const
+
 function PresentialModeIcon() {
   return (
     <svg
@@ -80,11 +91,38 @@ export function PresentialGraduationSection({ courses }: Props) {
       <div className="lp-shell">
         <div className="lp-presential__head">
           <h2>GRADUAÇÃO PRESENCIAL</h2>
-          <div className="lp-presential__location">
-            <p>Rua Dr. Diogo de Faria, 66 - Vila Mariana, São Paulo - SP, CEP: 04037-000</p>
+        </div>
+      </div>
+
+      <div className="lp-presential__ordinances-band">
+        <div className="lp-shell">
+          <div className="lp-presential__ordinances" aria-label="Portarias dos cursos presenciais">
+            <div className="lp-presential__ordinances-brand">
+              <img
+                src="/landing/faculdade-unicesp-portaria.webp"
+                alt="Faculdade Unicesp"
+                width="243"
+                height="77"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+
+            <div className="lp-presential__ordinances-divider" aria-hidden="true" />
+
+            <div className="lp-presential__ordinances-list">
+              {PRESENTIAL_ORDINANCES.map((ordinance) => (
+                <div key={ordinance.title} className="lp-presential__ordinance">
+                  <span className="lp-presential__ordinance-tag">{ordinance.title}</span>
+                  <p>{ordinance.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
+      </div>
 
+      <div className="lp-shell">
         <div className="lp-presential__grid">
           {courses.map((course) => (
             <article key={course.id} className={`lp-presential-card ${course.cardClassName ?? ''}`}>

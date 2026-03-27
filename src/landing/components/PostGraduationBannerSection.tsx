@@ -7,8 +7,8 @@
           <img
             src="/landing/pos-graduacao-banner.webp"
             alt="Pós-graduação EAD"
-            width="1240"
-            height="234"
+            width="1351"
+            height="377"
             loading="lazy"
             decoding="async"
           />

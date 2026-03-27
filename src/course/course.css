@@ -2614,9 +2614,171 @@
 }
 
 .course-lead-form__agreement a,
+.course-lead-form__agreement-link,
 .course-lead-form__info-link,
 .course-lead-form__voucher-field button {
   color: #066aff;
+}
+
+.course-lead-form__agreement-link {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: inline;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+  text-decoration: underline;
+  white-space: normal;
+  word-break: normal;
+}
+
+.course-lead-form__contract-modal-backdrop {
+  align-items: center;
+  background: rgb(0 0 0 / 52%);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 1000;
+}
+
+.course-lead-form__contract-modal {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 20px 80px rgb(0 0 0 / 22%);
+  max-height: min(82vh, 760px);
+  max-width: 760px;
+  overflow: auto;
+  width: 100%;
+}
+
+.course-lead-form__contract-modal-header {
+  align-items: center;
+  border-bottom: 1px solid rgb(11 17 31 / 10%);
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 22px 24px 18px;
+}
+
+.course-lead-form__contract-modal-header h3 {
+  color: #0b111f;
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.course-lead-form__contract-modal-close {
+  background: transparent;
+  border: 0;
+  color: rgb(11 17 31 / 60%);
+  cursor: pointer;
+  flex: 0 0 auto;
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 28px;
+  line-height: 1;
+  padding: 0;
+}
+
+.course-lead-form__contract-modal-body {
+  color: #0b111f;
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.5;
+  padding: 22px 24px 10px;
+}
+
+.course-lead-form__contract-modal-state {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.course-lead-form__contract-modal-state.is-error {
+  align-items: flex-start;
+  color: #b64c4c;
+  display: grid;
+  gap: 12px;
+}
+
+.course-lead-form__contract-modal-state.is-error p {
+  margin: 0;
+}
+
+.course-lead-form__contract-modal-state.is-error button {
+  background: transparent;
+  border: 0;
+  color: #066aff;
+  cursor: pointer;
+  font: inherit;
+  justify-self: start;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.course-lead-form__contract-modal-content {
+  display: grid;
+  gap: 14px;
+}
+
+.course-lead-form__contract-modal-content.is-text {
+  white-space: pre-wrap;
+}
+
+.course-lead-form__contract-modal-content > :first-child {
+  margin-top: 0;
+}
+
+.course-lead-form__contract-modal-content > :last-child {
+  margin-bottom: 0;
+}
+
+.course-lead-form__contract-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 24px 24px;
+}
+
+.course-lead-form__contract-modal-confirm {
+  align-items: center;
+  background: #fe0000;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: 'Kumbh Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  height: 44px;
+  justify-content: center;
+  min-width: 120px;
+  padding: 0 22px;
+}
+
+@media (max-width: 767px) {
+  .course-lead-form__contract-modal-backdrop {
+    padding: 16px;
+  }
+
+  .course-lead-form__contract-modal-header,
+  .course-lead-form__contract-modal-body,
+  .course-lead-form__contract-modal-footer {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .course-lead-form__contract-modal-header h3 {
+    font-size: 18px;
+  }
 }
 
 .course-lead-form__info-link {

@@ -622,6 +622,51 @@
   margin: 0 0 14px;
 }
 
+.vestibular-offer__modal-state {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.vestibular-offer__modal-state.is-error {
+  align-items: flex-start;
+  color: #b64c4c;
+  display: grid;
+  gap: 12px;
+}
+
+.vestibular-offer__modal-state.is-error p {
+  margin: 0;
+}
+
+.vestibular-offer__modal-state.is-error button {
+  background: transparent;
+  border: 0;
+  color: #066aff;
+  cursor: pointer;
+  font: inherit;
+  justify-self: start;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.vestibular-offer__modal-content {
+  display: grid;
+  gap: 14px;
+}
+
+.vestibular-offer__modal-content.is-text {
+  white-space: pre-wrap;
+}
+
+.vestibular-offer__modal-content > :first-child {
+  margin-top: 0;
+}
+
+.vestibular-offer__modal-content > :last-child {
+  margin-bottom: 0;
+}
+
 .vestibular-offer__modal-footer {
   display: flex;
   justify-content: flex-end;

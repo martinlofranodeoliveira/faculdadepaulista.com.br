@@ -11,6 +11,11 @@ import {
   type JourneySnapshot,
 } from '@/lib/journeyClient'
 import { getCoursePath, normalizeComparableText } from '@/lib/courseRoutes'
+import {
+  fetchInstitutionContract,
+  type InstitutionContractPayload,
+  type InstitutionContractType,
+} from '@/lib/institutionContractsClient'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
 
 import {
@@ -629,6 +634,11 @@ export function CourseLeadForm({
   const [workload, setWorkload] = useState(workloadOptions[0] ?? '')
   const [voucherCode, setVoucherCode] = useState('')
   const [voucherOpen, setVoucherOpen] = useState(false)
+  const [isContractModalOpen, setIsContractModalOpen] = useState(false)
+  const [contractLoading, setContractLoading] = useState(false)
+  const [contractError, setContractError] = useState('')
+  const [contractContent, setContractContent] = useState<InstitutionContractPayload | null>(null)
+  const [loadedContractType, setLoadedContractType] = useState<InstitutionContractType | null>(null)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [advanceLoading, setAdvanceLoading] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
@@ -753,6 +763,38 @@ export function CourseLeadForm({
       normalizeComparableText(selectedGraduationPole.name) !== normalizeComparableText(graduationCity)
     )
   }, [graduationCity, selectedGraduationPole])
+
+  const contractType: InstitutionContractType = courseType === 'graduacao' ? 'graduation' : 'pos'
+
+  const loadContract = async (type: InstitutionContractType) => {
+    setContractLoading(true)
+    setContractError('')
+
+    try {
+      const nextContract = await fetchInstitutionContract(type)
+      setContractContent(nextContract)
+      setLoadedContractType(type)
+    } catch (error) {
+      setContractContent(null)
+      setLoadedContractType(type)
+      setContractError(
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível carregar o contrato agora. Tente novamente em instantes.',
+      )
+    } finally {
+      setContractLoading(false)
+    }
+  }
+
+  const openContractModal = () => {
+    setIsContractModalOpen(true)
+
+    if (contractLoading) return
+    if (loadedContractType === contractType && (contractContent || contractError)) return
+
+    void loadContract(contractType)
+  }
 
   const hydrateResumeIntoCurrentCourse = (progress: StoredJourneyProgress) => {
     if (progress.fullName) setFullName(progress.fullName)
@@ -1792,14 +1834,181 @@ export function CourseLeadForm({
   const promoBannerWidth = courseType === 'pos' ? 513 : 510
   const fullNamePlaceholder = courseType === 'graduacao' ? 'Nome completo' : 'Nome'
   const phonePlaceholder = courseType === 'graduacao' ? 'Telefone' : 'WhatsApp'
+  const agreementCopy = (
+    <span>
+      {'LI E CONCORDO COM OS '}
+      <a
+        href="#course-contract"
+        className="course-lead-form__agreement-link"
+        onClick={(event) => {
+          event.preventDefault()
+          event.stopPropagation()
+          openContractModal()
+        }}
+      >
+        TERMOS DO CONTRATO DE PRESTAÇÃO DE SERVIÇOS EDUCACIONAIS.
+      </a>
+    </span>
+  )
+  const contractModal = isContractModalOpen ? (
+    <div
+      className="course-lead-form__contract-modal-backdrop"
+      role="presentation"
+      onClick={() => setIsContractModalOpen(false)}
+    >
+      <div
+        className="course-lead-form__contract-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="course-contract-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="course-lead-form__contract-modal-header">
+          <h3 id="course-contract-title">{contractContent?.title || 'Contrato de prestação de serviços educacionais'}</h3>
+          <button
+            type="button"
+            className="course-lead-form__contract-modal-close"
+            aria-label="Fechar contrato"
+            onClick={() => setIsContractModalOpen(false)}
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="course-lead-form__contract-modal-body">
+          {contractLoading ? (
+            <div className="course-lead-form__contract-modal-state">
+              <LoaderCircle className="course-lead-form__spinner" size={22} strokeWidth={2.2} />
+              <span>Carregando contrato...</span>
+            </div>
+          ) : contractError ? (
+            <div className="course-lead-form__contract-modal-state is-error">
+              <p>{contractError}</p>
+              <button type="button" onClick={() => void loadContract(contractType)}>
+                Tentar novamente
+              </button>
+            </div>
+          ) : contractContent?.html ? (
+            <div
+              className="course-lead-form__contract-modal-content"
+              dangerouslySetInnerHTML={{ __html: contractContent.html }}
+            />
+          ) : (
+            <div className="course-lead-form__contract-modal-content is-text">
+              {contractContent?.text || 'Contrato não encontrado para a instituição informada.'}
+            </div>
+          )}
+        </div>
+
+        <div className="course-lead-form__contract-modal-footer">
+          <button
+            type="button"
+            className="course-lead-form__contract-modal-confirm"
+            onClick={() => setIsContractModalOpen(false)}
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null
 
   if (resumeMode !== 'default') {
     const isLookupMode = resumeMode === 'lookup'
 
     return (
+      <>
+        <form
+          className={`course-lead-form course-lead-form--${courseType}`}
+          onSubmit={isLookupMode ? handleResumeLookup : handleResumeSelection}
+          noValidate
+        >
+          <div className="course-lead-form__promo course-lead-form__promo--image" aria-hidden="true">
+            <img src={promoBannerSrc} alt="" width={promoBannerWidth} height="83" decoding="async" />
+          </div>
+
+          <p className="course-lead-form__resume">
+            {isLookupMode ? (
+              <>
+                {'Ainda n\u00e3o se inscreveu? '}
+                <button type="button" onClick={closeResumeFlow}>
+                  Clique aqui e inscreva-se
+                </button>
+              </>
+            ) : (
+              'J\u00e1 iniciou sua inscri\u00e7\u00e3o? Clique aqui para continuar'
+            )}
+          </p>
+
+          <div className="course-lead-form__header">
+            <h2>{isLookupMode ? 'INFORME SEU E-MAIL PARA CONTINUAR' : 'SELECIONE O CURSO'}</h2>
+          </div>
+
+          <div className="course-lead-form__fields">
+            {isLookupMode ? (
+              <>
+                <div className="course-lead-form__field-stack">
+                  <label className={`course-lead-form__field ${resumeErrors.email ? 'is-invalid' : ''}`}>
+                    <input
+                      ref={resumeEmailInputRef}
+                      type="email"
+                      placeholder="Email"
+                      autoComplete="email"
+                      maxLength={120}
+                      value={resumeEmail}
+                      onChange={(event) => setResumeEmail(event.target.value)}
+                    />
+                  </label>
+                  {resumeErrors.email ? <p className="course-lead-form__error">{resumeErrors.email}</p> : null}
+                </div>
+
+                <label className={`course-lead-form__agreement ${resumeErrors.agreement ? 'is-invalid' : ''}`}>
+                  <input
+                    type="checkbox"
+                    checked={resumeAgreementAccepted}
+                    onChange={(event) => setResumeAgreementAccepted(event.target.checked)}
+                  />
+                  {agreementCopy}
+                </label>
+                {resumeErrors.agreement ? <p className="course-lead-form__error">{resumeErrors.agreement}</p> : null}
+              </>
+            ) : (
+              <div className="course-lead-form__field-stack">
+                <CourseFormSelect
+                  value={selectedResumeJourneyId}
+                  options={resumeCourseSelectOptions}
+                  placeholder="Selecione o curso"
+                  menuLabel="Selecione o curso"
+                  invalid={Boolean(resumeErrors.courseId)}
+                  onChange={setSelectedResumeJourneyId}
+                />
+                {resumeErrors.courseId ? <p className="course-lead-form__error">{resumeErrors.courseId}</p> : null}
+              </div>
+            )}
+          </div>
+
+          <div className="course-lead-form__actions">
+            <button type="submit" className="course-lead-form__submit" disabled={resumeLoading}>
+              {resumeLoading ? (
+                <LoaderCircle className="course-lead-form__spinner" size={26} strokeWidth={2.25} />
+              ) : (
+                <span>CONTINUAR</span>
+              )}
+            </button>
+          </div>
+
+          {resumeMessage ? <p className="course-lead-form__feedback is-error">{resumeMessage}</p> : null}
+        </form>
+        {contractModal}
+      </>
+    )
+  }
+
+  return (
+    <>
       <form
         className={`course-lead-form course-lead-form--${courseType}`}
-        onSubmit={isLookupMode ? handleResumeLookup : handleResumeSelection}
+        onSubmit={handleSubmit}
         noValidate
       >
         <div className="course-lead-form__promo course-lead-form__promo--image" aria-hidden="true">
@@ -1807,111 +2016,17 @@ export function CourseLeadForm({
         </div>
 
         <p className="course-lead-form__resume">
-          {isLookupMode ? (
-            <>
-              {'Ainda n\u00e3o se inscreveu? '}
-              <button type="button" onClick={closeResumeFlow}>
-                Clique aqui e inscreva-se
-              </button>
-            </>
-          ) : (
-            'J\u00e1 iniciou sua inscri\u00e7\u00e3o? Clique aqui para continuar'
-          )}
+          {'J\u00e1 iniciou sua inscri\u00e7\u00e3o? '}
+          <button type="button" onClick={openResumeFlow}>
+            Clique aqui para continuar
+          </button>
         </p>
 
         <div className="course-lead-form__header">
-          <h2>{isLookupMode ? 'INFORME SEU E-MAIL PARA CONTINUAR' : 'SELECIONE O CURSO'}</h2>
+          <h2>{title}</h2>
         </div>
 
         <div className="course-lead-form__fields">
-          {isLookupMode ? (
-            <>
-              <div className="course-lead-form__field-stack">
-                <label className={`course-lead-form__field ${resumeErrors.email ? 'is-invalid' : ''}`}>
-                  <input
-                    ref={resumeEmailInputRef}
-                    type="email"
-                    placeholder="Email"
-                    autoComplete="email"
-                    maxLength={120}
-                    value={resumeEmail}
-                    onChange={(event) => setResumeEmail(event.target.value)}
-                  />
-                </label>
-                {resumeErrors.email ? <p className="course-lead-form__error">{resumeErrors.email}</p> : null}
-              </div>
-
-              <label className={`course-lead-form__agreement ${resumeErrors.agreement ? 'is-invalid' : ''}`}>
-                <input
-                  type="checkbox"
-                  checked={resumeAgreementAccepted}
-                  onChange={(event) => setResumeAgreementAccepted(event.target.checked)}
-                />
-                <span>
-                  {'Ao continuar voc\u00ea concorda com nossos '}
-                  <a href="/termos-de-uso" target="_blank" rel="noreferrer">
-                    Termos de uso
-                  </a>{' '}
-                  e{' '}
-                  <a href="/politica-de-privacidade" target="_blank" rel="noreferrer">
-                    {'Pol\u00edticas de Privacidade'}
-                  </a>
-                </span>
-              </label>
-              {resumeErrors.agreement ? <p className="course-lead-form__error">{resumeErrors.agreement}</p> : null}
-            </>
-          ) : (
-            <div className="course-lead-form__field-stack">
-              <CourseFormSelect
-                value={selectedResumeJourneyId}
-                options={resumeCourseSelectOptions}
-                placeholder="Selecione o curso"
-                menuLabel="Selecione o curso"
-                invalid={Boolean(resumeErrors.courseId)}
-                onChange={setSelectedResumeJourneyId}
-              />
-              {resumeErrors.courseId ? <p className="course-lead-form__error">{resumeErrors.courseId}</p> : null}
-            </div>
-          )}
-        </div>
-
-        <div className="course-lead-form__actions">
-          <button type="submit" className="course-lead-form__submit" disabled={resumeLoading}>
-            {resumeLoading ? (
-              <LoaderCircle className="course-lead-form__spinner" size={26} strokeWidth={2.25} />
-            ) : (
-              <span>CONTINUAR</span>
-            )}
-          </button>
-        </div>
-
-        {resumeMessage ? <p className="course-lead-form__feedback is-error">{resumeMessage}</p> : null}
-      </form>
-    )
-  }
-
-  return (
-    <form
-      className={`course-lead-form course-lead-form--${courseType}`}
-      onSubmit={handleSubmit}
-      noValidate
-    >
-      <div className="course-lead-form__promo course-lead-form__promo--image" aria-hidden="true">
-        <img src={promoBannerSrc} alt="" width={promoBannerWidth} height="83" decoding="async" />
-      </div>
-
-      <p className="course-lead-form__resume">
-        {'J\u00e1 iniciou sua inscri\u00e7\u00e3o? '}
-        <button type="button" onClick={openResumeFlow}>
-          Clique aqui para continuar
-        </button>
-      </p>
-
-            <div className="course-lead-form__header">
-        <h2>{title}</h2>
-      </div>
-
-      <div className="course-lead-form__fields">
         {step === 1 ? (
           <>
             <div className="course-lead-form__field-stack">
@@ -2044,16 +2159,7 @@ export function CourseLeadForm({
                 checked={agreementAccepted}
                 onChange={(event) => setAgreementAccepted(event.target.checked)}
               />
-              <span>
-                {'Ao continuar voc\u00ea concorda com nossos '}
-                <a href="/termos-de-uso" target="_blank" rel="noreferrer">
-                  Termos de uso
-                </a>{' '}
-                e{' '}
-                <a href="/politica-de-privacidade" target="_blank" rel="noreferrer">
-                  {'Pol\u00edticas de Privacidade'}
-                </a>
-              </span>
+              {agreementCopy}
             </label>
             {errors.agreement ? <p className="course-lead-form__error">{errors.agreement}</p> : null}
           </>
@@ -2291,8 +2397,10 @@ export function CourseLeadForm({
         <p className={`course-lead-form__feedback is-${submitStatus}`}>{submitMessage}</p>
       ) : null}
 
-      <input type="hidden" value={courseTitle} readOnly />
-    </form>
+        <input type="hidden" value={courseTitle} readOnly />
+      </form>
+      {contractModal}
+    </>
   )
 }
 

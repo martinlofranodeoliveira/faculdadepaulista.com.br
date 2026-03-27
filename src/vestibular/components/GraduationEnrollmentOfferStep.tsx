@@ -1,6 +1,10 @@
-import { useMemo, useState } from 'react'
+﻿import { useMemo, useState } from 'react'
 import { ArrowLeft, LoaderCircle } from 'lucide-react'
 
+import {
+  fetchInstitutionContract,
+  type InstitutionContractPayload,
+} from '@/lib/institutionContractsClient'
 import type { AdmissionOptionId } from '../GraduationVestibularPage'
 import type { GraduationOfferRow } from '../graduationOffer'
 
@@ -40,7 +44,38 @@ export function GraduationEnrollmentOfferStep({
 }: Props) {
   const [hasAcceptedContract, setHasAcceptedContract] = useState(false)
   const [isContractModalOpen, setIsContractModalOpen] = useState(false)
+  const [contractLoading, setContractLoading] = useState(false)
+  const [contractError, setContractError] = useState('')
+  const [contractContent, setContractContent] = useState<InstitutionContractPayload | null>(null)
   const optionTitle = useMemo(() => getOptionTitle(admissionOptionId), [admissionOptionId])
+
+  async function loadContract() {
+    setContractLoading(true)
+    setContractError('')
+
+    try {
+      const nextContract = await fetchInstitutionContract('graduation')
+      setContractContent(nextContract)
+    } catch (error) {
+      setContractContent(null)
+      setContractError(
+        error instanceof Error
+          ? error.message
+          : 'Não foi possível carregar o contrato agora. Tente novamente em instantes.',
+      )
+    } finally {
+      setContractLoading(false)
+    }
+  }
+
+  function openContractModal() {
+    setIsContractModalOpen(true)
+
+    if (contractLoading) return
+    if (contractContent || contractError) return
+
+    void loadContract()
+  }
 
   async function handleFinish() {
     if (!hasAcceptedContract) {
@@ -103,7 +138,7 @@ export function GraduationEnrollmentOfferStep({
               <button
                 type="button"
                 className="vestibular-offer__contract-link"
-                onClick={() => setIsContractModalOpen(true)}
+                onClick={openContractModal}
               >
                 contrato de prestação de serviços educacionais
               </button>{' '}
@@ -141,7 +176,9 @@ export function GraduationEnrollmentOfferStep({
             onClick={(event) => event.stopPropagation()}
           >
             <div className="vestibular-offer__modal-header">
-              <h3 id="vestibular-contract-title">Contrato de prestação de serviços educacionais</h3>
+              <h3 id="vestibular-contract-title">
+                {contractContent?.title || 'Contrato de prestação de serviços educacionais'}
+              </h3>
               <button
                 type="button"
                 className="vestibular-offer__modal-close"
@@ -153,14 +190,28 @@ export function GraduationEnrollmentOfferStep({
             </div>
 
             <div className="vestibular-offer__modal-body">
-              <p>
-                Este é um conteúdo mockado do contrato. O texto definitivo será carregado
-                dinamicamente conforme a instituição responsável pelo curso.
-              </p>
-              <p>
-                Nesta etapa, o modal já está pronto para exibir título, descrição e conteúdo
-                completo assim que a API estiver disponível.
-              </p>
+              {contractLoading ? (
+                <div className="vestibular-offer__modal-state">
+                  <LoaderCircle size={20} className="is-spinning" />
+                  <span>Carregando contrato...</span>
+                </div>
+              ) : contractError ? (
+                <div className="vestibular-offer__modal-state is-error">
+                  <p>{contractError}</p>
+                  <button type="button" onClick={() => void loadContract()}>
+                    Tentar novamente
+                  </button>
+                </div>
+              ) : contractContent?.html ? (
+                <div
+                  className="vestibular-offer__modal-content"
+                  dangerouslySetInnerHTML={{ __html: contractContent.html }}
+                />
+              ) : (
+                <div className="vestibular-offer__modal-content is-text">
+                  {contractContent?.text || 'Contrato não encontrado para a instituição informada.'}
+                </div>
+              )}
             </div>
 
             <div className="vestibular-offer__modal-footer">

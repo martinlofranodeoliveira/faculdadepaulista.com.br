@@ -1461,7 +1461,7 @@ export function CourseLeadForm({
     )
 
     if (!refreshedOption) {
-      throw new Error('N\u00e3o foi poss\u00edvel retomar esta inscri\u00e7\u00e3o agora.')
+      throw new Error('Não foi possível retomar esta inscrição agora.')
     }
 
     refreshedOption.displayTitle = option.displayTitle
@@ -1529,7 +1529,7 @@ export function CourseLeadForm({
 
     const nextErrors: ResumeFieldErrors = {
       email: validateEmail(resumeEmail),
-      agreement: resumeAgreementAccepted ? undefined : 'Voc\u00ea precisa aceitar os termos para continuar.',
+      agreement: resumeAgreementAccepted ? undefined : 'Você precisa aceitar os termos para continuar.',
     }
     setResumeErrors(nextErrors)
     setResumeMessage('')

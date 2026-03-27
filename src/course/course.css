@@ -120,19 +120,21 @@
 }
 
 .course-page__grad-highlights {
-  align-items: center;
+  align-items: stretch;
   background: transparent;
   border-radius: 0;
-  display: flex;
+  display: grid;
   gap: 20px;
-  justify-content: space-between;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   padding: 0;
 }
 
 .course-page__grad-highlight-item {
   align-items: center;
   display: flex;
+  min-width: 0;
   gap: 10px;
+  width: 100%;
 }
 
 .course-page__grad-highlight-icon-wrap {
@@ -156,6 +158,7 @@
   color: #070707;
   display: grid;
   gap: 5px;
+  min-width: 0;
 }
 
 .course-page__grad-highlight-copy strong {

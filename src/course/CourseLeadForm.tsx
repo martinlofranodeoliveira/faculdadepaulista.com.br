@@ -10,7 +10,7 @@ import {
   type JourneyPendingItem,
   type JourneySnapshot,
 } from '@/lib/journeyClient'
-import { getCoursePath } from '@/lib/courseRoutes'
+import { getCoursePath, normalizeComparableText } from '@/lib/courseRoutes'
 import { readStoredUtmParams, syncUtmParamsFromUrl } from '@/lib/utm'
 
 import {
@@ -87,6 +87,13 @@ type PoleCityOption = {
   id: number
   name: string
 }
+
+type CustomSelectOption = {
+  value: string
+  label: string
+}
+
+const SYNTHETIC_GRADUATION_POLE_VALUE = '__synthetic_city_pole__'
 
 type ResumeMode = 'default' | 'lookup' | 'select'
 
@@ -178,6 +185,105 @@ function normalizeName(value: string): string {
   return value.replace(/\s+/g, ' ').replace(/^\s+/, '')
 }
 
+function formatPoleOptionLabel(value: string): string {
+  const normalized = value.trim()
+  if (!normalized) return ''
+  return /^polo\b/i.test(normalized) ? normalized : `Polo ${normalized}`
+}
+
+type CourseFormSelectProps = {
+  value: string
+  options: CustomSelectOption[]
+  placeholder: string
+  menuLabel: string
+  disabled?: boolean
+  invalid?: boolean
+  onChange: (value: string) => void
+}
+
+function CourseFormSelect({
+  value,
+  options,
+  placeholder,
+  menuLabel,
+  disabled = false,
+  invalid = false,
+  onChange,
+}: CourseFormSelectProps) {
+  const [open, setOpen] = useState(false)
+
+  const selectedOption = options.find((option) => option.value === value)
+  const displayLabel = selectedOption?.label || placeholder
+
+  return (
+    <div
+      className={`course-lead-form__field course-lead-form__field--select course-lead-form__field--custom-select ${
+        invalid ? 'is-invalid' : ''
+      } ${disabled ? 'is-disabled' : ''}`}
+      onBlur={(event) => {
+        if (event.currentTarget.contains(event.relatedTarget as Node | null)) return
+        setOpen(false)
+      }}
+    >
+      <div className="course-lead-form__select-wrapper">
+        <button
+          type="button"
+          className={`course-lead-form__select-trigger ${!selectedOption ? 'is-placeholder' : ''}`}
+          aria-label={menuLabel}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-invalid={invalid}
+          disabled={disabled}
+          onClick={() => {
+            if (disabled) return
+            setOpen((current) => !current)
+          }}
+          onKeyDown={(event) => {
+            if (disabled) return
+
+            if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              setOpen(true)
+            }
+
+            if (event.key === 'Escape') {
+              setOpen(false)
+            }
+          }}
+        >
+          <span className="course-lead-form__select-trigger-text">{displayLabel}</span>
+          <span className="course-lead-form__select-trigger-icon" aria-hidden="true">
+            <ChevronDown size={18} strokeWidth={2} />
+          </span>
+        </button>
+
+        {open && !disabled ? (
+          <div className="course-lead-form__select-content" role="listbox" aria-label={menuLabel}>
+            {options.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                role="option"
+                aria-selected={value === option.value}
+                className={`course-lead-form__select-option ${
+                  value === option.value ? 'is-selected' : ''
+                }`}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  onChange(option.value)
+                  setOpen(false)
+                }}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
 function validateFullName(value: string): string | undefined {
   const normalized = value.trim()
   if (!normalized) return 'Informe seu nome completo.'
@@ -208,8 +314,8 @@ function validateCpf(value: string): string | undefined {
   if (!rawDigits) return 'Informe seu CPF.'
 
   const digits = rawDigits.padStart(11, '0')
-  if (digits.length !== 11) return 'Digite um CPF v?lido.'
-  if (/^(\d)\1{10}$/.test(digits)) return 'Digite um CPF v?lido.'
+  if (digits.length !== 11) return 'Digite um CPF válido.'
+  if (/^(\d)\1{10}$/.test(digits)) return 'Digite um CPF válido.'
 
   for (let t = 9; t < 11; t += 1) {
     let d = 0
@@ -221,7 +327,7 @@ function validateCpf(value: string): string | undefined {
     d = ((10 * d) % 11) % 10
 
     if (Number.parseInt(digits[t] ?? '0', 10) !== d) {
-      return 'Digite um CPF v?lido.'
+      return 'Digite um CPF válido.'
     }
   }
 
@@ -562,6 +668,92 @@ export function CourseLeadForm({
     return poleOptions.find((pole) => pole.id === normalizedPoleId)
   }, [graduationPoleId, poleOptions])
 
+  const resumeCourseSelectOptions = useMemo<CustomSelectOption[]>(
+    () =>
+      resumeOptions.map((option) => ({
+        value: String(option.journeyId),
+        label: option.displayTitle,
+      })),
+    [resumeOptions],
+  )
+
+  const workloadSelectOptions = useMemo<CustomSelectOption[]>(
+    () =>
+      workloadOptions.map((option) => ({
+        value: option,
+        label: option,
+      })),
+    [workloadOptions],
+  )
+
+  const paymentPlanSelectOptions = useMemo<CustomSelectOption[]>(
+    () =>
+      visiblePaymentPlanOptions.map((option) => ({
+        value: option,
+        label: option,
+      })),
+    [visiblePaymentPlanOptions],
+  )
+
+  const graduationStateSelectOptions = useMemo<CustomSelectOption[]>(
+    () =>
+      graduationStateOptions.map((option) => ({
+        value: String(option.id),
+        label: option.stateUf,
+      })),
+    [graduationStateOptions],
+  )
+
+  const graduationCitySelectOptions = useMemo<CustomSelectOption[]>(
+    () =>
+      graduationCityOptions.map((option) => ({
+        value: String(option.id),
+        label: option.name,
+      })),
+    [graduationCityOptions],
+  )
+
+  const graduationPoleSelectOptions = useMemo<CustomSelectOption[]>(
+    () => {
+      if (poleOptions.length > 0) {
+        return poleOptions.map((option) => ({
+          value: String(option.id),
+          label: formatPoleOptionLabel(option.name),
+        }))
+      }
+
+      if (!graduationCityId || !graduationCity) return []
+
+      return [
+        {
+          value: SYNTHETIC_GRADUATION_POLE_VALUE,
+          label: formatPoleOptionLabel(graduationCity),
+        },
+      ]
+    },
+    [graduationCity, graduationCityId, poleOptions],
+  )
+
+  const graduationPcdSelectOptions = useMemo<CustomSelectOption[]>(
+    () => [
+      { value: 'nao', label: 'Não' },
+      { value: 'sim', label: 'Sim' },
+    ],
+    [],
+  )
+
+  const hasSyntheticOnlyPoleOption = useMemo(() => {
+    if (poleOptions.length !== 1 || !graduationCity) return false
+    return normalizeComparableText(poleOptions[0]?.name ?? '') === normalizeComparableText(graduationCity)
+  }, [graduationCity, poleOptions])
+
+  const shouldSendSelectedGraduationPole = useMemo(() => {
+    if (!selectedGraduationPole || !graduationCity) return false
+    return (
+      normalizeComparableText(selectedGraduationPole.name) !== normalizeComparableText(graduationCity)
+    )
+  }, [graduationCity, selectedGraduationPole])
+
   const hydrateResumeIntoCurrentCourse = (progress: StoredJourneyProgress) => {
     if (progress.fullName) setFullName(progress.fullName)
     if (progress.email) setEmail(progress.email)
@@ -833,6 +1025,21 @@ export function CourseLeadForm({
   }, [courseType, graduationCityId])
 
   useEffect(() => {
+    if (courseType !== 'graduacao' || !graduationCityId || polesLoading) return
+
+    if (poleOptions.length > 0) {
+      if (graduationPoleId === SYNTHETIC_GRADUATION_POLE_VALUE) {
+        setGraduationPoleId('')
+      }
+      return
+    }
+
+    if (graduationPoleId !== SYNTHETIC_GRADUATION_POLE_VALUE) {
+      setGraduationPoleId(SYNTHETIC_GRADUATION_POLE_VALUE)
+    }
+  }, [courseType, graduationCityId, graduationPoleId, poleOptions, polesLoading])
+
+  useEffect(() => {
     if (courseType !== 'graduacao') return
     if (!graduationPoleId || !poleOptions.length) return
 
@@ -919,7 +1126,12 @@ export function CourseLeadForm({
         cpf: validateCpf(cpf),
         stateUf: graduationStateUf ? undefined : 'Selecione o estado.',
         city: graduationCity ? undefined : 'Selecione a cidade.',
-        poleId: graduationPoleId ? undefined : 'Selecione o polo.',
+        poleId:
+          polesLoading
+            ? 'Aguarde carregar os polos.'
+            : !hasSyntheticOnlyPoleOption && poleOptions.length > 0 && !graduationPoleId
+              ? 'Selecione o polo.'
+              : undefined,
         pcd: graduationPcd ? undefined : 'Informe se você é portador de necessidades.',
         pcdDetails:
           needsDetailsRequired && !graduationPcdDetails.trim()
@@ -1471,23 +1683,27 @@ export function CourseLeadForm({
         normalizedGraduationCpf &&
         graduationStateUf &&
         graduationCity &&
-        selectedGraduationPole &&
         typeof graduationPcdValue === 'boolean'
       ) {
         try {
-          const step2Response = await updateJourneyStep2(ensuredJourneyId, {
+          const step2Payload: Record<string, string | number | boolean | null> = {
             cpf: normalizedGraduationCpf,
             estado: graduationStateUf,
             cidade: graduationCity,
-            polo: selectedGraduationPole.name,
-            pole_id: selectedGraduationPole.id,
             pcd: graduationPcdValue,
             quais_necessidades:
               graduationPcdValue && graduationPcdDetails.trim()
                 ? graduationPcdDetails.trim()
                 : null,
             voucher_code: voucherCode.trim() || null,
-          })
+          }
+
+          if (selectedGraduationPole && shouldSendSelectedGraduationPole) {
+            step2Payload.polo = selectedGraduationPole.name
+            step2Payload.pole_id = selectedGraduationPole.id
+          }
+
+          const step2Response = await updateJourneyStep2(ensuredJourneyId, step2Payload)
 
           saveJourneyProgress({
             journeyId: ensuredJourneyId,
@@ -1501,8 +1717,8 @@ export function CourseLeadForm({
             cpf: normalizedGraduationCpf,
             stateUf: graduationStateUf,
             city: graduationCity,
-            poleId: selectedGraduationPole.id,
-            poleName: selectedGraduationPole.name,
+            poleId: shouldSendSelectedGraduationPole ? selectedGraduationPole?.id : undefined,
+            poleName: shouldSendSelectedGraduationPole ? selectedGraduationPole?.name : undefined,
             pcd: graduationPcdValue,
             pcdDetails:
               graduationPcdValue && graduationPcdDetails.trim()
@@ -1529,8 +1745,8 @@ export function CourseLeadForm({
         cpf: normalizedGraduationCpf || undefined,
         stateUf: graduationStateUf || undefined,
         city: graduationCity || undefined,
-        poleId: selectedGraduationPole?.id,
-        poleName: selectedGraduationPole?.name,
+        poleId: shouldSendSelectedGraduationPole ? selectedGraduationPole?.id : undefined,
+        poleName: shouldSendSelectedGraduationPole ? selectedGraduationPole?.name : undefined,
         pcd: graduationPcdValue,
         pcdDetails:
           graduationPcdValue && graduationPcdDetails.trim()
@@ -1646,21 +1862,14 @@ export function CourseLeadForm({
             </>
           ) : (
             <div className="course-lead-form__field-stack">
-              <label
-                className={`course-lead-form__field course-lead-form__field--select ${resumeErrors.courseId ? 'is-invalid' : ''}`}
-              >
-                <select
-                  value={selectedResumeJourneyId}
-                  onChange={(event) => setSelectedResumeJourneyId(event.target.value)}
-                >
-                  {resumeOptions.map((option) => (
-                    <option key={option.journeyId} value={String(option.journeyId)}>
-                      {option.displayTitle}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown size={18} strokeWidth={2} />
-              </label>
+              <CourseFormSelect
+                value={selectedResumeJourneyId}
+                options={resumeCourseSelectOptions}
+                placeholder="Selecione o curso"
+                menuLabel="Selecione o curso"
+                invalid={Boolean(resumeErrors.courseId)}
+                onChange={setSelectedResumeJourneyId}
+              />
               {resumeErrors.courseId ? <p className="course-lead-form__error">{resumeErrors.courseId}</p> : null}
             </div>
           )}
@@ -1782,16 +1991,13 @@ export function CourseLeadForm({
 
             {courseType === 'pos' ? (
               <>
-                <label className="course-lead-form__field course-lead-form__field--select">
-                  <select value={workload} onChange={(event) => setWorkload(event.target.value)}>
-                    {workloadOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown size={18} strokeWidth={2} />
-                </label>
+                <CourseFormSelect
+                  value={workload}
+                  options={workloadSelectOptions}
+                  placeholder="Carga horária"
+                  menuLabel="Selecione a carga horária"
+                  onChange={setWorkload}
+                />
 
                 <div className="course-lead-form__voucher-toggle">
                   <button type="button" onClick={() => setVoucherOpen((current) => !current)}>
@@ -1871,16 +2077,13 @@ export function CourseLeadForm({
                   {errors.cpf ? <p className="course-lead-form__error">{errors.cpf}</p> : null}
                 </div>
 
-                <label className="course-lead-form__field course-lead-form__field--select">
-                  <select value={paymentPlan} onChange={(event) => setPaymentPlan(event.target.value)}>
-                    {visiblePaymentPlanOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown size={18} strokeWidth={2} />
-                </label>
+                <CourseFormSelect
+                  value={paymentPlan}
+                  options={paymentPlanSelectOptions}
+                  placeholder="Plano de pagamento"
+                  menuLabel="Selecione o plano de pagamento"
+                  onChange={setPaymentPlan}
+                />
 
                 <div className="course-lead-form__voucher-toggle">
                   <button type="button" onClick={() => setVoucherOpen((current) => !current)}>
@@ -1923,83 +2126,63 @@ export function CourseLeadForm({
               <>
                 <div className="course-lead-form__field-row course-lead-form__field-row--graduation-location">
                   <div className="course-lead-form__field-stack">
-                    <label className={`course-lead-form__field course-lead-form__field--select ${errors.stateUf ? 'is-invalid' : ''}`}>
-                      <select
-                        value={graduationStateId}
-                        onChange={(event) => {
-                          const nextStateId = event.target.value
-                          const nextState = graduationStateOptions.find(
-                            (option) => String(option.id) === nextStateId,
-                          )
+                    <CourseFormSelect
+                      value={graduationStateId}
+                      options={graduationStateSelectOptions}
+                      placeholder={polesLoading ? 'Carregando...' : 'Estado'}
+                      menuLabel="Selecione o estado"
+                      disabled={polesLoading || !graduationStateSelectOptions.length}
+                      invalid={Boolean(errors.stateUf)}
+                      onChange={(nextStateId) => {
+                        const nextState = graduationStateOptions.find(
+                          (option) => String(option.id) === nextStateId,
+                        )
 
-                          setGraduationStateId(nextStateId)
-                          setGraduationStateUf(nextState?.stateUf ?? '')
-                          setGraduationCityId('')
-                          setGraduationCity('')
-                          setGraduationCityOptions([])
-                          setGraduationPoleId('')
-                          setPoleOptions([])
-                        }}
-                        disabled={polesLoading || !graduationStateOptions.length}
-                      >
-                        <option value="">{polesLoading ? 'Carregando...' : 'Estado'}</option>
-                        {graduationStateOptions.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {option.stateUf}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown size={18} strokeWidth={2} />
-                    </label>
+                        setGraduationStateId(nextStateId)
+                        setGraduationStateUf(nextState?.stateUf ?? '')
+                        setGraduationCityId('')
+                        setGraduationCity('')
+                        setGraduationCityOptions([])
+                        setGraduationPoleId('')
+                        setPoleOptions([])
+                      }}
+                    />
                     {errors.stateUf ? <p className="course-lead-form__error">{errors.stateUf}</p> : null}
                   </div>
 
                   <div className="course-lead-form__field-stack">
-                    <label className={`course-lead-form__field course-lead-form__field--select ${errors.city ? 'is-invalid' : ''}`}>
-                      <select
-                        value={graduationCityId}
-                        onChange={(event) => {
-                          const nextCityId = event.target.value
-                          const nextCity = graduationCityOptions.find(
-                            (option) => String(option.id) === nextCityId,
-                          )
+                    <CourseFormSelect
+                      value={graduationCityId}
+                      options={graduationCitySelectOptions}
+                      placeholder={polesLoading ? 'Carregando...' : 'Cidade'}
+                      menuLabel="Selecione a cidade"
+                      disabled={polesLoading || !graduationStateId || !graduationCitySelectOptions.length}
+                      invalid={Boolean(errors.city)}
+                      onChange={(nextCityId) => {
+                        const nextCity = graduationCityOptions.find(
+                          (option) => String(option.id) === nextCityId,
+                        )
 
-                          setGraduationCityId(nextCityId)
-                          setGraduationCity(nextCity?.name ?? '')
-                          setGraduationPoleId('')
-                          setPoleOptions([])
-                        }}
-                        disabled={polesLoading || !graduationStateId || !graduationCityOptions.length}
-                      >
-                        <option value="">{polesLoading ? 'Carregando...' : 'Cidade'}</option>
-                        {graduationCityOptions.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {option.name}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown size={18} strokeWidth={2} />
-                    </label>
+                        setGraduationCityId(nextCityId)
+                        setGraduationCity(nextCity?.name ?? '')
+                        setGraduationPoleId('')
+                        setPoleOptions([])
+                      }}
+                    />
                     {errors.city ? <p className="course-lead-form__error">{errors.city}</p> : null}
                   </div>
                 </div>
 
                 <div className="course-lead-form__field-stack">
-                  <label className={`course-lead-form__field course-lead-form__field--select ${errors.poleId ? 'is-invalid' : ''}`}>
-                    <select
-                      value={graduationPoleId}
-                      onChange={(event) => setGraduationPoleId(event.target.value)}
-                      disabled={polesLoading || !graduationCityId || !poleOptions.length}
-                    >
-                      <option value="">{polesLoading ? 'Carregando...' : 'Polo'}</option>
-                      {poleOptions.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown size={18} strokeWidth={2} />
-                  </label>
+                  <CourseFormSelect
+                    value={graduationPoleId}
+                    options={graduationPoleSelectOptions}
+                    placeholder={polesLoading ? 'Carregando...' : 'Polo'}
+                    menuLabel="Selecione o polo"
+                    disabled={polesLoading || !graduationCityId || !graduationPoleSelectOptions.length}
+                    invalid={Boolean(errors.poleId)}
+                    onChange={setGraduationPoleId}
+                  />
                   {errors.poleId ? <p className="course-lead-form__error">{errors.poleId}</p> : null}
                 </div>
 
@@ -2021,14 +2204,14 @@ export function CourseLeadForm({
 
                 <div className="course-lead-form__field-row course-lead-form__field-row--graduation-needs">
                   <div className="course-lead-form__field-stack">
-                    <label className={`course-lead-form__field course-lead-form__field--select ${errors.pcd ? 'is-invalid' : ''}`}>
-                      <select value={graduationPcd} onChange={(event) => setGraduationPcd(event.target.value)}>
-                        <option value="">Portador de necessidades</option>
-                        <option value="nao">Não</option>
-                        <option value="sim">Sim</option>
-                      </select>
-                      <ChevronDown size={18} strokeWidth={2} />
-                    </label>
+                    <CourseFormSelect
+                      value={graduationPcd}
+                      options={graduationPcdSelectOptions}
+                      placeholder="Portador de necessidades"
+                      menuLabel="Selecione se ? portador de necessidades"
+                      invalid={Boolean(errors.pcd)}
+                      onChange={setGraduationPcd}
+                    />
                     {errors.pcd ? <p className="course-lead-form__error">{errors.pcd}</p> : null}
                   </div>
 

@@ -331,42 +331,16 @@
   grid-template-columns: minmax(0, 1fr);
 }
 
-.course-page__regulation-mec-card {
-  align-self: start;
-  align-items: center;
-  background: #fff;
-  border: 1px solid #0163a9;
-  border-radius: 12px;
-  display: grid;
-  gap: 14px;
-  grid-template-columns: 76px minmax(0, 1fr);
-  min-height: 0;
-  padding: 12px 16px;
+.course-page__regulation-mec-link {
+  display: inline-block;
   width: min(100%, 283px);
 }
 
-.course-page__regulation-mec-qr {
+.course-page__regulation-mec-card {
+  align-self: start;
   display: block;
   height: auto;
-  width: 76px;
-}
-
-.course-page__regulation-mec-copy {
-  display: grid;
-  gap: 8px;
-}
-
-.course-page__regulation-mec-copy strong {
-  color: #0c60a6;
-  font: 800 17.563px/1.12 'Kumbh Sans', sans-serif;
-  letter-spacing: -0.02em;
-}
-
-.course-page__regulation-mec-copy span {
-  color: #0c60a6;
-  font: 800 12px/1 'Kumbh Sans', sans-serif;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  width: min(100%, 283px);
 }
 
 .course-page__fact-item {
@@ -3494,19 +3468,7 @@
   }
 
   .course-page__regulation-mec-card {
-    gap: 12px;
-    grid-template-columns: 64px minmax(0, 1fr);
-    min-height: 88px;
-    padding: 12px 14px;
     width: 100%;
-  }
-
-  .course-page__regulation-mec-qr {
-    width: 64px;
-  }
-
-  .course-page__regulation-mec-copy strong {
-    font-size: 15px;
   }
 
   .course-page__fact-icon-svg {
@@ -3835,14 +3797,6 @@
   .course-page__regulation-copy {
     font-size: 13px;
     line-height: 1.45;
-  }
-
-  .course-page__regulation-mec-copy strong {
-    font-size: 14px;
-  }
-
-  .course-page__regulation-mec-copy span {
-    font-size: 11px;
   }
 
   .course-page__curriculum,

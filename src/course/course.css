@@ -328,7 +328,7 @@
   align-items: start;
   display: grid;
   gap: 15px;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .course-page__regulation-mec-card {

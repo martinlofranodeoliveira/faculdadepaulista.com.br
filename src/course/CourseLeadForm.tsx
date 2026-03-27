@@ -448,7 +448,7 @@ async function fetchPoleStates(): Promise<PoleStateOption[]> {
     | null
 
   if (!response.ok) {
-    throw new Error(payload?.message || 'N?o foi poss?vel carregar os estados agora.')
+    throw new Error(payload?.message || 'Não foi possível carregar os estados agora.')
   }
 
   return Array.isArray(payload?.data?.items) ? payload.data.items : []
@@ -461,7 +461,7 @@ async function fetchPoleCities(stateId: number): Promise<PoleCityOption[]> {
     | null
 
   if (!response.ok) {
-    throw new Error(payload?.message || 'N?o foi poss?vel carregar as cidades agora.')
+    throw new Error(payload?.message || 'Não foi possível carregar as cidades agora.')
   }
 
   return Array.isArray(payload?.data?.items) ? payload.data.items : []
@@ -474,7 +474,7 @@ async function fetchPolesByCity(cityId: number): Promise<PoleOption[]> {
     | null
 
   if (!response.ok) {
-    throw new Error(payload?.message || 'N?o foi poss?vel carregar os polos agora.')
+    throw new Error(payload?.message || 'Não foi possível carregar os polos agora.')
   }
 
   return Array.isArray(payload?.data?.items) ? payload.data.items : []
@@ -944,7 +944,7 @@ export function CourseLeadForm({
         setPolesMessage(
           error instanceof Error
             ? error.message
-            : 'N?o foi poss?vel carregar os estados agora. Tente novamente em instantes.',
+            : 'Não foi possível carregar os estados agora. Tente novamente em instantes.',
         )
       } finally {
         if (!cancelled) setPolesLoading(false)
@@ -1003,7 +1003,7 @@ export function CourseLeadForm({
         setPolesMessage(
           error instanceof Error
             ? error.message
-            : 'N?o foi poss?vel carregar as cidades agora. Tente novamente em instantes.',
+            : 'Não foi possível carregar as cidades agora. Tente novamente em instantes.',
         )
       } finally {
         if (!cancelled) setPolesLoading(false)
@@ -1054,7 +1054,7 @@ export function CourseLeadForm({
         setPolesMessage(
           error instanceof Error
             ? error.message
-            : 'N?o foi poss?vel carregar os polos agora. Tente novamente em instantes.',
+            : 'Não foi possível carregar os polos agora. Tente novamente em instantes.',
         )
       } finally {
         if (!cancelled) setPolesLoading(false)
@@ -1206,7 +1206,7 @@ export function CourseLeadForm({
     const poloId = parseEnvInteger(import.meta.env.VITE_CRM_POLO, 4658)
     const normalizedCpf = normalizeCpf(cpf)
     const graduationPcdValue =
-      graduationPcd === 'sim' ? 'Sim' : graduationPcd === 'nao' ? 'N?o' : 'n?o informado'
+      graduationPcd === 'sim' ? 'Sim' : graduationPcd === 'nao' ? 'Não' : 'não informado'
     const etapa =
       courseType === 'pos'
         ? stage === 'lead'
@@ -1219,11 +1219,11 @@ export function CourseLeadForm({
     const observacao =
       courseType === 'pos'
         ? stage === 'lead'
-          ? `P?S-GRADUA??O: P?gina do curso Faculdade Paulista | Lead captado | Voucher: ${voucherCode.trim() || 'n?o informado'}`
-          : `P?S-GRADUA??O: P?gina do curso Faculdade Paulista | Inscrito | CPF: ${normalizedCpf || 'n?o informado'} | Plano: ${paymentPlan || 'n?o informado'} | Carga hor?ria: ${workload || 'n?o informada'} | Voucher: ${voucherCode.trim() || 'n?o informado'}`
+          ? `PÓS-GRADUAÇÃO: Página do curso Faculdade Paulista | Lead captado | Voucher: ${voucherCode.trim() || 'não informado'}`
+          : `PÓS-GRADUAÇÃO: Página do curso Faculdade Paulista | Inscrito | CPF: ${normalizedCpf || 'não informado'} | Plano: ${paymentPlan || 'não informado'} | Carga horária: ${workload || 'não informada'} | Voucher: ${voucherCode.trim() || 'não informado'}`
         : stage === 'lead'
-          ? `GRADUA??O: P?gina do curso Faculdade Paulista | Lead captado | Voucher: ${voucherCode.trim() || 'n?o informado'}`
-          : `GRADUA??O: P?gina do curso Faculdade Paulista | Inscrito | CPF: ${normalizedCpf || 'n?o informado'} | Estado: ${graduationStateUf || 'n?o informado'} | Cidade: ${graduationCity || 'n?o informada'} | Polo: ${shouldSendSelectedGraduationPole ? selectedGraduationPole?.name || 'n?o informado' : 'sem polo'} | PCD: ${graduationPcdValue}${graduationPcd === 'sim' && graduationPcdDetails.trim() ? ` | Detalhes PCD: ${graduationPcdDetails.trim()}` : ''} | Voucher: ${voucherCode.trim() || 'n?o informado'}`
+          ? `GRADUAÇÃO: Página do curso Faculdade Paulista | Lead captado | Voucher: ${voucherCode.trim() || 'não informado'}`
+          : `GRADUAÇÃO: Página do curso Faculdade Paulista | Inscrito | CPF: ${normalizedCpf || 'não informado'} | Estado: ${graduationStateUf || 'não informado'} | Cidade: ${graduationCity || 'não informada'} | Polo: ${shouldSendSelectedGraduationPole ? selectedGraduationPole?.name || 'não informado' : 'sem polo'} | PCD: ${graduationPcdValue}${graduationPcd === 'sim' && graduationPcdDetails.trim() ? ` | Detalhes PCD: ${graduationPcdDetails.trim()}` : ''} | Voucher: ${voucherCode.trim() || 'não informado'}`
 
     const payload = {
       aluno: 0,
@@ -2352,7 +2352,7 @@ export function CourseLeadForm({
                       value={graduationPcd}
                       options={graduationPcdSelectOptions}
                       placeholder="Portador de necessidades"
-                      menuLabel="Selecione se ? portador de necessidades"
+                      menuLabel="Selecione se é portador de necessidades"
                       invalid={Boolean(errors.pcd)}
                       onChange={setGraduationPcd}
                     />

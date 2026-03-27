@@ -9,6 +9,8 @@ interface ImportMetaEnv {
   readonly VITE_CRM_EMPRESA?: string
   readonly VITE_CRM_ETAPA_GRAD?: string
   readonly VITE_CRM_ETAPA_POS?: string
+  readonly VITE_CRM_ETAPA_INSCRITO_GRAD?: string
+  readonly VITE_CRM_ETAPA_INSCRITO_POS?: string
   readonly VITE_CRM_FUNIL_GRAD?: string
   readonly VITE_CRM_FUNIL_POS?: string
   readonly VITE_CRM_STATUS_LEAD?: string

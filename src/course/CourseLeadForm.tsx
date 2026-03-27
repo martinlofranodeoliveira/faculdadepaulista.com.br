@@ -644,7 +644,8 @@ export function CourseLeadForm({
   const [advanceLoading, setAdvanceLoading] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle')
   const [submitMessage, setSubmitMessage] = useState('')
-  const [crmSubmitted, setCrmSubmitted] = useState(leadSubmitted)
+  const [crmLeadSubmitted, setCrmLeadSubmitted] = useState(leadSubmitted)
+  const [crmInscritoSubmitted, setCrmInscritoSubmitted] = useState(false)
   const [resumeMode, setResumeMode] = useState<ResumeMode>('default')
   const [resumeEmail, setResumeEmail] = useState('')
   const [resumeAgreementAccepted, setResumeAgreementAccepted] = useState(false)
@@ -1187,19 +1188,42 @@ export function CourseLeadForm({
     }
   }
 
-  const submitLeadToCrm = async () => {
-    if (crmSubmitted) return
+  const submitCrmStage = async (stage: 'lead' | 'inscrito') => {
+    if (stage === 'lead' && crmLeadSubmitted) return
+    if (stage === 'inscrito' && crmInscritoSubmitted) return
 
     const trackedFromUrl = syncUtmParamsFromUrl(window.location.search)
     const storedTrackingParams = readStoredUtmParams()
     const trackingParams = { ...storedTrackingParams, ...trackedFromUrl }
     const empresaId = parseEnvInteger(import.meta.env.VITE_CRM_EMPRESA, 9)
-    const etapaGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 78)
-    const etapaPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_POS, 78)
+    const etapaLeadGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_GRAD, 78)
+    const etapaLeadPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_POS, 78)
+    const etapaInscritoGrad = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_INSCRITO_GRAD, 79)
+    const etapaInscritoPos = parseEnvInteger(import.meta.env.VITE_CRM_ETAPA_INSCRITO_POS, 79)
     const funilGrad = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_GRAD, 6)
     const funilPos = parseEnvInteger(import.meta.env.VITE_CRM_FUNIL_POS, 6)
     const statusLead = parseEnvInteger(import.meta.env.VITE_CRM_STATUS_LEAD, 1)
     const poloId = parseEnvInteger(import.meta.env.VITE_CRM_POLO, 4658)
+    const normalizedCpf = normalizeCpf(cpf)
+    const graduationPcdValue =
+      graduationPcd === 'sim' ? 'Sim' : graduationPcd === 'nao' ? 'N?o' : 'n?o informado'
+    const etapa =
+      courseType === 'pos'
+        ? stage === 'lead'
+          ? etapaLeadPos
+          : etapaInscritoPos
+        : stage === 'lead'
+          ? etapaLeadGrad
+          : etapaInscritoGrad
+
+    const observacao =
+      courseType === 'pos'
+        ? stage === 'lead'
+          ? `P?S-GRADUA??O: P?gina do curso Faculdade Paulista | Lead captado | Voucher: ${voucherCode.trim() || 'n?o informado'}`
+          : `P?S-GRADUA??O: P?gina do curso Faculdade Paulista | Inscrito | CPF: ${normalizedCpf || 'n?o informado'} | Plano: ${paymentPlan || 'n?o informado'} | Carga hor?ria: ${workload || 'n?o informada'} | Voucher: ${voucherCode.trim() || 'n?o informado'}`
+        : stage === 'lead'
+          ? `GRADUA??O: P?gina do curso Faculdade Paulista | Lead captado | Voucher: ${voucherCode.trim() || 'n?o informado'}`
+          : `GRADUA??O: P?gina do curso Faculdade Paulista | Inscrito | CPF: ${normalizedCpf || 'n?o informado'} | Estado: ${graduationStateUf || 'n?o informado'} | Cidade: ${graduationCity || 'n?o informada'} | Polo: ${shouldSendSelectedGraduationPole ? selectedGraduationPole?.name || 'n?o informado' : 'sem polo'} | PCD: ${graduationPcdValue}${graduationPcd === 'sim' && graduationPcdDetails.trim() ? ` | Detalhes PCD: ${graduationPcdDetails.trim()}` : ''} | Voucher: ${voucherCode.trim() || 'n?o informado'}`
 
     const payload = {
       aluno: 0,
@@ -1210,15 +1234,12 @@ export function CourseLeadForm({
       matricula: '',
       idCurso: courseId ?? 0,
       curso: courseLabel,
-      etapa: courseType === 'pos' ? etapaPos : etapaGrad,
-      cpf: hasSecondStep ? normalizeCpf(cpf) : '',
+      etapa,
+      cpf: stage === 'inscrito' && hasSecondStep ? normalizedCpf : '',
       valor: paymentPlan,
       funil: courseType === 'pos' ? funilPos : funilGrad,
       status: statusLead,
-      observacao:
-        courseType === 'pos'
-          ? `PÓS-GRADUAÇÃO: Página do curso Faculdade Paulista | Plano: ${paymentPlan || 'não informado'} | Carga horária: ${workload || 'não informada'} | Voucher: ${voucherCode.trim() || 'não informado'}`
-          : `GRADUAÇÃO: Página do curso Faculdade Paulista | Voucher: ${voucherCode.trim() || 'não informado'}`,
+      observacao,
       campanha: pickTrackingValue(trackingParams, ['campanha', 'utm_campaign']),
       midia: pickTrackingValue(trackingParams, ['midia', 'utm_medium']),
       fonte:
@@ -1279,7 +1300,12 @@ export function CourseLeadForm({
       throw new Error(`CRM request failed with status ${response.status}`)
     }
 
-    setCrmSubmitted(true)
+    if (stage === 'lead') {
+      setCrmLeadSubmitted(true)
+      return
+    }
+
+    setCrmInscritoSubmitted(true)
   }
 
   const ensureJourneyStep1 = async () => {
@@ -1351,7 +1377,7 @@ export function CourseLeadForm({
 
     try {
       if (!leadSubmitted) {
-        await submitLeadToCrm()
+        await submitCrmStage('lead')
       }
       await ensureJourneyStep1()
       saveCourseLeadDraft({
@@ -1660,7 +1686,7 @@ export function CourseLeadForm({
 
     try {
       if (!leadSubmitted) {
-        await submitLeadToCrm()
+        await submitCrmStage('lead')
       }
 
       const ensuredJourneyId = await ensureJourneyStep1()
@@ -1684,6 +1710,11 @@ export function CourseLeadForm({
         }
 
         const step2Response = await updateJourneyStep2(ensuredJourneyId, step2Payload)
+        try {
+          await submitCrmStage('inscrito')
+        } catch (error) {
+          console.warn('Não foi possível enviar a etapa de inscrito da pós para o CRM:', error)
+        }
         saveJourneyProgress({
           journeyId: ensuredJourneyId,
           courseType,
@@ -1746,6 +1777,11 @@ export function CourseLeadForm({
           }
 
           const step2Response = await updateJourneyStep2(ensuredJourneyId, step2Payload)
+          try {
+            await submitCrmStage('inscrito')
+          } catch (error) {
+            console.warn('Não foi possível enviar a etapa de inscrito da graduação para o CRM:', error)
+          }
 
           saveJourneyProgress({
             journeyId: ensuredJourneyId,

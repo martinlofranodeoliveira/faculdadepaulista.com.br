@@ -1211,6 +1211,8 @@ function buildCatalogCourseSummary(
         },
   ).image
 
+  const seoOgImage = toAbsoluteMediaUrl(seo.ogImageUrl)
+
   return {
     institutionId: institution.id,
     institutionName: institution.name,
@@ -1222,7 +1224,7 @@ function buildCatalogCourseSummary(
     path,
     title,
     rawLabel,
-    image: toAbsoluteMediaUrl(seo.ogImageUrl) || resolvedImage,
+    image: resolvedImage || seoOgImage,
     currentInstallmentPrice,
     currentInstallmentPriceMonthly,
     oldInstallmentPrice: getFallbackOldInstallmentPrice(courseType, modality),
@@ -1421,6 +1423,8 @@ function mapCatalogCourse(
     ? formatFixed18MonthlyLabel(totalPriceCents, courseType === 'pos')
     : fallbackCurrentPrice.monthly
 
+  const seoOgImage = toAbsoluteMediaUrl(seo.ogImageUrl)
+
   return {
     institutionId: institution.id,
     institutionName: institution.name,
@@ -1442,7 +1446,7 @@ function mapCatalogCourse(
     modalityLabel: getPageModalityLabel(modality),
     modalityBadge: getModalityLabel(courseType, modality),
     offeringModalityText: normalizeText(detail?.offering_modality ?? course.offering_modality),
-    image: toAbsoluteMediaUrl(seo.ogImageUrl) || image,
+    image: image || seoOgImage,
     galleryImages,
     posPriceCents: courseType === 'pos' ? totalPriceCents : 0,
     currentInstallmentPrice,

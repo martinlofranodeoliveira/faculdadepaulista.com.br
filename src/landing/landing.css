@@ -3924,6 +3924,11 @@ section[id] {
 }
 
 @media (max-width: 1200px) and (min-width: 1024px) {
+  .lp-header__desktop .lp-shell {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .lp-header__inner {
     gap: 12px;
     min-height: 54px;
@@ -3972,6 +3977,48 @@ section[id] {
     line-height: 18px;
     min-height: 40px;
     padding: 8px 14px;
+  }
+
+  .lp-footer__grid {
+    gap: 28px;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .lp-footer__brand,
+  .lp-footer__location {
+    grid-column: 1 / -1;
+  }
+
+  .lp-footer__map {
+    width: 100%;
+  }
+
+  .lp-contact-channels__inner {
+    align-items: start;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-contact-channels__intro {
+    gap: 16px;
+    grid-column: 1 / -1;
+    justify-items: center;
+    max-width: none;
+    text-align: center;
+  }
+
+  .lp-contact-card {
+    width: 100%;
+  }
+
+  .lp-contact-card--phone .lp-contact-card__item-content,
+  .lp-contact-card--whatsapp .lp-contact-card__item-content {
+    flex: 1 1 auto;
+    max-width: none;
+  }
+
+  .lp-contact-card--whatsapp .lp-contact-card__item,
+  .lp-contact-card__offer {
+    width: 100%;
   }
 }
 

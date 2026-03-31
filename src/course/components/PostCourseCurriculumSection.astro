@@ -24,41 +24,31 @@ const hasDownload = Boolean(initialDownloadHref)
 <section class="course-page__curriculum course-page__curriculum--post" aria-labelledby="course-curriculum-title">
   <div class="course-page__shell course-page__curriculum-shell is-post" data-curriculum-switcher>
     <div class="course-page__curriculum-toolbar">
-      <h2 id="course-curriculum-title">Grade curricular</h2>
-      {
-        hasDownload ? (
-          <a
-            href={initialDownloadHref}
-            download={initialDownloadFilename}
-            class="course-page__curriculum-download"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-curriculum-download
-          >
-            <span class="course-page__download-icon" aria-hidden="true"></span>
-            <span data-download-label>Baixar matriz completa</span>
-          </a>
-        ) : null
-      }
+      <div class="course-page__curriculum-toolbar-main">
+        <h2 id="course-curriculum-title">Grade curricular</h2>
+        {
+          hasCurriculum ? (
+            <div class="course-page__curriculum-pills" aria-label="Cargas horárias disponíveis">
+              {curriculumVariants.map((variant, index) => (
+                <button
+                  type="button"
+                  class={`course-page__curriculum-pill${index === 0 ? ' is-active' : ''}`}
+                  data-curriculum-chip
+                  data-workload-id={variant.id}
+                  aria-pressed={index === 0 ? 'true' : 'false'}
+                >
+                  {variant.chipLabel}
+                </button>
+              ))}
+            </div>
+          ) : null
+        }
+      </div>
     </div>
 
     {
       hasCurriculum ? (
         <>
-          <div class="course-page__curriculum-pills" aria-label="Cargas horárias disponíveis">
-            {curriculumVariants.map((variant, index) => (
-              <button
-                type="button"
-                class={`course-page__curriculum-pill${index === 0 ? ' is-active' : ''}`}
-                data-curriculum-chip
-                data-workload-id={variant.id}
-                aria-pressed={index === 0 ? 'true' : 'false'}
-              >
-                {variant.chipLabel}
-              </button>
-            ))}
-          </div>
-
           <div class="course-page__curriculum-panel">
             <button
               type="button"

@@ -443,6 +443,21 @@
   margin: 12px 0 0;
 }
 
+.course-page__info-card-head {
+  display: block;
+}
+
+.course-page__info-card-head--post {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.course-page__info-card-head--post h2 {
+  color: #fe0000;
+  margin: 0;
+}
+
 .course-page__info-card p {
   color: rgba(11, 17, 31, 0.78);
   font: 400 14px/1.55 'Montserrat', Arial, sans-serif;
@@ -573,13 +588,20 @@
   justify-content: space-between;
 }
 
+.course-page__curriculum-toolbar-main {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 24px;
+}
+
 .course-page__curriculum-toolbar h2 {
   color: #fff;
   font-size: clamp(28px, 3vw, 40px);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
-  margin: 0;
+  margin: 0 0 20px;
   text-transform: uppercase;
 }
 
@@ -949,7 +971,7 @@
   align-items: center;
   display: flex;
   gap: 24px;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .course-page__grad-curriculum-head h2 {
@@ -3313,26 +3335,13 @@
     gap: 14px;
   }
 
+  .course-page__curriculum-toolbar-main {
+    gap: 14px;
+  }
+
   .course-page__curriculum--post .course-page__curriculum-toolbar h2 {
     font-size: 22px;
     line-height: 1.15;
-  }
-
-  .course-page__curriculum--post .course-page__curriculum-toolbar .course-page__curriculum-download {
-    border-radius: 32px;
-    font-size: 14px;
-    gap: 7px;
-    justify-content: center;
-    min-height: 44px;
-    min-width: 231px;
-    padding: 0 16px;
-    text-transform: none;
-    width: fit-content;
-  }
-
-  .course-page__curriculum--post .course-page__curriculum-toolbar .course-page__download-icon {
-    height: 16px;
-    width: 16px;
   }
 
   .course-page__curriculum--post .course-page__curriculum-pills {
@@ -3545,7 +3554,7 @@
   .course-page__info-card--post h2 {
     font-size: 15px;
     line-height: 1;
-    margin-top: 11px;
+    margin-top: 0;
   }
 
   .course-page__info-card--post p {

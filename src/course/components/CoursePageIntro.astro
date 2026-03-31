@@ -10,6 +10,18 @@ interface Props {
 
 const { categoryLabel, categoryPath, pageHeading, breadcrumbCurrentLabel, description } =
   Astro.props
+
+function getDescriptionPreview(value: string): string {
+  const normalized = value.replace(/\s+/g, ' ').trim()
+  if (!normalized) return ''
+
+  const firstPeriodIndex = normalized.indexOf('.')
+  if (firstPeriodIndex === -1) return normalized
+
+  return normalized.slice(0, firstPeriodIndex + 1).trim()
+}
+
+const previewDescription = getDescriptionPreview(description)
 const variantClass =
   Astro.props.variant === 'post'
     ? ' course-page__pagehead--post'
@@ -31,6 +43,6 @@ const variantClass =
 
   <section class="course-page__intro">
     <h1 class="course-page__title">{pageHeading}</h1>
-    <p class="course-page__description">{description}</p>
+    <p class="course-page__description">{previewDescription}</p>
   </section>
 </div>

@@ -673,6 +673,7 @@ export function CourseLeadForm({
 
   const visibleCurrentInstallmentText =
     selectedPaymentPlanGroup?.currentInstallmentText || pricing.currentInstallmentText
+  const punctualityDiscountLabel = courseType === 'pos' ? '73%' : '73,8%'
 
   const selectedGraduationPole = useMemo(() => {
     const normalizedPoleId = Number.parseInt(graduationPoleId, 10)
@@ -2388,7 +2389,7 @@ export function CourseLeadForm({
         <div className="course-lead-form__price-card">
           <div className="course-lead-form__price-highlight" aria-hidden="true">
             <span className="course-lead-form__price-offer">
-              <strong>73,8%</strong>
+              <strong>{punctualityDiscountLabel}</strong>
               <span>OFF</span>
             </span>
             <span className="course-lead-form__price-divider" />

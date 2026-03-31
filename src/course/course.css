@@ -333,14 +333,14 @@
 
 .course-page__regulation-mec-link {
   display: inline-block;
-  width: min(100%, 283px);
+  width: min(100%, 317px);
 }
 
 .course-page__regulation-mec-card {
   align-self: start;
   display: block;
-  height: auto;
-  width: min(100%, 283px);
+  height: 101px;
+  width: 317px;
 }
 
 .course-page__fact-item {

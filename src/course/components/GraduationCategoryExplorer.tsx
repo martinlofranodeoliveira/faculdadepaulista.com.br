@@ -152,10 +152,10 @@ export function GraduationCategoryExplorer({ courses }: Props) {
   return (
     <>
       <section className="category-page__grad-heading">
-        <h1>Todas as graduaÁıes</h1>
+        <h1>Todas as gradua√ß√µes</h1>
 
         <div className="category-page__search-row">
-          <label className="category-page__search" aria-label="Buscar curso de graduaÁ„o">
+          <label className="category-page__search" aria-label="Buscar curso de gradua√ß√£o">
             <SearchIcon />
             <input
               type="search"
@@ -182,7 +182,7 @@ export function GraduationCategoryExplorer({ courses }: Props) {
         <aside
           id="graduation-category-filters"
           className={`category-page__filters${mobileFiltersOpen ? ' is-open' : ''}`}
-          aria-label="Filtros de graduaÁ„o"
+          aria-label="Filtros de gradua√ß√£o"
         >
           <div className="category-page__filter-card">
             <h2>Tipo de Curso</h2>
@@ -203,10 +203,10 @@ export function GraduationCategoryExplorer({ courses }: Props) {
           </div>
 
           <div className="category-page__filter-card">
-            <h2>¡rea do Conhecimento</h2>
+            <h2>√Årea do Conhecimento</h2>
             <div
               className="category-page__filter-group"
-              aria-label="¡rea do Conhecimento"
+              aria-label="√Årea do Conhecimento"
             >
               {areaOptions.map((option) => (
                 <FilterOption
@@ -272,7 +272,7 @@ export function GraduationCategoryExplorer({ courses }: Props) {
           ) : (
             <div className="category-page__empty">
               <h2>Nenhum curso encontrado</h2>
-              <p>Refine sua busca ou limpe os filtros para visualizar outras graduaÁıes.</p>
+              <p>Refine sua busca ou limpe os filtros para visualizar outras gradua√ß√µes.</p>
             </div>
           )}
         </div>

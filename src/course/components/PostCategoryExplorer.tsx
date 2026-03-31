@@ -213,10 +213,10 @@ export function PostCategoryExplorer({ courses }: Props) {
   return (
     <>
       <section className="category-page__grad-heading category-page__grad-heading--post">
-        <h1>Todas as pós-graduações</h1>
+        <h1>Todas as pÃ³s-graduaÃ§Ãµes</h1>
 
         <div className="category-page__search-row">
-          <label className="category-page__search" aria-label="Buscar curso de pós-graduação">
+          <label className="category-page__search" aria-label="Buscar curso de pÃ³s-graduaÃ§Ã£o">
             <SearchIcon />
             <input
               type="search"
@@ -243,7 +243,7 @@ export function PostCategoryExplorer({ courses }: Props) {
         <aside
           id="post-category-filters"
           className={`category-page__filters${mobileFiltersOpen ? ' is-open' : ''}`}
-          aria-label="Filtros de pós-graduação"
+          aria-label="Filtros de pÃ³s-graduaÃ§Ã£o"
         >
           <div className="category-page__filter-card">
             <h2>Tipo de Curso</h2>
@@ -264,10 +264,10 @@ export function PostCategoryExplorer({ courses }: Props) {
           </div>
 
           <div className="category-page__filter-card">
-            <h2>Área do Conhecimento</h2>
+            <h2>Ãrea do Conhecimento</h2>
             <div
               className="category-page__filter-group"
-              aria-label="Área do Conhecimento"
+              aria-label="Ãrea do Conhecimento"
             >
               {areaOptions.map((option) => (
                 <FilterOption
@@ -287,7 +287,7 @@ export function PostCategoryExplorer({ courses }: Props) {
 
         <div className="category-page__post-results">
           <div className="category-page__post-results-head">
-            <span className="category-page__post-results-label">Paginação</span>
+            <span className="category-page__post-results-label">PaginaÃ§Ã£o</span>
 
             <div className="category-page__post-pagination">
               <span>
@@ -300,7 +300,7 @@ export function PostCategoryExplorer({ courses }: Props) {
                   className={safePage === 1 ? 'is-muted' : undefined}
                   onClick={handlePreviousPage}
                   disabled={safePage === 1}
-                  aria-label="Página anterior"
+                  aria-label="PÃ¡gina anterior"
                 >
                   <PaginationIcon direction="prev" />
                 </button>
@@ -309,7 +309,7 @@ export function PostCategoryExplorer({ courses }: Props) {
                   className={safePage === totalPages ? 'is-muted' : undefined}
                   onClick={handleNextPage}
                   disabled={safePage === totalPages}
-                  aria-label="Próxima página"
+                  aria-label="PrÃ³xima pÃ¡gina"
                 >
                   <PaginationIcon direction="next" />
                 </button>
@@ -356,7 +356,7 @@ export function PostCategoryExplorer({ courses }: Props) {
             </div>
           ) : (
             <div className="category-page__empty">
-              <h2>Nenhuma pós-graduação encontrada</h2>
+              <h2>Nenhuma pÃ³s-graduaÃ§Ã£o encontrada</h2>
               <p>Refine sua busca ou limpe os filtros para visualizar outros cursos.</p>
             </div>
           )}

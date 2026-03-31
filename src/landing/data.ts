@@ -121,8 +121,8 @@ export const formCourseGroups: FormCourseGroup[] = [
       },
       { value: 'graduacao-marketing-digital', label: 'Marketing Digital EAD' },
       { value: 'graduacao-administracao', label: 'Administração EAD' },
-      { value: 'graduacao-enfermagem', label: 'Enfermagem Presencial' },
-      { value: 'graduacao-psicologia', label: 'Psicologia Presencial' },
+      { value: 'graduacao-bacharelado-em-enfermagem', label: 'Enfermagem Presencial' },
+      { value: 'graduacao-bacharelado-em-psicologia', label: 'Psicologia Presencial' },
       { value: 'graduacao-ciencias-contabeis', label: 'Ciências Contábeis EAD' },
       { value: 'graduacao-processos-gerenciais', label: 'Processos Gerenciais EAD' },
       {
@@ -186,13 +186,13 @@ export const graduationCarouselCourseConfigs: GraduationCarouselCourseConfig[] =
     image: assets.gradAdministracao,
   },
   {
-    courseValue: 'graduacao-enfermagem',
+    courseValue: 'graduacao-bacharelado-em-enfermagem',
     installmentPrice: 'R$ 449,00/MÊS',
     oldInstallmentPrice: 'R$ 1.890,00',
     image: assets.gradEnfermagemPresencial,
   },
   {
-    courseValue: 'graduacao-psicologia',
+    courseValue: 'graduacao-bacharelado-em-psicologia',
     installmentPrice: 'R$ 549,00/MÊS',
     oldInstallmentPrice: 'R$ 1.890,00',
     image: assets.gradPsicologiaPresencial,
@@ -433,5 +433,4 @@ export const faqItems: FaqItem[] = [
 ]
 
 export const partners = ['MEC', 'Reclame Aqui', 'Google for Education']
-
 

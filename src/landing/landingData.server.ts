@@ -34,8 +34,8 @@ const FIXED_PRESENTIAL_COURSES: Array<
   }
 > = [
   {
-    fallbackId: 'graduacao-enfermagem',
-    fallbackCourseValue: 'graduacao-enfermagem',
+    fallbackId: 'bacharelado-em-enfermagem',
+    fallbackCourseValue: 'graduacao-bacharelado-em-enfermagem',
     fallbackCourseLabel: 'Enfermagem Presencial',
     title: 'Enfermagem',
     mode: 'Bacharelado Presencial',
@@ -49,8 +49,8 @@ const FIXED_PRESENTIAL_COURSES: Array<
     originalPriceLabel: 'De R$ 1.890,00',
   },
   {
-    fallbackId: 'graduacao-psicologia',
-    fallbackCourseValue: 'graduacao-psicologia',
+    fallbackId: 'bacharelado-em-psicologia',
+    fallbackCourseValue: 'graduacao-bacharelado-em-psicologia',
     fallbackCourseLabel: 'Psicologia Presencial',
     title: 'Psicologia',
     mode: 'Bacharelado Presencial',

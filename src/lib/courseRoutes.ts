@@ -4,6 +4,15 @@ export type CourseRouteInput = {
   courseLabel: string
 }
 
+const GRADUATION_SLUG_OVERRIDES = new Map<string, string>([
+  ['graduacao-enfermagem', 'bacharelado-em-enfermagem'],
+  ['graduacao-psicologia', 'bacharelado-em-psicologia'],
+  ['enfermagem', 'bacharelado-em-enfermagem'],
+  ['psicologia', 'bacharelado-em-psicologia'],
+  ['bacharelado em enfermagem', 'bacharelado-em-enfermagem'],
+  ['bacharelado em psicologia', 'bacharelado-em-psicologia'],
+])
+
 export function normalizeComparableText(value: string): string {
   return value
     .normalize('NFD')
@@ -58,6 +67,17 @@ export function getCourseDisplayTitle(input: CourseRouteInput): string {
 }
 
 export function getCourseSlug(input: CourseRouteInput): string {
+  if (input.courseType === 'graduacao') {
+    const overrideCandidates = [input.courseValue, getCourseDisplayTitle(input), input.courseLabel]
+      .filter(Boolean)
+      .map((value) => normalizeComparableText(String(value)))
+
+    for (const candidate of overrideCandidates) {
+      const overriddenSlug = GRADUATION_SLUG_OVERRIDES.get(candidate)
+      if (overriddenSlug) return overriddenSlug
+    }
+  }
+
   if (input.courseValue) {
     if (input.courseValue.startsWith('graduacao-')) {
       return input.courseValue.replace(/^graduacao-/, '')

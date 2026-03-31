@@ -50,13 +50,12 @@ const showEadBenefitsSection =
     <GraduationProfileSection presentation={viewModel.presentation} />
   </GraduationCourseHeroSection>
 
-  <GraduationSalarySection presentation={viewModel.presentation} />
-  {showLabsSection ? <GraduationCourseLabsSection presentation={viewModel.presentation} /> : null}
-  {showEadBenefitsSection ? <GraduationEadBenefitsSection presentation={viewModel.presentation} /> : null}
-
   <GraduationCourseCurriculumSection
     presentation={viewModel.presentation}
   />
+  <GraduationSalarySection presentation={viewModel.presentation} />
+  {showLabsSection ? <GraduationCourseLabsSection presentation={viewModel.presentation} /> : null}
+  {showEadBenefitsSection ? <GraduationEadBenefitsSection presentation={viewModel.presentation} /> : null}
   <GraduationRelatedCoursesSection courses={viewModel.relatedCourses} />
   <GraduationFaqSection items={viewModel.courseFaqItems} whatsappHref={viewModel.whatsappHref} />
 </main>

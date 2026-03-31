@@ -1,4 +1,4 @@
-.course-page {
+﻿.course-page {
   background: #f4f4f4;
   min-height: 100vh;
 }
@@ -19,9 +19,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  font: 400 20px/1.25 'Liberation Sans', Arial, sans-serif;
+  font: 400 20px/1.25 'Montserrat', Arial, sans-serif;
   margin-top: 0;
-  padding-top: 26px;
+  padding-top: 35px;
 }
 
 .course-page__breadcrumb a {
@@ -51,7 +51,7 @@
 
 .course-page__description {
   color: #070707;
-  font: 400 clamp(16px, 1.62vw, 20px)/1.35 'Liberation Sans', Arial, sans-serif;
+  font: 400 clamp(16px, 1.62vw, 20px)/1.35 'Montserrat', Arial, sans-serif;
   margin: 12px 0 0;
   max-width: 1100px;
 }
@@ -169,7 +169,7 @@
 
 .course-page__grad-highlight-copy p {
   color: rgba(7, 7, 7, 0.75);
-  font: 400 14px/16px 'Liberation Sans', Arial, sans-serif;
+  font: 400 14px/16px 'Montserrat', Arial, sans-serif;
   margin: 0;
 }
 
@@ -401,7 +401,7 @@
 
 .course-page__fact-item p {
   color: rgba(20, 20, 20, 0.72);
-  font: 400 14px/1.45 'Liberation Sans', Arial, sans-serif;
+  font: 400 14px/1.15 'Montserrat', Arial, sans-serif;
   margin: 0;
 }
 
@@ -445,7 +445,7 @@
 
 .course-page__info-card p {
   color: rgba(11, 17, 31, 0.78);
-  font: 400 14px/1.55 'Liberation Sans', Arial, sans-serif;
+  font: 400 14px/1.55 'Montserrat', Arial, sans-serif;
   margin: 10px 0 0;
 }
 
@@ -713,7 +713,7 @@
 
 .course-page__curriculum-row-title,
 .course-page__curriculum-row-hours {
-  font-family: 'Liberation Sans', Arial, sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
   font-size: 20px;
   line-height: 1.36;
 }
@@ -725,6 +725,10 @@
 .course-page__curriculum-row--total .course-page__curriculum-row-title,
 .course-page__curriculum-row--total .course-page__curriculum-row-hours {
   font-weight: 700;
+}
+
+.course-page__curriculum-row--total {
+  border-bottom: 0;
 }
 
 .course-page__curriculum-actions {
@@ -877,7 +881,7 @@
 .course-page__labs-copy p,
 .course-page__salary-copy p,
 .course-page__salary-copy small {
-  font-family: 'Liberation Sans', Arial, sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 .course-page__curriculum-body p {
@@ -1046,7 +1050,7 @@
 
 .course-page__grad-curriculum-empty {
   color: #fff;
-  font: 400 18px/1.5 'Liberation Sans', Arial, sans-serif;
+  font: 400 18px/1.5 'Montserrat', Arial, sans-serif;
   margin: 38px 0 0;
 }
 
@@ -1145,7 +1149,7 @@
 }
 
 .course-page__grad-curriculum-body p {
-  font: 400 20px/1.36 'Liberation Sans', Arial, sans-serif;
+  font: 400 20px/1.36 'Montserrat', Arial, sans-serif;
   letter-spacing: -0.02em;
   margin: 0;
 }
@@ -1169,7 +1173,7 @@
 
 .course-page__grad-curriculum-disciplines li {
   color: #0b111f;
-  font: 400 20px/1.36 'Liberation Sans', Arial, sans-serif;
+  font: 400 20px/1.36 'Montserrat', Arial, sans-serif;
   letter-spacing: -0.02em;
 }
 
@@ -1207,7 +1211,7 @@
   border-radius: 12px;
   color: #000;
   display: inline-flex;
-  font: 400 22px/1.36 'Liberation Sans', Arial, sans-serif;
+  font: 400 22px/1.36 'Montserrat', Arial, sans-serif;
   margin: 0 0 14px;
   min-height: 42px;
   padding: 6px 12px;
@@ -1468,14 +1472,14 @@
 
 .course-page__grad-salary-copy p {
   color: #0b111f;
-  font: 400 18px/1.36 'Liberation Sans', Arial, sans-serif;
+  font: 400 18px/1.36 'Montserrat', Arial, sans-serif;
   margin: 0;
   max-width: 526px;
 }
 
 .course-page__grad-salary-copy small {
   color: rgba(11, 17, 31, 0.75);
-  font: 400 12px/1.36 'Liberation Sans', Arial, sans-serif;
+  font: 400 12px/1.36 'Montserrat', Arial, sans-serif;
   margin-top: auto;
   max-width: 475px;
 }
@@ -1794,7 +1798,7 @@
 
 .course-page__labs-list li {
   color: #fff;
-  font: 400 18px/1.36 'Liberation Sans', Arial, sans-serif;
+  font: 400 18px/1.36 'Montserrat', Arial, sans-serif;
   padding-left: 28px;
   position: relative;
 }
@@ -1922,7 +1926,7 @@
 
 .course-page__career-block p {
   color: rgba(255, 255, 255, 0.94);
-  font: 400 18px/1.36 'Liberation Sans', Arial, sans-serif;
+  font: 400 18px/1.36 'Montserrat', Arial, sans-serif;
   letter-spacing: -0.02em;
   margin: 0;
 }
@@ -1937,7 +1941,7 @@
 
 .course-page__career-list li {
   color: rgba(255, 255, 255, 0.94);
-  font: 400 18px/1.36 'Liberation Sans', Arial, sans-serif;
+  font: 400 18px/1.36 'Montserrat', Arial, sans-serif;
   letter-spacing: -0.02em;
   margin: 0;
   padding-left: 14px;
@@ -1973,7 +1977,7 @@
   border-radius: 12px;
   color: #000;
   display: inline-flex;
-  font: 400 22px/1.36 'Liberation Sans', Arial, sans-serif;
+  font: 400 22px/1.36 'Montserrat', Arial, sans-serif;
   margin: 0 0 18px;
   min-height: 42px;
   padding: 6px 12px;
@@ -2157,7 +2161,7 @@
   color: #000;
   cursor: pointer;
   display: flex;
-  font: 400 16px/24px 'Liberation Sans', Arial, sans-serif;
+  font: 400 16px/24px 'Montserrat', Arial, sans-serif;
   gap: 16px;
   justify-content: space-between;
   list-style: none;
@@ -2231,7 +2235,7 @@
 
 .course-page__faq-contact-text p {
   color: #000;
-  font: 400 16px/24px 'Liberation Sans', Arial, sans-serif;
+  font: 400 16px/24px 'Montserrat', Arial, sans-serif;
   margin: 0;
 }
 
@@ -2340,7 +2344,7 @@
 .course-lead-form__draft-note,
 .course-lead-form__feedback,
 .course-lead-form__error {
-  font-family: 'Liberation Sans', Arial, sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 .course-lead-form__resume {
@@ -2811,7 +2815,7 @@
 .course-lead-form__info-link {
   align-items: center;
   display: inline-flex;
-  font-family: 'Liberation Sans', Arial, sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
   font-size: 12px;
   gap: 7px;
   line-height: 1.4;
@@ -3011,7 +3015,7 @@
   background: none;
   border: 0;
   cursor: pointer;
-  font: 700 16px/20px 'Liberation Sans', Arial, sans-serif;
+  font: 700 16px/20px 'Montserrat', Arial, sans-serif;
   padding: 0;
   text-decoration: underline;
 }
@@ -3204,11 +3208,11 @@
   }
 
   .course-page__salary-bar {
-    width: 120px;
+    width: 154px;
   }
 
   .course-page__grad-salary-bar {
-    width: 120px;
+    width: 154px;
   }
 
   .course-page__curriculum-toolbar,
@@ -3263,7 +3267,7 @@
 
   .course-page__title {
     font-size: 30px;
-    line-height: 1.08;
+    line-height: 1.15;
   }
 
   .course-page__description {
@@ -3283,7 +3287,7 @@
 
   .course-page__pagehead--post .course-page__title {
     font-size: 22px;
-    line-height: 0.88;
+    line-height: 1.15;
     max-width: 391px;
   }
 
@@ -3310,8 +3314,8 @@
   }
 
   .course-page__curriculum--post .course-page__curriculum-toolbar h2 {
-    font-size: 25px;
-    line-height: 35px;
+    font-size: 22px;
+    line-height: 1.15;
   }
 
   .course-page__curriculum--post .course-page__curriculum-toolbar .course-page__curriculum-download {
@@ -3510,13 +3514,13 @@
   }
 
   .course-page__fact-item strong {
-    font: 700 12.967px/20.274px 'Liberation Sans', Arial, sans-serif;
+    font: 700 12.967px/20.274px 'Montserrat', Arial, sans-serif;
     letter-spacing: 0;
   }
 
   .course-page__fact-item p {
     color: rgba(7, 7, 7, 0.75);
-    font: 400 12.967px/20.274px 'Liberation Sans', Arial, sans-serif;
+    font: 400 12.967px/16.274px 'Montserrat', Arial, sans-serif;
   }
 
   .course-page__form-column--post {
@@ -3649,8 +3653,8 @@
   }
 
   .course-page__differentials-shell--post h2 {
-    font-size: 25px;
-    line-height: 25px;
+    font-size: 22px;
+    line-height: 1.15;
     max-width: 360px;
   }
 
@@ -3739,8 +3743,8 @@
 
   .course-page__related.course-page__related--post h2 {
     gap: 0 6px;
-    font-size: 25px;
-    line-height: 40px;
+    font-size: 22px;
+    line-height: 1.15;
   }
 
   .course-page__related-grid--post {
@@ -3814,8 +3818,8 @@
 
   .course-page__grad-related-title {
     gap: 0 6px;
-    font-size: 25px;
-    line-height: 40px;
+    font-size: 22px;
+    line-height: 1.15;
   }
 
   .course-page__regulation-note {
@@ -3905,8 +3909,8 @@
   }
 
   .course-page__salary-card.is-post .course-page__salary-copy h2 {
-    font-size: 25px;
-    line-height: 25px;
+    font-size: 22px;
+    line-height: 1.15;
     max-width: 305px;
   }
 
@@ -3983,8 +3987,8 @@
   }
 
   .course-page__grad-curriculum-head h2 {
-    font-size: 25px;
-    line-height: 35px;
+    font-size: 22px;
+    line-height: 1.15;
   }
 
   .course-page__grad-curriculum-download,
@@ -4157,8 +4161,8 @@
   }
 
   .course-page__career-block h2 {
-    font-size: 25px;
-    line-height: 40px;
+    font-size: 22px;
+    line-height: 1.15;
   }
 
   .course-page__career-block p,
@@ -4237,8 +4241,8 @@
   }
 
   .course-page__grad-salary-copy h2 {
-    font-size: 25px;
-    line-height: 25px;
+    font-size: 22px;
+    line-height: 1.15;
     max-width: 305px;
   }
 
@@ -4342,8 +4346,8 @@
   }
 
   .course-page__labs-copy h2 {
-    font-size: 25px;
-    line-height: 35px;
+    font-size: 22px;
+    line-height: 1.15;
   }
 
   .course-page__labs-copy p {
@@ -4602,6 +4606,7 @@
   .course-lead-form--pos .course-lead-form__submit {
     border-radius: 8px;
     box-shadow: none;
+    font-size: 16px;
     min-height: 36.31px;
   }
 
@@ -4679,7 +4684,7 @@
 
   .course-page__pagehead--graduation .course-page__title {
     font-size: 22px;
-    line-height: 0.88;
+    line-height: 1.15;
     max-width: 391px;
   }
 
@@ -4768,7 +4773,7 @@
   }
 
   .course-page__grad-highlight-copy p {
-    font: 400 12px/12px 'Liberation Sans', Arial, sans-serif;
+    font: 400 12px/12px 'Montserrat', Arial, sans-serif;
   }
 
   .course-page__grad-highlight-item:first-child {
@@ -4837,8 +4842,8 @@
   }
 
   .course-page__grad-benefits-inner h2 {
-    font-size: 25px;
-    line-height: 1.16;
+    font-size: 22px;
+    line-height: 1.15;
     max-width: none;
   }
 
@@ -4934,6 +4939,7 @@
   .course-lead-form--graduation .course-lead-form__submit {
     border-radius: 8px;
     box-shadow: none;
+    font-size: 16px;
     min-height: 36.31px;
   }
 
@@ -4970,3 +4976,4 @@
     display: none;
   }
 }
+

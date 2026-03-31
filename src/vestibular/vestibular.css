@@ -1,4 +1,4 @@
-.is-spinning {
+﻿.is-spinning {
   animation: vestibular-spin 0.9s linear infinite;
 }
 
@@ -236,7 +236,7 @@
   border-radius: 8px;
   color: #000000;
   display: block;
-  font-family: 'Liberation Sans', Arial, sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
   font-size: 16px;
   height: 48px;
   outline: none;
@@ -1481,3 +1481,4 @@
     padding: 0 20px;
   }
 }
+

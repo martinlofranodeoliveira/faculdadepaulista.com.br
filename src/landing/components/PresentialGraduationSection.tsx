@@ -176,7 +176,6 @@ export function PresentialGraduationSection({ courses }: Props) {
                         courseValue: course.courseValue,
                         courseLabel: course.courseLabel,
                         courseId: course.courseId,
-                        redirectPath: '/graduacao/inscricao-finalizada',
                       })
                     }}
                   >

@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --lp-bg: #ffffff;
   --lp-bg-soft: #ffffff;
   --lp-text: #2f2a2a;
@@ -80,7 +80,7 @@ section[id] {
   gap: 18px;
   justify-content: space-between;
   min-height: 57px;
-  padding: 10px 0;
+  padding: 18px 0;
 }
 
 .lp-header__brands {
@@ -742,7 +742,7 @@ section[id] {
 
 .lp-hero__description {
   color: #fff;
-  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+  font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
   font-size: clamp(16px, 1.32vw, 20px);
   line-height: 1.42;
   margin: clamp(20px, 2.4vw, 32px) 0 0;
@@ -1010,7 +1010,7 @@ section[id] {
   border: 0;
   color: #191919;
   flex: 1;
-  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+  font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
   font-size: 14px;
   height: 100%;
   line-height: 20px;
@@ -1143,7 +1143,7 @@ section[id] {
   color: #191919;
   cursor: pointer;
   display: flex;
-  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+  font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
   font-size: 14px;
   gap: 10px;
   height: 100%;
@@ -1218,7 +1218,7 @@ section[id] {
   border-radius: 8px;
   color: #0f172a;
   cursor: pointer;
-  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+  font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
@@ -1348,7 +1348,7 @@ section[id] {
 
 .lp-course-modal__head p {
   color: #0d0d0d;
-  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+  font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
   font-size: 18.8px;
   line-height: 1.4;
   margin: -2px 0 0;
@@ -1376,7 +1376,7 @@ section[id] {
   background: transparent;
   border: 0;
   color: #111;
-  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+  font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
   font-size: 16px;
   height: 100%;
   line-height: 1.25;
@@ -1497,7 +1497,7 @@ section[id] {
 .lp-future__head p {
   color: #4b5563;
   font-size: clamp(14px, 1.25vw, 18px);
-  line-height: 1.55;
+  line-height: 1.15;
   margin: 12px auto 0;
   max-width: 670px;
 }
@@ -2003,8 +2003,9 @@ section[id] {
   color: #334155;
   font-size: clamp(16px, 1.35vw, 18px);
   line-height: 1.625;
-  margin: 0;
+  margin: 0 auto;
   max-width: 310px;
+  text-align: center;
 }
 
 .lp-story-card__person {
@@ -2253,7 +2254,7 @@ section[id] {
   align-items: center;
   color: #0f1722;
   display: inline-flex;
-  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+  font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
   font-size: 16px;
   gap: 9px;
   line-height: 1.2;
@@ -2291,7 +2292,7 @@ section[id] {
   border-radius: 0;
   color: #222b38;
   display: flex;
-  font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+  font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
   font-size: 16px;
   gap: 12px;
   line-height: 1.28;
@@ -3926,8 +3927,7 @@ section[id] {
   .lp-header__inner {
     gap: 12px;
     min-height: 54px;
-    padding-bottom: 8px;
-    padding-top: 8px;
+    padding: 18px 0;
   }
 
   .lp-header__brands {
@@ -4575,7 +4575,7 @@ section[id] {
 
   .lp-grad-carousel__scope {
     flex: 1 1 auto;
-    font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+    font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
     font-size: 14.889px;
     line-height: 1.445;
   }
@@ -4593,7 +4593,7 @@ section[id] {
     cursor: pointer;
     display: inline-flex;
     flex: 0 0 auto;
-    font-family: 'Liberation Sans', 'Kumbh Sans', Arial, sans-serif;
+    font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
     font-size: 14.889px;
     font-weight: 700;
     gap: 5.79px;
@@ -5770,3 +5770,4 @@ section[id] {
     padding: 8px 10px;
   }
 }
+

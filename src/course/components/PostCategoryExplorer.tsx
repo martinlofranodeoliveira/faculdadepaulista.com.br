@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState, type ChangeEvent } from 'react'
+import { useEffect, useMemo, useState, type ChangeEvent, type Dispatch, type SetStateAction } from 'react'
 
 import { normalizeComparableText } from '@/lib/courseRoutes'
 
@@ -85,7 +85,7 @@ function FilterOption({ checked, label, onClick }: FilterOptionProps) {
     <button
       className="category-page__filter-option"
       type="button"
-      role="radio"
+      role="checkbox"
       aria-checked={checked}
       onClick={onClick}
     >
@@ -112,8 +112,8 @@ function FilterOption({ checked, label, onClick }: FilterOptionProps) {
 
 export function PostCategoryExplorer({ courses }: Props) {
   const [search, setSearch] = useState('')
-  const [modality, setModality] = useState('all')
-  const [area, setArea] = useState('all')
+  const [selectedModalities, setSelectedModalities] = useState<string[]>([])
+  const [selectedAreas, setSelectedAreas] = useState<string[]>([])
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [pageSize, setPageSize] = useState(PAGE_SIZE_DESKTOP)
   const [page, setPage] = useState(1)
@@ -167,17 +167,29 @@ export function PostCategoryExplorer({ courses }: Props) {
     const normalizedSearch = normalizeComparableText(search)
 
     return courses.filter((course) => {
-      if (modality !== 'all' && course.modality !== modality) return false
-      if (area !== 'all' && course.area !== area) return false
+      if (selectedModalities.length > 0 && !selectedModalities.includes(course.modality)) return false
+      if (selectedAreas.length > 0 && !selectedAreas.includes(course.area)) return false
       if (!normalizedSearch) return true
 
       return normalizeComparableText(course.title).includes(normalizedSearch)
     })
-  }, [area, courses, modality, search])
+  }, [courses, search, selectedAreas, selectedModalities])
 
   useEffect(() => {
     setPage(1)
-  }, [area, modality, pageSize, search])
+  }, [pageSize, search, selectedAreas, selectedModalities])
+
+  function toggleFilterValue(
+    value: string,
+    setState: Dispatch<SetStateAction<string[]>>,
+  ) {
+    setState((current) => {
+      if (value === 'all') return []
+      return current.includes(value)
+        ? current.filter((item) => item !== value)
+        : [...current, value]
+    })
+  }
 
   const totalPages = Math.max(1, Math.ceil(filteredCourses.length / pageSize))
   const safePage = Math.min(page, totalPages)
@@ -201,10 +213,10 @@ export function PostCategoryExplorer({ courses }: Props) {
   return (
     <>
       <section className="category-page__grad-heading category-page__grad-heading--post">
-        <h1>Todas as pós-graduações</h1>
+        <h1>Todas as p�s-gradua��es</h1>
 
         <div className="category-page__search-row">
-          <label className="category-page__search" aria-label="Buscar curso de pós-graduação">
+          <label className="category-page__search" aria-label="Buscar curso de p�s-gradua��o">
             <SearchIcon />
             <input
               type="search"
@@ -231,35 +243,42 @@ export function PostCategoryExplorer({ courses }: Props) {
         <aside
           id="post-category-filters"
           className={`category-page__filters${mobileFiltersOpen ? ' is-open' : ''}`}
-          aria-label="Filtros de pós-graduação"
+          aria-label="Filtros de p�s-gradua��o"
         >
           <div className="category-page__filter-card">
             <h2>Tipo de Curso</h2>
-            <div className="category-page__filter-group" role="radiogroup" aria-label="Tipo de Curso">
+            <div className="category-page__filter-group" aria-label="Tipo de Curso">
               {modalityOptions.map((option) => (
                 <FilterOption
                   key={option.value}
-                  checked={modality === option.value}
+                  checked={
+                    option.value === 'all'
+                      ? selectedModalities.length === 0
+                      : selectedModalities.includes(option.value)
+                  }
                   label={option.label}
-                  onClick={() => setModality(option.value)}
+                  onClick={() => toggleFilterValue(option.value, setSelectedModalities)}
                 />
               ))}
             </div>
           </div>
 
           <div className="category-page__filter-card">
-            <h2>Área do Conhecimento</h2>
+            <h2>�rea do Conhecimento</h2>
             <div
               className="category-page__filter-group"
-              role="radiogroup"
-              aria-label="Área do Conhecimento"
+              aria-label="�rea do Conhecimento"
             >
               {areaOptions.map((option) => (
                 <FilterOption
                   key={option.value}
-                  checked={area === option.value}
+                  checked={
+                    option.value === 'all'
+                      ? selectedAreas.length === 0
+                      : selectedAreas.includes(option.value)
+                  }
                   label={option.label}
-                  onClick={() => setArea(option.value)}
+                  onClick={() => toggleFilterValue(option.value, setSelectedAreas)}
                 />
               ))}
             </div>
@@ -268,7 +287,7 @@ export function PostCategoryExplorer({ courses }: Props) {
 
         <div className="category-page__post-results">
           <div className="category-page__post-results-head">
-            <span className="category-page__post-results-label">Paginação</span>
+            <span className="category-page__post-results-label">Pagina��o</span>
 
             <div className="category-page__post-pagination">
               <span>
@@ -281,7 +300,7 @@ export function PostCategoryExplorer({ courses }: Props) {
                   className={safePage === 1 ? 'is-muted' : undefined}
                   onClick={handlePreviousPage}
                   disabled={safePage === 1}
-                  aria-label="Página anterior"
+                  aria-label="P�gina anterior"
                 >
                   <PaginationIcon direction="prev" />
                 </button>
@@ -290,7 +309,7 @@ export function PostCategoryExplorer({ courses }: Props) {
                   className={safePage === totalPages ? 'is-muted' : undefined}
                   onClick={handleNextPage}
                   disabled={safePage === totalPages}
-                  aria-label="Próxima página"
+                  aria-label="Pr�xima p�gina"
                 >
                   <PaginationIcon direction="next" />
                 </button>
@@ -337,7 +356,7 @@ export function PostCategoryExplorer({ courses }: Props) {
             </div>
           ) : (
             <div className="category-page__empty">
-              <h2>Nenhuma pós-graduação encontrada</h2>
+              <h2>Nenhuma p�s-gradua��o encontrada</h2>
               <p>Refine sua busca ou limpe os filtros para visualizar outros cursos.</p>
             </div>
           )}
@@ -348,3 +367,4 @@ export function PostCategoryExplorer({ courses }: Props) {
 }
 
 export default PostCategoryExplorer
+

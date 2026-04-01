@@ -1,4 +1,5 @@
 import { getGraduationCatalogCourseSummaries } from '@/lib/catalogApi'
+import { formatGraduationCourseHeading } from '@/lib/courseRoutes'
 
 export type GraduationCategoryCourse = {
   path: string
@@ -26,7 +27,7 @@ export async function getGraduationCategoryCourses(force = false): Promise<Gradu
 
   return entries.map((course) => ({
     path: course.path,
-    title: course.title,
+    title: formatGraduationCourseHeading(course.rawLabel, course.value, course.path),
     courseLabel: course.rawLabel,
     courseValue: course.value,
     courseId: course.courseId,

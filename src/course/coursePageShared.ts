@@ -78,10 +78,15 @@ function slugifyFilePart(value: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-function buildBreadcrumbCurrentLabel(courseType: CourseType, title: string) {
+function buildBreadcrumbCurrentLabel(
+  courseType: CourseType,
+  title: string,
+  courseValue?: string,
+  currentPath?: string,
+) {
   if (courseType === 'pos') return formatPostCourseHeading(title)
 
-  return formatGraduationCourseHeading(title)
+  return formatGraduationCourseHeading(title, courseValue, currentPath)
 }
 
 function mapRelatedCourses(pool: CoursePageSummaryEntry[], currentPath: string | undefined) {
@@ -131,6 +136,7 @@ export async function getCoursePageViewModel({
   title,
   area,
   rawLabel,
+  courseValue,
   currentPath,
   courseData,
 }: CoursePageProps): Promise<CoursePageViewModel> {
@@ -139,8 +145,13 @@ export async function getCoursePageViewModel({
   const pageHeading =
     courseType === 'pos'
       ? formatPostCourseHeading(title).toUpperCase()
-      : formatGraduationCourseHeading(title).toUpperCase()
-  const breadcrumbCurrentLabel = buildBreadcrumbCurrentLabel(courseType, title)
+      : formatGraduationCourseHeading(title, courseData?.value || courseValue, currentPath).toUpperCase()
+  const breadcrumbCurrentLabel = buildBreadcrumbCurrentLabel(
+    courseType,
+    title,
+    courseData?.value || courseValue,
+    currentPath,
+  )
   const presentation = getCoursePagePresentation({
     course: courseData,
     courseType,

@@ -1,4 +1,8 @@
-import { getCourseDisplayTitle, normalizeComparableText, stripGraduationModality } from '@/lib/courseRoutes'
+import {
+  formatGraduationCourseHeading,
+  normalizeComparableText,
+  stripGraduationModality,
+} from '@/lib/courseRoutes'
 import {
   getGraduationCatalogCourses,
   getPostCatalogCourses,
@@ -88,11 +92,7 @@ function buildGraduationCard(course: CatalogCourse): LandingGraduationCourseCard
     courseLabel: course.rawLabel,
     courseId: course.courseId,
     modality: course.modality,
-    title: getCourseDisplayTitle({
-      courseType: 'graduacao',
-      courseValue: course.value,
-      courseLabel: course.rawLabel,
-    }),
+    title: formatGraduationCourseHeading(course.rawLabel, course.value, course.path),
     image: course.image,
     modalityLabel: course.modalityBadge,
     installmentPrice: course.currentInstallmentPriceMonthly || course.currentInstallmentPrice,
@@ -118,7 +118,11 @@ function buildFixedPresentialCourses(graduationCourses: CatalogCourse[]): Landin
       courseLabel: dynamicCourse?.rawLabel || fixedCourse.fallbackCourseLabel,
       courseId: dynamicCourse?.courseId ?? 0,
       courseModality: 'presencial',
-      title: fixedCourse.title,
+      title: formatGraduationCourseHeading(
+        dynamicCourse?.rawLabel || fixedCourse.title,
+        dynamicCourse?.value || fixedCourse.fallbackCourseValue,
+        dynamicCourse?.path || `/graduacao/${fixedCourse.fallbackId}`,
+      ),
       mode: fixedCourse.mode,
       image: fixedCourse.image,
       imageAlt: fixedCourse.imageAlt,

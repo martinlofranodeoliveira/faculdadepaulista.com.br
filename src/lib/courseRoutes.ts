@@ -58,7 +58,23 @@ export function formatPostCourseHeading(label: string): string {
   return isMbaCourseTitle(title) ? title : `P\u00f3s-gradua\u00e7\u00e3o em ${title}`
 }
 
-export function formatGraduationCourseHeading(label: string): string {
+function inferGraduationTitulation(...candidates: Array<string | undefined>): string {
+  const normalizedValue = candidates.map((item) => normalizeComparableText(item ?? '')).join(' ')
+
+  if (normalizedValue.includes('bacharelado-em-')) return 'Bacharelado'
+  if (normalizedValue.includes('licenciatura-em-')) return 'Licenciatura'
+  if (normalizedValue.includes('tecnologo-em-') || normalizedValue.includes('tecnologo-')) {
+    return 'Tecnólogo'
+  }
+
+  return ''
+}
+
+export function formatGraduationCourseHeading(
+  label: string,
+  courseValue?: string,
+  routeHint?: string,
+): string {
   const title = stripGraduationModality(label)
   const titleWithoutPrefix = title
     .replace(/^graduação em\s+/i, '')
@@ -90,6 +106,11 @@ export function formatGraduationCourseHeading(label: string): string {
       const courseName = titleWithoutPrefix.slice(match.prefix.length).trim()
       return `Graduação em ${courseName} (${match.suffix})`
     }
+  }
+
+  const inferredTitulation = inferGraduationTitulation(courseValue, routeHint)
+  if (inferredTitulation) {
+    return `Graduação em ${titleWithoutPrefix || title} (${inferredTitulation})`
   }
 
   return `Graduação em ${titleWithoutPrefix || title}`

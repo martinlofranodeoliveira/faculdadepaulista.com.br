@@ -78,6 +78,12 @@ export type CatalogCourse = {
   tccRequired: boolean | null
   titulation: string
   laborMarket: string
+  salaryAverage: number | null
+  salaryJunior: number | null
+  salaryPleno: number | null
+  salarySenior: number | null
+  salaryWithoutPos: number | null
+  salaryWithPos: number | null
 }
 
 export type CatalogCourseSummary = Pick<
@@ -266,6 +272,21 @@ type ApiCourseMedia = {
   gallery_items?: Array<{ image_path?: string | null }> | null
   main_image_url?: string | null
   gallery_urls?: string[] | null
+}
+
+type ApiCourseTexts = {
+  salary_average?: number | string | null
+  ictSalaryAverage?: number | string | null
+  salary_junior?: number | string | null
+  ictSalaryJunior?: number | string | null
+  salary_pleno?: number | string | null
+  ictSalaryPleno?: number | string | null
+  salary_senior?: number | string | null
+  ictSalarySenior?: number | string | null
+  salary_without_pos?: number | string | null
+  ictSalaryWithoutPos?: number | string | null
+  salary_with_pos?: number | string | null
+  ictSalaryWithPos?: number | string | null
 }
 
 type ApiPricingItem = {
@@ -701,6 +722,22 @@ function parseMecScoreValue(value: unknown): number | null {
   return null
 }
 
+function parseSalaryValue(value: unknown): number | null {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : null
+  }
+
+  if (typeof value === 'string') {
+    const normalized = value.trim().replace(/\s+/g, '').replace(',', '.')
+    if (!normalized) return null
+
+    const parsed = Number.parseFloat(normalized)
+    return Number.isFinite(parsed) ? parsed : null
+  }
+
+  return null
+}
+
 function resolveMecScore(
   course: Pick<
     ApiCourseListItem,
@@ -1107,9 +1144,10 @@ async function getCourseBundle(
   media: ApiCourseMedia | null
   pricingItems: ApiPricingItem[]
   curriculumVariants: ApiCurriculumVariant[]
+  texts: ApiCourseTexts | null
 }> {
   return withCache(`course-bundle:${institution.id}:${courseId}`, async () => {
-    const [detailEnvelope, mediaEnvelope, pricingEnvelope, curriculumEnvelope] = await Promise.all([
+    const [detailEnvelope, mediaEnvelope, pricingEnvelope, curriculumEnvelope, textsEnvelope] = await Promise.all([
       apiFetch<ApiCourseDetail>(`/api/v1/public/courses/${courseId}`, institution, {
         show_disciplines: 'S',
         price: 'S',
@@ -1123,6 +1161,10 @@ async function getCourseBundle(
         `/api/v1/public/courses/${courseId}/curriculum`,
         institution,
       ),
+      optionalApiFetch<{ texts?: ApiCourseTexts | null }>(
+        `/api/v1/public/courses/${courseId}/texts`,
+        institution,
+      ),
     ])
 
     return {
@@ -1130,6 +1172,7 @@ async function getCourseBundle(
       media: mediaEnvelope?.data ?? null,
       pricingItems: pricingEnvelope?.data?.items ?? [],
       curriculumVariants: curriculumEnvelope?.data?.variants ?? [],
+      texts: textsEnvelope?.data?.texts ?? null,
     }
   }, force)
 }
@@ -1329,6 +1372,7 @@ function mapCatalogCourse(
     media: ApiCourseMedia | null
     pricingItems: ApiPricingItem[]
     curriculumVariants: ApiCurriculumVariant[]
+    texts: ApiCourseTexts | null
   } | null,
   courseType: CourseType,
 ): CatalogCourse {
@@ -1424,6 +1468,15 @@ function mapCatalogCourse(
     : fallbackCurrentPrice.monthly
 
   const seoOgImage = toAbsoluteMediaUrl(seo.ogImageUrl)
+  const texts = bundle?.texts
+  const salaryAverage = parseSalaryValue(texts?.salary_average ?? texts?.ictSalaryAverage)
+  const salaryJunior = parseSalaryValue(texts?.salary_junior ?? texts?.ictSalaryJunior)
+  const salaryPleno = parseSalaryValue(texts?.salary_pleno ?? texts?.ictSalaryPleno)
+  const salarySenior = parseSalaryValue(texts?.salary_senior ?? texts?.ictSalarySenior)
+  const salaryWithoutPos = parseSalaryValue(
+    texts?.salary_without_pos ?? texts?.ictSalaryWithoutPos,
+  )
+  const salaryWithPos = parseSalaryValue(texts?.salary_with_pos ?? texts?.ictSalaryWithPos)
 
   return {
     institutionId: institution.id,
@@ -1483,6 +1536,12 @@ function mapCatalogCourse(
     tccRequired: resolveTccRequired(course, detail),
     titulation: normalizeText(detail?.titulation),
     laborMarket: normalizeRichText(detail?.labor_market ?? course.labor_market),
+    salaryAverage,
+    salaryJunior,
+    salaryPleno,
+    salarySenior,
+    salaryWithoutPos,
+    salaryWithPos,
   } satisfies CatalogCourse
 }
 

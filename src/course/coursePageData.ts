@@ -119,6 +119,15 @@ function formatCurrencyAmount(value: number): string {
   }).format(value)
 }
 
+function getSalaryBarHeight(value: number, maxValue: number, minHeight: number, maxHeight: number): number {
+  if (!Number.isFinite(value) || value <= 0 || !Number.isFinite(maxValue) || maxValue <= 0) {
+    return minHeight
+  }
+
+  const ratio = Math.min(1, value / maxValue)
+  return Math.round(minHeight + (maxHeight - minHeight) * ratio)
+}
+
 function formatCurrencyFromCents(value: number): string {
   return formatCurrencyAmount(value / 100)
 }
@@ -529,10 +538,21 @@ function buildDifferentials() {
   }
 }
 
-function buildSalary(title: string, areaLabel: string, courseType: CourseType): CoursePresentation['salary'] {
+function buildSalary(
+  title: string,
+  areaLabel: string,
+  courseType: CourseType,
+  course?: CatalogCourse,
+): CoursePresentation['salary'] {
   const salaryArea = (areaLabel || title).toUpperCase()
 
   if (courseType === 'pos') {
+    const fallbackWithoutPos = 4000
+    const fallbackWithPos = 10500
+    const withoutPos = course?.salaryWithoutPos ?? fallbackWithoutPos
+    const withPos = course?.salaryWithPos ?? fallbackWithPos
+    const maxValue = Math.max(withoutPos, withPos)
+
     return {
       accentTitle: 'Salário médio na área',
       darkTitle: `de ${salaryArea}`,
@@ -543,19 +563,27 @@ function buildSalary(title: string, areaLabel: string, courseType: CourseType): 
       items: [
         {
           label: 'Sem Pós-graduação',
-          value: 'R$ 4.000,00',
+          value: formatCurrencyAmount(withoutPos),
           caption: 'Profissional graduado',
-          height: 97,
+          height: getSalaryBarHeight(withoutPos, maxValue, 97, 180),
         },
         {
           label: 'Com Pós-graduação',
-          value: '+ R$ 10.500,00',
+          value: `+ ${formatCurrencyAmount(withPos)}`,
           caption: 'Profissional especialista',
-          height: 180,
+          height: getSalaryBarHeight(withPos, maxValue, 97, 180),
         },
       ],
     }
   }
+
+  const fallbackJunior = 4000
+  const fallbackPleno = 6700
+  const fallbackSenior = 10700
+  const junior = course?.salaryJunior ?? fallbackJunior
+  const pleno = course?.salaryPleno ?? fallbackPleno
+  const senior = course?.salarySenior ?? fallbackSenior
+  const maxValue = Math.max(junior, pleno, senior)
 
   return {
     accentTitle: 'Salário médio na área',
@@ -566,21 +594,21 @@ function buildSalary(title: string, areaLabel: string, courseType: CourseType): 
     items: [
       {
         label: 'Júnior',
-        value: 'R$ 4.000,00',
+        value: formatCurrencyAmount(junior),
         caption: 'Recém-formado',
-        height: 96,
+        height: getSalaryBarHeight(junior, maxValue, 96, 178),
       },
       {
         label: 'Pleno',
-        value: 'R$ 6.700,00',
+        value: formatCurrencyAmount(pleno),
         caption: '2 a 3 anos de experiência',
-        height: 136,
+        height: getSalaryBarHeight(pleno, maxValue, 96, 178),
       },
       {
         label: 'Sênior',
-        value: 'R$ 10.700,00',
+        value: formatCurrencyAmount(senior),
         caption: '4 a 5 anos de experiência',
-        height: 178,
+        height: getSalaryBarHeight(senior, maxValue, 96, 178),
       },
     ],
   }
@@ -649,7 +677,7 @@ export function getCoursePagePresentation({ course, courseType, title, area }: I
         ],
     infoCards: isPost ? buildPostInfoCards(course, title) : buildGraduationInfoCards(course, title),
     curriculum: isPost ? buildPostCurriculum(course, title) : buildGraduationCurriculum(course),
-    salary: buildSalary(title, area || course?.primaryAreaLabel || title, courseType),
+    salary: buildSalary(title, area || course?.primaryAreaLabel || title, courseType, course),
     labs: {
       title: 'Laboratórios modernos',
       description:

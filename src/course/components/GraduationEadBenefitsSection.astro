@@ -7,31 +7,33 @@ interface Props {
 
 const { presentation } = Astro.props
 
-const isSemi = presentation.modality === 'semipresencial'
-const heading = isSemi
-  ? 'POR QUE A GRADUAÇÃO SEMIPRESENCIAL NA FACULDADE PAULISTA É A ESCOLHA CERTA PARA VOCÊ?'
-  : 'POR QUE A GRADUAÇÃO EAD NA FACULDADE PAULISTA É A ESCOLHA CERTA PARA VOCÊ?'
+const modalityLabel = (presentation.modalityLabel || 'EAD').toUpperCase()
 
 const items = [
   {
-    title: 'Estude onde e quando quiser:',
+    title: 'Estude onde e quando quiser',
     text: 'Conteúdo acessível para se adaptar ao seu ritmo. Você tem a liberdade de organizar seus horários e estudar de onde estiver, perfeito para sua rotina.',
   },
   {
-    title: 'Suporte Humanizado:',
-    text: 'Você nunca está sozinho; nossa equipe acadêmica oferece auxílio individualizado. Você conta com suporte em cada etapa, garantindo que as suas dúvidas sejam sanadas.',
+    title: 'Suporte Humanizado',
+    text: 'Você nunca estará sozinho; nossa equipe acadêmica oferece auxílio individualizado. Você conta com suporte em cada etapa, garantindo que as suas dúvidas sejam sanadas.',
   },
   {
-    title: 'Diploma de Peso:',
+    title: 'Diploma de Peso',
     text: 'Certificação reconhecida pelo MEC, garantindo a validade das suas competências em todo o território nacional.',
   },
 ]
 ---
 
-<section class="course-page__grad-benefits" aria-labelledby="graduation-ead-benefits-title">
+<section class="course-page__grad-benefits" aria-labelledby="graduation-benefits-title">
   <div class="course-page__shell">
     <div class="course-page__grad-benefits-inner">
-      <h2 id="graduation-ead-benefits-title">{heading}</h2>
+      <div class="course-page__grad-benefits-heading">
+        <p class="course-page__grad-benefits-heading-top" id="graduation-benefits-title">
+          A graduação {modalityLabel} na Faculdade Paulista é a
+        </p>
+        <h2 class="course-page__grad-benefits-heading-bottom">Escolha certa para você</h2>
+      </div>
 
       <div class="course-page__grad-benefits-grid">
         {items.map((item) => (
@@ -41,6 +43,10 @@ const items = [
           </article>
         ))}
       </div>
+
+      <a class="course-page__grad-benefits-cta" href="#course-form">
+        Inscreva-se já
+      </a>
     </div>
   </div>
 </section>

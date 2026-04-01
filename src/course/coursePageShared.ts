@@ -4,7 +4,7 @@ import {
   getPostCoursePageSummaries,
   type CoursePageSummaryEntry,
 } from '@/lib/courseCatalog'
-import { formatPostCourseHeading } from '@/lib/courseRoutes'
+import { formatGraduationCourseHeading, formatPostCourseHeading } from '@/lib/courseRoutes'
 
 import { getCourseFaqItems } from './courseFaqData'
 import { getCoursePagePresentation, type CoursePresentation } from './coursePageData'
@@ -78,14 +78,10 @@ function slugifyFilePart(value: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-function buildBreadcrumbCurrentLabel(courseType: CourseType, title: string, rawLabel?: string) {
+function buildBreadcrumbCurrentLabel(courseType: CourseType, title: string) {
   if (courseType === 'pos') return formatPostCourseHeading(title)
 
-  const normalized = (rawLabel ?? '').toLowerCase()
-
-  if (normalized.includes('presencial')) return `Graduação Presencial em ${title}`
-  if (normalized.includes('semipresencial')) return `Graduação Semipresencial em ${title}`
-  return `Graduação EAD em ${title}`
+  return formatGraduationCourseHeading(title)
 }
 
 function mapRelatedCourses(pool: CoursePageSummaryEntry[], currentPath: string | undefined) {
@@ -141,8 +137,10 @@ export async function getCoursePageViewModel({
   const categoryLabel = courseType === 'pos' ? 'Pós-graduação' : 'Graduação'
   const categoryPath = courseType === 'pos' ? '/pos-graduacao' : '/graduacao'
   const pageHeading =
-    courseType === 'pos' ? formatPostCourseHeading(title).toUpperCase() : `GRADUAÇÃO EM ${title}`
-  const breadcrumbCurrentLabel = buildBreadcrumbCurrentLabel(courseType, title, rawLabel)
+    courseType === 'pos'
+      ? formatPostCourseHeading(title).toUpperCase()
+      : formatGraduationCourseHeading(title).toUpperCase()
+  const breadcrumbCurrentLabel = buildBreadcrumbCurrentLabel(courseType, title)
   const presentation = getCoursePagePresentation({
     course: courseData,
     courseType,

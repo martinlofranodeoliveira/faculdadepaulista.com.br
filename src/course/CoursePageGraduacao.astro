@@ -23,8 +23,10 @@ const normalizedTitle = props.title
 const showLabsSection =
   props.courseData?.modality === 'presencial' &&
   (normalizedTitle.includes('enfermagem') || normalizedTitle.includes('psicologia'))
-const showEadBenefitsSection =
+const showInlineBenefitsSection =
   viewModel.presentation.modality === 'ead' || viewModel.presentation.modality === 'semipresencial'
+const showPresentialBenefitsSection =
+  viewModel.presentation.modality === 'presencial' && showLabsSection
 ---
 
 <Header client:load />
@@ -50,12 +52,13 @@ const showEadBenefitsSection =
     <GraduationProfileSection presentation={viewModel.presentation} />
   </GraduationCourseHeroSection>
 
+  {showInlineBenefitsSection ? <GraduationEadBenefitsSection presentation={viewModel.presentation} /> : null}
   <GraduationCourseCurriculumSection
     presentation={viewModel.presentation}
   />
   <GraduationSalarySection presentation={viewModel.presentation} />
   {showLabsSection ? <GraduationCourseLabsSection presentation={viewModel.presentation} /> : null}
-  {showEadBenefitsSection ? <GraduationEadBenefitsSection presentation={viewModel.presentation} /> : null}
+  {showPresentialBenefitsSection ? <GraduationEadBenefitsSection presentation={viewModel.presentation} /> : null}
   <GraduationRelatedCoursesSection courses={viewModel.relatedCourses} />
   <GraduationFaqSection items={viewModel.courseFaqItems} whatsappHref={viewModel.whatsappHref} />
 </main>

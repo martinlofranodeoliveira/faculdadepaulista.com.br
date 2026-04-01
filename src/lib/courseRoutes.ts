@@ -55,7 +55,40 @@ export function isMbaCourseTitle(label: string): boolean {
 
 export function formatPostCourseHeading(label: string): string {
   const title = stripPostGraduationPrefix(label)
-  return isMbaCourseTitle(title) ? title : `Pós-graduação em ${title}`
+  return isMbaCourseTitle(title) ? title : `P\u00f3s-gradua\u00e7\u00e3o em ${title}`
+}
+
+export function formatGraduationCourseHeading(label: string): string {
+  const title = stripGraduationModality(label)
+  const normalized = normalizeComparableText(title)
+
+  const titledMatches = [
+    {
+      prefix: 'bacharelado em ',
+      suffix: 'Bacharelado',
+    },
+    {
+      prefix: 'licenciatura em ',
+      suffix: 'Licenciatura',
+    },
+    {
+      prefix: 'tecnologo em ',
+      suffix: 'Tecnólogo',
+    },
+    {
+      prefix: 'tecnologo ',
+      suffix: 'Tecnólogo',
+    },
+  ]
+
+  for (const match of titledMatches) {
+    if (normalized.startsWith(match.prefix)) {
+      const courseName = title.slice(match.prefix.length).trim()
+      return `Gradua\u00e7\u00e3o em ${courseName} (${match.suffix})`
+    }
+  }
+
+  return `Gradua\u00e7\u00e3o em ${title}`
 }
 
 export function getCourseDisplayTitle(input: CourseRouteInput): string {

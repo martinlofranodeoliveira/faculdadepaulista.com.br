@@ -90,8 +90,8 @@ body {
 
 .floating-whatsapp__icon svg {
   display: block;
-  height: 28px;
-  width: 28px;
+  height: 34px;
+  width: 34px;
 }
 
 @media (max-width: 720px) {
@@ -108,7 +108,7 @@ body {
   }
 
   .floating-whatsapp__icon svg {
-    height: 28px;
-    width: 28px;
+    height: 34px;
+    width: 34px;
   }
 }

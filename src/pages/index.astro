@@ -3,9 +3,11 @@ import { getLandingPageData } from '@/landing/landingData.server'
 import { LandingPage } from '@/landing/LandingPage'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 
-const title = 'Faculdade Paulista | Graduação e Pós-graduação com Nota Máxima no MEC'
+const title = 'FACULDADE PAULISTA | ENFERMAGEM E PSICOLOGIA'
 const description =
-  'Estude na Faculdade Paulista com cursos de Graduação e Pós-graduação EAD e presencial. Matrículas abertas, professores qualificados e suporte especializado.'
+  'Bacharel Graduação em Enfermagem e Psicologia. Faculdade Nota 04 no MEC. R$449,00 Mensais.'
+const keywords =
+  'Enfermagem, Técnico de Enfermagem, Psicologia, Faculdade Enfermagem, Faculdade Psicologia, Faculdade Paulista, Graduação Enfermagem, Graduação Psicologia, Bacharelado Enfermagem, Bacharelado Psicologia'
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -40,6 +42,7 @@ const landingData = await getLandingPageData()
 <BaseLayout
   title={title}
   description={description}
+  keywords={keywords}
   canonicalPath="/"
   structuredData={structuredData}
 >

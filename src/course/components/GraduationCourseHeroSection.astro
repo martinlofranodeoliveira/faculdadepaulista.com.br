@@ -1,6 +1,7 @@
 ---
 import type { CoursePresentation } from '../coursePageData'
 import { CourseLeadForm } from '../CourseLeadForm'
+import GraduationRegulationFlag from './GraduationRegulationFlag.astro'
 
 interface Props {
   title: string
@@ -65,6 +66,10 @@ const {
           </div>
         ))}
       </div>
+
+      {presentation.modality !== 'presencial' ? (
+        <GraduationRegulationFlag modalityLabel={presentation.modalityLabel} />
+      ) : null}
 
       {presentation.graduationPortarias.length ? (
         <section class="course-page__grad-portarias" aria-labelledby="graduation-portarias-title">

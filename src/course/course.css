@@ -324,11 +324,23 @@
   margin: 0;
 }
 
+.course-page__regulation-copy--graduation {
+  gap: 14px;
+}
+
 .course-page__regulation-note--post {
   align-items: start;
   display: grid;
   gap: 15px;
   grid-template-columns: minmax(0, 1fr);
+}
+
+.course-page__regulation-note--graduation {
+  align-items: start;
+  display: grid;
+  gap: 15px;
+  grid-template-columns: minmax(0, 1fr);
+  margin-top: 10px;
 }
 
 .course-page__regulation-mec-link {
@@ -3169,6 +3181,10 @@
     order: 4;
   }
 
+  .course-page__regulation-note--graduation {
+    order: 4;
+  }
+
   .course-page__info-stack--post {
     order: 5;
   }
@@ -3516,6 +3532,11 @@
   }
 
   .course-page__regulation-note--post {
+    gap: 12px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .course-page__regulation-note--graduation {
     gap: 12px;
     grid-template-columns: minmax(0, 1fr);
   }

@@ -1,0 +1,48 @@
+---
+interface Props {
+  modalityLabel: string
+}
+
+const { modalityLabel } = Astro.props as Props
+
+const regulationHref =
+  'https://emec.mec.gov.br/emec/consulta-cadastro/detalhamento/d96957f455f6405d14c6542552b0f6eb/MjE3NTc='
+const courseModalityLabel = `Graduação ${modalityLabel}`.trim()
+---
+
+<section class="course-page__regulation-note course-page__regulation-note--graduation">
+  <div class="course-page__regulation-copy course-page__regulation-copy--graduation">
+    <p>
+      O Curso de {courseModalityLabel} ofertado pela Faculdade Fasul Educacional, inscrita no
+      CNPJ sob n° 21.558.886/0001-63, Instituição de Ensino Superior devidamente credenciada pelo
+      Ministério da Educação (MEC) para a oferta de cursos na modalidade a distância (EAD),
+      conforme Portaria n° 499, de 08/07/2021, DOU de 09/07/2021.
+    </p>
+    <p>
+      A Faculdade Paulista atua exclusivamente na divulgação e gestão comercial e educacional dos
+      Cursos.
+    </p>
+    <p>
+      O Certificado de conclusão será emitido pela Faculdade Fasul Educacional, nos termos da
+      Legislação vigente.
+    </p>
+  </div>
+
+  <a
+    href={regulationHref}
+    target="_blank"
+    rel="noreferrer noopener"
+    class="course-page__regulation-mec-link"
+    aria-label="Consultar cadastro da instituição no sistema e-MEC"
+  >
+    <img
+      src="/course/consulte-mec-qr.webp"
+      alt="Consulte aqui o cadastro da Instituição no Sistema e-MEC"
+      class="course-page__regulation-mec-card"
+      width="317"
+      height="101"
+      loading="lazy"
+      decoding="async"
+    />
+  </a>
+</section>

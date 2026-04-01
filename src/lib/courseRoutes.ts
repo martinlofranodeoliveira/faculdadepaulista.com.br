@@ -60,7 +60,11 @@ export function formatPostCourseHeading(label: string): string {
 
 export function formatGraduationCourseHeading(label: string): string {
   const title = stripGraduationModality(label)
-  const normalized = normalizeComparableText(title)
+  const titleWithoutPrefix = title
+    .replace(/^graduação em\s+/i, '')
+    .replace(/^graduacao em\s+/i, '')
+    .trim()
+  const normalized = normalizeComparableText(titleWithoutPrefix || title)
 
   const titledMatches = [
     {
@@ -83,12 +87,12 @@ export function formatGraduationCourseHeading(label: string): string {
 
   for (const match of titledMatches) {
     if (normalized.startsWith(match.prefix)) {
-      const courseName = title.slice(match.prefix.length).trim()
-      return `Gradua\u00e7\u00e3o em ${courseName} (${match.suffix})`
+      const courseName = titleWithoutPrefix.slice(match.prefix.length).trim()
+      return `Graduação em ${courseName} (${match.suffix})`
     }
   }
 
-  return `Gradua\u00e7\u00e3o em ${title}`
+  return `Graduação em ${titleWithoutPrefix || title}`
 }
 
 export function getCourseDisplayTitle(input: CourseRouteInput): string {

@@ -1785,6 +1785,7 @@
 
 .course-page__salary-chart.is-post .course-page__salary-bar {
   border-radius: 13.686px;
+  box-shadow: none;
   width: 210px;
 }
 

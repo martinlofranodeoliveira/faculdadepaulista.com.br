@@ -1640,13 +1640,13 @@ section[id] {
   color: inherit;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 18px;
   grid-column: 2 / 4;
   grid-row: 2;
   justify-content: center;
   min-height: 0;
   overflow: hidden;
-  padding: 26px 32px;
+  padding: 28px 32px 30px;
   position: relative;
   text-decoration: none;
 }
@@ -1658,51 +1658,39 @@ section[id] {
   position: absolute;
 }
 
-.lp-future__reclame-face--main {
-  height: 74.6px;
-  position: static;
-  width: 74.6px;
-}
-
 .lp-future__reclame-face--left {
-  left: -76px;
-  opacity: 0.07;
-  top: -2px;
-  width: 194.6px;
+  left: -66px;
+  opacity: 0.09;
+  top: 4px;
+  width: 176px;
 }
 
 .lp-future__reclame-face--top-left {
-  left: 284px;
-  opacity: 0.1;
-  top: 18px;
-  width: 67.7px;
-}
-
-.lp-future__reclame-face--top-center {
-  left: 335px;
-  top: 17px;
-  width: 82px;
+  left: 262px;
+  opacity: 0.12;
+  top: 28px;
+  width: 58px;
 }
 
 .lp-future__reclame-face--top-right {
-  left: 430px;
-  opacity: 0.1;
-  top: 18px;
-  width: 67.7px;
+  left: 390px;
+  opacity: 0.12;
+  top: 26px;
+  width: 58px;
 }
 
 .lp-future__reclame-face--right {
-  opacity: 0.07;
-  right: -72px;
-  top: 118px;
-  width: 174px;
+  opacity: 0.09;
+  right: -62px;
+  top: 112px;
+  width: 160px;
 }
 
 .lp-future__reclame-head {
   align-items: center;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 8px;
   position: relative;
   z-index: 1;
 }
@@ -1710,8 +1698,8 @@ section[id] {
 .lp-future__reclame-logo {
   display: block;
   height: auto;
-  margin-top: 14px;
-  max-width: 313px;
+  margin-top: 0;
+  max-width: 356px;
   width: 100%;
 }
 
@@ -1772,6 +1760,28 @@ section[id] {
 
 .lp-future__reclame-ranking-copy span {
   font: 300 12.557px/1.25 'Mitr', sans-serif;
+}
+
+.lp-future__reclame-cta {
+  align-items: center;
+  background: linear-gradient(180deg, #329b31 0%, #2a7f27 100%);
+  border-radius: 8px;
+  color: #fff;
+  display: inline-flex;
+  font: 700 18px/1 'Kumbh Sans', sans-serif;
+  gap: 8px;
+  height: 48px;
+  justify-content: center;
+  min-width: 232px;
+  padding: 0 22px;
+  position: relative;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.lp-future__reclame-cta svg {
+  display: block;
+  flex: none;
 }
 
 .lp-future__history {
@@ -2193,6 +2203,7 @@ section[id] {
   border-radius: 18px;
   height: 423px;
   overflow: hidden;
+  position: relative;
 }
 
 .lp-presential-card__image img {
@@ -2233,6 +2244,28 @@ section[id] {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.lp-presential-card__badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lp-presential-card__badge {
+  align-items: center;
+  background: #f50001;
+  border-radius: 4.32px;
+  color: #fff;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.13;
+  min-height: 22px;
+  padding: 3px 8px;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .lp-presential-card__start {
@@ -2338,6 +2371,13 @@ section[id] {
   gap: 1px;
 }
 
+.lp-presential-card__price-current-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .lp-presential-card__price-from {
   color: rgba(15, 23, 34, 0.65);
   font-size: 16px;
@@ -2353,6 +2393,20 @@ section[id] {
   letter-spacing: -0.01em;
   line-height: 1.35;
   white-space: nowrap;
+}
+
+.lp-presential-card__fixed {
+  align-items: center;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  color: #007bff;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 700;
+  height: 22px;
+  line-height: 1.13;
+  padding: 3px 8px;
+  text-transform: uppercase;
 }
 
 .lp-presential-card__cta {
@@ -2460,20 +2514,67 @@ section[id] {
   text-transform: uppercase;
 }
 
+.lp-grad-carousel__filters-row {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.lp-grad-carousel__search-link {
+  align-items: center;
+  color: #fff;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 16px;
+  font-weight: 600;
+  gap: 7px;
+  height: 47px;
+  justify-content: center;
+  padding: 0 20px 0 12px;
+  position: relative;
+  text-decoration: underline;
+  text-transform: uppercase;
+}
+
+.lp-grad-carousel__search-link::after {
+  background: rgba(255, 255, 255, 0.28);
+  content: '';
+  display: block;
+  height: 47px;
+  margin-left: 14px;
+  width: 1px;
+}
+
+.lp-grad-carousel__search-link svg {
+  display: block;
+  flex: none;
+}
+
 .lp-grad-carousel__filters {
   display: flex;
   flex-wrap: nowrap;
   gap: 10px;
-  margin-top: 25px;
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
-  padding-bottom: 6px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  padding-bottom: 10px;
+  scrollbar-color: rgba(255, 255, 255, 0.46) rgba(255, 255, 255, 0.14);
+  scrollbar-width: thin;
 }
 
 .lp-grad-carousel__filters::-webkit-scrollbar {
-  display: none;
+  height: 6px;
+}
+
+.lp-grad-carousel__filters::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+}
+
+.lp-grad-carousel__filters::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.46);
+  border-radius: 999px;
 }
 
 .lp-grad-carousel__filter {
@@ -2486,12 +2587,12 @@ section[id] {
   display: inline-flex;
   flex: 0 0 auto;
   font-family: inherit;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 800;
   height: 47px;
   justify-content: center;
   line-height: 26px;
-  padding: 0 22px;
+  padding: 0 20px;
   transition:
     background-color 180ms ease,
     color 180ms ease,
@@ -2572,39 +2673,54 @@ section[id] {
   background: #fff;
   border-radius: 22px;
   display: grid;
-  gap: 28px;
-  grid-template-columns: minmax(0, 1fr) auto;
-  min-height: 177px;
-  padding: 34px 51px 34px 34px;
+  gap: 20px;
+  grid-template-columns: 217px minmax(0, 1fr) auto;
+  min-height: 165px;
+  padding: 14px;
+}
+
+.lp-grad-carousel__image-wrap {
+  border-radius: 16px;
+  height: 137px;
+  overflow: hidden;
+}
+
+.lp-grad-carousel__image-wrap img {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
 
 .lp-grad-carousel__content {
   display: grid;
-  gap: 10px;
+  align-content: center;
+  gap: 12px;
   min-width: 0;
 }
 
-.lp-grad-carousel__meta {
+.lp-grad-carousel__promo {
   align-items: center;
+  background: linear-gradient(98.93deg, #fe0000 11.08%, #c50002 147.79%);
+  border-radius: 7px;
+  color: #fff;
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  gap: 7px;
+  min-height: 33px;
+  padding: 4px 10px;
+  width: fit-content;
 }
 
-.lp-grad-carousel__meta span {
-  align-items: center;
-  color: #111111;
-  display: inline-flex;
-  font-size: clamp(13px, 1.25vw, 15px);
-  font-weight: 500;
-  gap: 6px;
+.lp-grad-carousel__promo svg {
+  display: block;
+  flex: none;
+}
+
+.lp-grad-carousel__promo {
+  font-size: 14px;
+  font-weight: 700;
   line-height: 1.45;
   text-transform: uppercase;
-}
-
-.lp-grad-carousel__meta span svg {
-  color: #c50002;
-  flex-shrink: 0;
 }
 
 .lp-grad-carousel__content h3 {
@@ -2630,14 +2746,16 @@ section[id] {
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.14;
+  text-transform: uppercase;
 }
 
 .lp-grad-carousel__price span {
   color: #6d6565;
-  font-size: clamp(14px, 1.32vw, 21px);
+  font-size: clamp(14px, 1.2vw, 18px);
   font-weight: 700;
   line-height: 1.2;
   text-decoration: line-through;
+  text-transform: uppercase;
 }
 
 .lp-grad-carousel__cta {
@@ -2935,9 +3053,9 @@ section[id] {
   display: flex;
   flex: 0 0 306px;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   min-height: 384px;
-  padding: 12px;
+  padding: 10px;
   scroll-snap-stop: always;
   scroll-snap-align: start;
 }
@@ -2946,6 +3064,7 @@ section[id] {
   border-radius: 12px;
   height: 132px;
   overflow: hidden;
+  position: relative;
 }
 
 .lp-all-grad-card__image-wrap img {
@@ -2955,45 +3074,70 @@ section[id] {
   width: 100%;
 }
 
-.lp-all-grad-card__badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin: 0;
-}
-
-.lp-all-grad-card__mode {
+.lp-all-grad-card__promo,
+.lp-presential-card__promo {
   align-items: center;
-  background: #f50001;
-  border: 0;
-  border-radius: 3px;
+  background: linear-gradient(95deg, #fe0000 5.82%, #c50002 146.34%);
+  border-bottom-left-radius: 12px;
+  border-top-right-radius: 12px;
   color: #fff;
   display: inline-flex;
-  font-size: 9px;
+  gap: 4px;
+  justify-content: center;
+  min-height: 23px;
+  padding: 3px 8px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.lp-all-grad-card__promo span,
+.lp-presential-card__promo span {
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.13;
-  margin: 0;
-  min-height: 18px;
-  padding: 0 7px;
   text-transform: uppercase;
   white-space: nowrap;
-  width: fit-content;
 }
 
-.lp-all-grad-card__mec {
+.lp-all-grad-card__promo svg,
+.lp-presential-card__promo svg {
+  display: block;
+  flex: none;
+}
+
+.lp-all-grad-card__badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+}
+
+.lp-all-grad-card__badge-row,
+.lp-presential-card__badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.lp-all-grad-card__mode,
+.lp-all-grad-card__mec,
+.lp-all-grad-card__semester {
   align-items: center;
   background: #f50001;
   border: 0;
-  border-radius: 3px;
+  border-radius: 4.32px;
   color: #fff;
   display: inline-flex;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.13;
-  min-height: 18px;
-  padding: 0 8px;
+  margin: 0;
+  min-height: 22px;
+  padding: 3px 8px;
   text-transform: uppercase;
   white-space: nowrap;
   width: fit-content;
@@ -4166,9 +4310,23 @@ section[id] {
     justify-content: flex-start;
   }
 
+  .lp-grad-carousel__filters-row {
+    margin-top: 20px;
+  }
+
+  .lp-grad-carousel__search-link {
+    font-size: 14px;
+    height: 40px;
+    padding: 0 16px 0 10px;
+  }
+
+  .lp-grad-carousel__search-link::after {
+    height: 40px;
+    margin-left: 10px;
+  }
+
   .lp-grad-carousel__filters {
     gap: 10px;
-    margin-top: 20px;
   }
 
   .lp-grad-carousel__filter {
@@ -4191,10 +4349,13 @@ section[id] {
   }
 
   .lp-grad-carousel__item {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: auto;
+    grid-template-columns: 188px minmax(0, 1fr) auto;
     gap: 18px;
     padding: 22px 24px;
+  }
+
+  .lp-grad-carousel__image-wrap {
+    height: 126px;
   }
 
   .lp-grad-carousel__cta {
@@ -4564,21 +4725,41 @@ section[id] {
     white-space: nowrap;
   }
 
+  .lp-grad-carousel__filters-row {
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .lp-grad-carousel__search-link {
+    font-size: 12px;
+    height: 34.497px;
+    padding: 0 10px 0 0;
+    white-space: nowrap;
+  }
+
+  .lp-grad-carousel__search-link::after {
+    height: 34.497px;
+    margin-left: 8px;
+  }
+
+  .lp-grad-carousel__search-link svg {
+    height: 16px;
+    width: 16px;
+  }
+
   .lp-grad-carousel__filters {
     flex-wrap: nowrap;
     gap: 10px;
-    margin-top: 14px;
     overflow-x: auto;
     overflow-y: hidden;
-    padding-bottom: 0;
+    padding-bottom: 8px;
     scroll-snap-type: x mandatory;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
     touch-action: pan-x;
   }
 
   .lp-grad-carousel__filters::-webkit-scrollbar {
-    display: none;
+    height: 4px;
   }
 
   .lp-grad-carousel__filter {
@@ -4633,64 +4814,38 @@ section[id] {
     min-height: 38.049px;
   }
 
-  .lp-grad-carousel__sort {
-    align-items: center;
-    background: transparent;
-    border: 1px solid #ffffff;
-    border-radius: 6px;
-    color: #ffffff;
-    cursor: pointer;
-    display: inline-flex;
-    flex: 0 0 auto;
-    font-family: 'Montserrat', 'Kumbh Sans', Arial, sans-serif;
-    font-size: 14.889px;
-    font-weight: 700;
-    gap: 5.79px;
-    height: 38.049px;
-    justify-content: center;
-    padding: 0 10px;
-  }
-
-  .lp-grad-carousel__sort svg {
-    flex: 0 0 auto;
-    height: 19.852px;
-    width: 19.852px;
-  }
-
   .lp-grad-carousel__item {
     border-radius: 15px;
     gap: 14px;
     grid-template-columns: 1fr;
-    grid-template-rows: auto;
+    grid-template-rows: auto auto;
     min-height: 171.57px;
     padding: 14px;
   }
 
+  .lp-grad-carousel__image-wrap {
+    display: none;
+  }
+
   .lp-grad-carousel__content {
+    align-content: flex-start;
     gap: 11px;
     width: 100%;
   }
 
-  .lp-grad-carousel__meta {
-    gap: 12px;
-    justify-content: space-between;
-    width: 100%;
+  .lp-grad-carousel__promo {
+    border-radius: 5px;
+    font-size: 8px;
+    gap: 4px;
+    line-height: 1.25;
+    min-height: 22px;
+    padding: 3px 6px;
+    max-width: 100%;
   }
 
-  .lp-grad-carousel__meta span {
-    font-size: 10.952px;
-    gap: 6px;
-    white-space: nowrap;
-  }
-
-  .lp-grad-carousel__meta span:first-child svg {
-    height: 20.536px;
-    width: 20.536px;
-  }
-
-  .lp-grad-carousel__meta span:last-child svg {
-    height: 16.607px;
-    width: 16.607px;
+  .lp-grad-carousel__promo svg {
+    height: 12px;
+    width: 12px;
   }
 
   .lp-grad-carousel__content h3,
@@ -4704,13 +4859,14 @@ section[id] {
   }
 
   .lp-grad-carousel__price span {
-    font-size: 15.06px;
+    font-size: 12px;
   }
 
   .lp-grad-carousel__cta {
-    align-self: flex-start;
-    border-radius: 20.929px;
+    align-self: flex-end;
+    border-radius: 8px;
     font-size: 11.547px;
+    grid-column: 1;
     height: 35.362px;
     min-width: 0;
     width: 138.563px;
@@ -4824,6 +4980,23 @@ section[id] {
     height: 100.633px;
   }
 
+  .lp-all-grad-card__promo {
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    gap: 3px;
+    min-height: 17.149px;
+    padding: 2px 6px;
+  }
+
+  .lp-all-grad-card__promo span {
+    font-size: 8.916px;
+  }
+
+  .lp-all-grad-card__promo svg {
+    height: 10.715px;
+    width: 10.715px;
+  }
+
   .lp-all-grad-card h3 {
     font-size: 14.723px;
     line-height: 1.2;
@@ -4835,20 +5008,16 @@ section[id] {
     gap: 4px;
   }
 
-  .lp-all-grad-card__mec {
-    font-size: 7.715px;
-    min-height: 13.723px;
-    padding: 0 5px;
-  }
-
-  .lp-all-grad-card__mode {
+  .lp-all-grad-card__mode,
+  .lp-all-grad-card__mec,
+  .lp-all-grad-card__semester {
     background: #f50001;
     border: 0;
     border-radius: 3.291px;
     color: #fff;
     font-size: 7.715px;
     min-height: 13.723px;
-    padding: 0 5px;
+    padding: 2px 5px;
   }
 
   .lp-all-grad-card__prices {
@@ -4996,6 +5165,34 @@ section[id] {
     gap: 6px;
   }
 
+  .lp-presential-card__promo {
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    gap: 3px;
+    min-height: 17px;
+    padding: 2px 6px;
+  }
+
+  .lp-presential-card__promo span {
+    font-size: 8.5px;
+  }
+
+  .lp-presential-card__promo svg {
+    height: 10px;
+    width: 10px;
+  }
+
+  .lp-presential-card__badges {
+    gap: 4px;
+  }
+
+  .lp-presential-card__badge {
+    border-radius: 3px;
+    font-size: 8.5px;
+    min-height: 16px;
+    padding: 2px 5px;
+  }
+
   .lp-presential-card__start {
     background: #d10000;
     border-radius: 4px;
@@ -5059,6 +5256,10 @@ section[id] {
     width: 100%;
   }
 
+  .lp-presential-card__price-current-row {
+    gap: 5px;
+  }
+
   .lp-presential-card__price-current {
     font-size: 16px;
     line-height: 1.35;
@@ -5070,6 +5271,13 @@ section[id] {
     line-height: 1.5;
     margin-left: 0;
     order: 1;
+  }
+
+  .lp-presential-card__fixed {
+    border-radius: 3px;
+    font-size: 8.5px;
+    height: 16px;
+    padding: 2px 5px;
   }
 
   .lp-presential-card__cta {
@@ -5151,13 +5359,9 @@ section[id] {
 
   .lp-future__reclame {
     border-radius: 13.843px;
-    gap: 18px;
+    gap: 14px;
     min-height: 281px;
     padding: 28px 18px 20px;
-  }
-
-  .lp-future__reclame-face--main {
-    width: 81.329px;
   }
 
   .lp-future__reclame-face--left {
@@ -5167,32 +5371,26 @@ section[id] {
   }
 
   .lp-future__reclame-face--top-left {
-    left: 91px;
-    top: 52px;
-    width: 55.308px;
-  }
-
-  .lp-future__reclame-face--top-center {
-    left: 140px;
-    top: 36px;
-    width: 81.329px;
+    left: 90px;
+    top: 28px;
+    width: 46px;
   }
 
   .lp-future__reclame-face--top-right {
-    left: 204px;
-    top: 58px;
-    width: 49.004px;
+    left: 205px;
+    top: 30px;
+    width: 46px;
   }
 
   .lp-future__reclame-face--right {
     right: -38px;
-    top: 201px;
+    top: 188px;
     width: 83.288px;
   }
 
   .lp-future__reclame-logo {
     margin-top: 0;
-    max-width: 269.903px;
+    max-width: 262px;
   }
 
   .lp-future__reclame-score {
@@ -5230,6 +5428,19 @@ section[id] {
 
   .lp-future__reclame-ranking-copy span {
     font-size: 11.326px;
+  }
+
+  .lp-future__reclame-cta {
+    font-size: 14px;
+    gap: 6px;
+    height: 40px;
+    min-width: 200px;
+    padding: 0 18px;
+  }
+
+  .lp-future__reclame-cta svg {
+    height: 14px;
+    width: 14px;
   }
 
   .lp-future__history {

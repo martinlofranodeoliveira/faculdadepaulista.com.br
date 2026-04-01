@@ -44,6 +44,7 @@ export type CatalogCourse = {
   rawLabel: string
   description: string
   seoDescription: string
+  areaIds: number[]
   areaLabels: string[]
   primaryAreaLabel: string
   areaSlug: string
@@ -139,6 +140,7 @@ type ApiCourseListItem = {
   teaching_plan_mime?: string | null
   main_image_url?: string | null
   modalities?: string | null
+  area_ids?: Array<number | string> | null
   area_names?: string[] | null
   seo?: ApiSeoBundle | null
   duration_months?: number | null
@@ -217,6 +219,7 @@ type ApiCourseDetail = {
   requires_tcc?: boolean | null
   has_tcc?: boolean | null
   has_course_completion_work?: boolean | null
+  area_ids?: Array<number | string> | null
   area_names?: string[] | null
   teaching_plan_path?: string | null
   teaching_plan_mime?: string | null
@@ -427,6 +430,14 @@ async function withCache<T>(key: string, loader: () => Promise<T>, force = false
 
 function normalizeText(value: string | null | undefined): string {
   return (value ?? '').replace(/\s+/g, ' ').trim()
+}
+
+function normalizeNumericArray(values: Array<number | string> | null | undefined): number[] {
+  if (!Array.isArray(values)) return []
+
+  return values
+    .map((value) => Number(value))
+    .filter((value) => Number.isInteger(value) && value > 0)
 }
 
 function normalizeMultilineText(value: string | null | undefined): string {
@@ -1459,6 +1470,7 @@ function mapCatalogCourse(
         },
   )
   const areaLabels = (detail?.area_names ?? course.area_names ?? []).map((item) => normalizeText(item)).filter(Boolean)
+  const areaIds = normalizeNumericArray(detail?.area_ids ?? course.area_ids)
   const primaryAreaLabel = buildPrimaryAreaLabel(areaLabels)
   const description =
     normalizeRichText(firstNonEmpty(detail?.description, course.description, seo.description)) ||
@@ -1511,6 +1523,7 @@ function mapCatalogCourse(
     rawLabel,
     description,
     seoDescription,
+    areaIds,
     areaLabels,
     primaryAreaLabel,
     areaSlug: buildAreaSlug(primaryAreaLabel),
@@ -1732,6 +1745,43 @@ export async function getGraduationCatalogCourses(force = false) {
 
 export async function getPostCatalogCourses(force = false) {
   return getCatalogCourses('pos', force)
+}
+
+export async function getPostCatalogCoursesByArea(areaId: number, force = false) {
+  return withCache(`catalog-courses:pos:area:${areaId}`, async () => {
+    if (!Number.isInteger(areaId) || areaId <= 0) return []
+
+    const institutions = getInstitutionConfigs()
+    if (!institutions.length || !API_BASE_URL) return []
+
+    const perInstitution = await Promise.all(
+      institutions.map(async (institution) => {
+        try {
+          const items = await fetchAllPages<ApiCourseListItem>(
+            '/api/v1/public/courses/by-modality-area',
+            institution,
+            {
+              level: 'pos',
+              modality: 'ead',
+              area_id: areaId,
+              show_disciplines: 'N',
+              price: 'S',
+            },
+          )
+
+          return items.map((course) => mapCatalogCourse(institution, course, null, 'pos'))
+        } catch (error) {
+          console.error(
+            `Erro ao carregar catálogo pós da área ${areaId} da instituição ${institution.name}:`,
+            error,
+          )
+          return []
+        }
+      }),
+    )
+
+    return dedupeCatalogCourses(perInstitution.flat())
+  }, force)
 }
 
 export async function getGraduationCatalogCourseBySlug(slug: string, force = false) {

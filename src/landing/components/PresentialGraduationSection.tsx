@@ -85,6 +85,13 @@ function BenefitItem({ children }: { children: ReactNode }) {
   )
 }
 
+function getPresentialDisplayTitle(title: string) {
+  return title
+    .replace(/^Graduação em\s+/i, '')
+    .replace(/\s*\((Bacharelado|Licenciatura|Tecnólogo)\)\s*$/i, '')
+    .trim()
+}
+
 export function PresentialGraduationSection({ courses }: Props) {
   return (
     <section className="lp-presential" id="graduacao">
@@ -144,7 +151,7 @@ export function PresentialGraduationSection({ courses }: Props) {
                     <PresentialModeIcon />
                     {course.mode}
                   </span>
-                  <h3>{course.title}</h3>
+                  <h3>{getPresentialDisplayTitle(course.title)}</h3>
                   <span className="lp-presential-card__start">{course.startDate}</span>
                 </div>
 

@@ -13,6 +13,7 @@ export type LandingGraduationCourseCard = {
   image: string
   imagePosition?: string
   modalityLabel: string
+  semesterCount: number
   installmentPrice: string
   oldInstallmentPrice: string
   fixedInstallments: boolean
@@ -36,6 +37,8 @@ export type LandingPresentialCourse = {
   startDate: string
   currentPrice: string
   originalPriceLabel: string
+  semesterCount: number
+  fixedInstallments: boolean
 }
 
 export type LandingPostCourse = {
@@ -45,8 +48,15 @@ export type LandingPostCourse = {
   courseModality?: 'ead' | 'semipresencial' | 'presencial'
   title: string
   area: string
+  image: string
   currentInstallmentPrice: string
   oldInstallmentPrice: string
+}
+
+export type LandingPostArea = {
+  areaId: number
+  label: string
+  courses: LandingPostCourse[]
 }
 
 export type LandingPageData = {
@@ -55,4 +65,5 @@ export type LandingPageData = {
   onlineGraduationCourses: LandingGraduationCourseCard[]
   presentialCourses: LandingPresentialCourse[]
   postCourses: LandingPostCourse[]
+  postAreas: LandingPostArea[]
 }

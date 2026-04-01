@@ -17,6 +17,7 @@ import { COURSE_MODAL_OPEN_EVENT, type CoursePrefillDetail } from './coursePrefi
 import type {
   LandingCourseOption,
   LandingGraduationCourseCard,
+  LandingPostArea,
   LandingPostCourse,
   LandingPresentialCourse,
 } from './landingModels'
@@ -27,6 +28,7 @@ type LandingPageProps = {
   onlineGraduationCourses: LandingGraduationCourseCard[]
   presentialCourses: LandingPresentialCourse[]
   postCourses: LandingPostCourse[]
+  postAreas: LandingPostArea[]
 }
 
 export function LandingPage({
@@ -35,6 +37,7 @@ export function LandingPage({
   onlineGraduationCourses,
   presentialCourses,
   postCourses,
+  postAreas,
 }: LandingPageProps) {
   const [selectedCourse, setSelectedCourse] = useState<CoursePrefillDetail | null>(null)
 
@@ -64,7 +67,7 @@ export function LandingPage({
           <AllGraduationsCarouselSection courses={onlineGraduationCourses} />
         </div>
         <PostGraduationBannerSection />
-        <GraduationCarouselSection courses={postCourses} />
+        <GraduationCarouselSection courses={postCourses} areas={postAreas} />
         <FutureSection />
         <TestimonialsSection />
         <FaqSection />

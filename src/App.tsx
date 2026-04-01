@@ -15,6 +15,7 @@ const EMPTY_LANDING_DATA = {
   onlineGraduationCourses: [] as Array<never>,
   presentialCourses: [] as Array<never>,
   postCourses: [] as Array<never>,
+  postAreas: [] as Array<never>,
 }
 
 function App() {

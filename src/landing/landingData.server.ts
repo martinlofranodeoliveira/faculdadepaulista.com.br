@@ -1,10 +1,11 @@
-import {
+﻿import {
   formatGraduationCourseHeading,
   normalizeComparableText,
   stripGraduationModality,
 } from '@/lib/courseRoutes'
 import {
   getGraduationCatalogCourses,
+  getPostCatalogCoursesByArea,
   getPostCatalogCourses,
   type CatalogCourse,
 } from '@/lib/catalogApi'
@@ -12,6 +13,7 @@ import {
 import type {
   LandingCourseOption,
   LandingGraduationCourseCard,
+  LandingPostArea,
   LandingPageData,
   LandingPostCourse,
   LandingPresentialCourse,
@@ -35,6 +37,7 @@ const FIXED_PRESENTIAL_COURSES: Array<
     fallbackId: string
     fallbackCourseValue: string
     fallbackCourseLabel: string
+    fallbackSemesterCount?: number
   }
 > = [
   {
@@ -51,6 +54,7 @@ const FIXED_PRESENTIAL_COURSES: Array<
     startDate: 'Início das aulas: 01/07/26',
     currentPrice: 'R$ 449,00/MÊS',
     originalPriceLabel: 'De R$ 1.890,00',
+    fallbackSemesterCount: 10,
   },
   {
     fallbackId: 'bacharelado-em-psicologia',
@@ -67,6 +71,7 @@ const FIXED_PRESENTIAL_COURSES: Array<
     startDate: 'Início das aulas: 01/07/26',
     currentPrice: 'R$ 549,00/MÊS',
     originalPriceLabel: 'De R$ 1.890,00',
+    fallbackSemesterCount: 10,
   },
 ]
 
@@ -86,6 +91,21 @@ function buildCourseOption(course: CatalogCourse): LandingCourseOption {
   }
 }
 
+function resolveSemesterCount(
+  course?: Pick<CatalogCourse, 'semesterCount' | 'durationMonths' | 'durationContinuousMonths'> | null,
+  fallback = 0,
+) {
+  const semesterCount = Number(course?.semesterCount ?? 0)
+  if (semesterCount > 0) return semesterCount
+
+  const durationMonths = Number(course?.durationMonths ?? course?.durationContinuousMonths ?? 0)
+  if (durationMonths > 0) {
+    return Math.max(1, Math.round(durationMonths / 6))
+  }
+
+  return fallback
+}
+
 function buildGraduationCard(course: CatalogCourse): LandingGraduationCourseCard {
   return {
     courseValue: course.value,
@@ -95,9 +115,10 @@ function buildGraduationCard(course: CatalogCourse): LandingGraduationCourseCard
     title: formatGraduationCourseHeading(course.rawLabel, course.value, course.path),
     image: course.image,
     modalityLabel: course.modalityBadge,
+    semesterCount: resolveSemesterCount(course),
     installmentPrice: course.currentInstallmentPriceMonthly || course.currentInstallmentPrice,
     oldInstallmentPrice: course.oldInstallmentPrice,
-    fixedInstallments: course.fixedInstallments,
+    fixedInstallments: true,
   }
 }
 
@@ -133,6 +154,8 @@ function buildFixedPresentialCourses(graduationCourses: CatalogCourse[]): Landin
       startDate: fixedCourse.startDate,
       currentPrice: fixedCourse.currentPrice,
       originalPriceLabel: fixedCourse.originalPriceLabel,
+      semesterCount: resolveSemesterCount(dynamicCourse, fixedCourse.fallbackSemesterCount ?? 0),
+      fixedInstallments: true,
     }
   })
 }
@@ -145,9 +168,26 @@ function buildPostCourse(course: CatalogCourse): LandingPostCourse {
     courseModality: course.modality,
     title: course.title,
     area: course.primaryAreaLabel,
+    image: course.image,
     currentInstallmentPrice: course.currentInstallmentPrice,
     oldInstallmentPrice: course.oldInstallmentPrice,
   }
+}
+
+function buildPostAreas(courses: CatalogCourse[]): Array<{ areaId: number; label: string }> {
+  const areaMap = new Map<number, string>()
+
+  for (const course of courses) {
+    course.areaIds.forEach((areaId, index) => {
+      const label = course.areaLabels[index] ?? ''
+      if (!areaId || !label || areaMap.has(areaId)) return
+      areaMap.set(areaId, label)
+    })
+  }
+
+  return [...areaMap.entries()]
+    .map(([areaId, label]) => ({ areaId, label }))
+    .sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'))
 }
 
 export async function getLandingPageData(force = false): Promise<LandingPageData> {
@@ -166,6 +206,18 @@ export async function getLandingPageData(force = false): Promise<LandingPageData
 
   const postOptions = sortByLabel(postCourses.map(buildCourseOption))
   const landingPostCourses = sortByLabel(postCourses.map(buildPostCourse))
+  const postAreaDefinitions = buildPostAreas(postCourses)
+  const postAreas: LandingPostArea[] = await Promise.all(
+    postAreaDefinitions.map(async ({ areaId, label }) => {
+      const areaCourses = await getPostCatalogCoursesByArea(areaId, force)
+
+      return {
+        areaId,
+        label,
+        courses: sortByLabel(areaCourses.map(buildPostCourse)),
+      }
+    }),
+  )
 
   return {
     graduationOptions,
@@ -173,5 +225,6 @@ export async function getLandingPageData(force = false): Promise<LandingPageData
     onlineGraduationCourses,
     presentialCourses,
     postCourses: landingPostCourses,
+    postAreas,
   }
 }

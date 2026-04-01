@@ -2,53 +2,17 @@
 
 import { getCoursePath } from '@/lib/courseRoutes'
 import { openCourseLeadModal } from '../coursePrefill'
-import type { LandingPostCourse } from '../landingModels'
+import type { LandingPostArea, LandingPostCourse } from '../landingModels'
 
 const ALL_AREAS = '__all_areas__'
 const COURSES_PER_PAGE = 5
 
-type SortOrder = 'asc' | 'desc'
 type Props = {
   courses: LandingPostCourse[]
+  areas: LandingPostArea[]
 }
 
-function GraduationLabelIcon() {
-  return (
-    <svg
-      width="27"
-      height="22"
-      viewBox="0 0 27 22"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M23.7129 16.5991V8.4181L13.0421 14.2278L0 7.11388L13.0421 0L26.0842 7.11388V16.5991H23.7129ZM13.0421 21.3417L4.74259 16.8362V10.908L13.0421 15.4134L21.3417 10.908V16.8362L13.0421 21.3417Z"
-        fill="#C50002"
-      />
-    </svg>
-  )
-}
-
-function VideoLabelIcon() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <path
-        d="M11.5059 0C5.15463 0 0 5.15463 0 11.5059C0 17.8571 5.15463 23.0117 11.5059 23.0117C17.8571 23.0117 23.0117 17.8571 23.0117 11.5059C23.0117 5.15463 17.8571 0 11.5059 0ZM9.2047 16.6835V6.32823L16.1082 11.5059L9.2047 16.6835Z"
-        fill="#C50002"
-      />
-    </svg>
-  )
-}
-
-function SortFilterIcon() {
+function SearchIcon() {
   return (
     <svg
       width="20"
@@ -58,38 +22,56 @@ function SortFilterIcon() {
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      <path d="M3.33301 5H16.6663" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M5.83301 10H14.1663" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M8.33301 15H11.6663" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path
+        d="M14.1667 14.1666L18.3334 18.3333M16.1111 9.16663C16.1111 13.0026 13.0027 16.1111 9.16675 16.1111C5.33077 16.1111 2.22231 13.0026 2.22231 9.16663C2.22231 5.33065 5.33077 2.22218 9.16675 2.22218C13.0027 2.22218 16.1111 5.33065 16.1111 9.16663Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
 
-export function GraduationCarouselSection({ courses }: Props) {
+function BonusPostIcon() {
+  return (
+    <svg
+      width="20"
+      height="22"
+      viewBox="0 0 20 22"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M5.93506 2.20703C4.62082 2.20703 3.55518 3.27269 3.55518 4.58691C3.55518 5.90114 4.62082 6.9668 5.93506 6.9668H9.51123V5.74805L8.53662 4.77344C7.60863 3.84544 6.66698 2.20703 5.93506 2.20703ZM13.0874 2.20703C12.3555 2.20703 11.4138 3.84544 10.4858 4.77344L9.51123 5.74805V6.9668H13.0874C14.4016 6.9668 15.4673 5.90114 15.4673 4.58691C15.4673 3.27269 14.4016 2.20703 13.0874 2.20703ZM3.55518 8.15723V10.5371H8.9165V8.15723H3.55518ZM10.106 8.15723V10.5371H15.4673V8.15723H10.106ZM3.55518 11.7275V17.6836C3.55518 18.3407 4.08799 18.8735 4.74512 18.8735H8.32129V11.7275H3.55518ZM9.51123 11.7275V18.8735H14.2773C14.9344 18.8735 15.4673 18.3407 15.4673 17.6836V11.7275H9.51123Z"
+        fill="#FFE23D"
+      />
+    </svg>
+  )
+}
+
+export function GraduationCarouselSection({ courses, areas }: Props) {
   const [activeArea, setActiveArea] = useState(ALL_AREAS)
   const [currentPage, setCurrentPage] = useState(1)
-  const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
   const listRef = useRef<HTMLDivElement | null>(null)
 
   const areaOptions = useMemo(() => {
-    const uniqueAreas = [...new Set(courses.map((course) => course.area).filter(Boolean))].sort(
-      (a, b) => a.localeCompare(b, 'pt-BR'),
-    )
-
-    return [ALL_AREAS, ...uniqueAreas]
-  }, [courses])
+    return [ALL_AREAS, ...areas.map((area) => area.label)]
+  }, [areas])
 
   const filteredCourses = useMemo(() => {
     const areaFiltered =
-      activeArea === ALL_AREAS ? courses : courses.filter((course) => course.area === activeArea)
+      activeArea === ALL_AREAS
+        ? courses
+        : areas.find((area) => area.label === activeArea)?.courses ?? []
 
-    const sorted = [...areaFiltered].sort((a, b) => a.title.localeCompare(b.title, 'pt-BR'))
-    return sortOrder === 'asc' ? sorted : sorted.reverse()
-  }, [activeArea, courses, sortOrder])
+    return [...areaFiltered].sort((a, b) => a.title.localeCompare(b.title, 'pt-BR'))
+  }, [activeArea, areas, courses])
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [activeArea, courses, sortOrder])
+  }, [activeArea, courses])
 
   const totalPages = Math.max(1, Math.ceil(filteredCourses.length / COURSES_PER_PAGE))
   const safeCurrentPage = Math.min(currentPage, totalPages)
@@ -126,28 +108,39 @@ export function GraduationCarouselSection({ courses }: Props) {
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: 0, behavior: 'auto' })
-  }, [activeArea, safeCurrentPage, sortOrder])
+  }, [activeArea, safeCurrentPage])
+
+  const buildCurrentPriceLabel = (price: string) => {
+    return /\/m[eê]s/i.test(price) ? price : `${price}/MÊS`
+  }
 
   return (
     <section className="lp-grad-carousel" id="pos-graduacao">
       <div className="lp-shell">
         <header className="lp-grad-carousel__head">
-          <h2>PÓS-GRADUAÇÕES EAD</h2>
+          <h2>2.000 PÓS-GRADUAÇÕES EAD</h2>
         </header>
 
-        <div className="lp-grad-carousel__filters" role="tablist" aria-label="Filtrar cursos por área">
-          {areaOptions.map((area) => (
-            <button
-              key={area}
-              type="button"
-              role="tab"
-              aria-selected={activeArea === area}
-              className={`lp-grad-carousel__filter ${activeArea === area ? 'is-active' : ''}`}
-              onClick={() => setActiveArea(area)}
-            >
-              {area === ALL_AREAS ? 'TODAS' : area}
-            </button>
-          ))}
+        <div className="lp-grad-carousel__filters-row">
+          <a href="/pos-graduacao" className="lp-grad-carousel__search-link">
+            <SearchIcon />
+            <span>PROCURAR</span>
+          </a>
+
+          <div className="lp-grad-carousel__filters" role="tablist" aria-label="Filtrar cursos por área">
+            {areaOptions.map((area, index) => (
+              <button
+                key={area}
+                type="button"
+                role="tab"
+                aria-selected={activeArea === area}
+                className={`lp-grad-carousel__filter ${activeArea === area ? 'is-active' : ''}`}
+                onClick={() => setActiveArea(area)}
+              >
+                {index === 0 ? 'TODAS' : area}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="lp-grad-carousel__divider" aria-hidden="true" />
@@ -158,37 +151,32 @@ export function GraduationCarouselSection({ courses }: Props) {
               <section className="lp-grad-carousel__area-section">
                 <div className="lp-grad-carousel__scope-row">
                   <p className="lp-grad-carousel__scope">{scopeLabel}</p>
-
-                  <button
-                    type="button"
-                    className="lp-grad-carousel__sort"
-                    aria-label={sortOrder === 'asc' ? 'Ordenar cursos de Z a A' : 'Ordenar cursos de A a Z'}
-                    onClick={() => setSortOrder((previous) => (previous === 'asc' ? 'desc' : 'asc'))}
-                  >
-                    <SortFilterIcon />
-                    <span>{sortOrder === 'asc' ? 'AZ' : 'ZA'}</span>
-                  </button>
                 </div>
 
                 <div className="lp-grad-carousel__list" ref={listRef}>
                   {paginatedCourses.map((course) => (
                     <article key={course.courseValue} className="lp-grad-carousel__item">
+                      <div className="lp-grad-carousel__image-wrap">
+                        <img
+                          src={course.image}
+                          alt={course.title}
+                          width="217"
+                          height="137"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </div>
+
                       <div className="lp-grad-carousel__content">
-                        <div className="lp-grad-carousel__meta">
-                          <span>
-                            <GraduationLabelIcon />
-                            PÓS-GRADUAÇÃO EAD
-                          </span>
-                          <span>
-                            <VideoLabelIcon />
-                            COM VIDEOAULAS
-                          </span>
-                        </div>
+                        <span className="lp-grad-carousel__promo">
+                          <BonusPostIcon />
+                          GANHE +3 PÓS PARA VOCÊ OU UM AMIGO!
+                        </span>
 
                         <h3>{course.title}</h3>
 
                         <div className="lp-grad-carousel__price">
-                          <strong>{course.currentInstallmentPrice}</strong>
+                          <strong>{buildCurrentPriceLabel(course.currentInstallmentPrice)}</strong>
                           {course.oldInstallmentPrice ? <span>{course.oldInstallmentPrice}</span> : null}
                         </div>
                       </div>

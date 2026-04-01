@@ -9,11 +9,34 @@ type Props = {
   courses: LandingGraduationCourseCard[]
 }
 
+function BonusPostIcon() {
+  return (
+    <svg
+      width="14"
+      height="15"
+      viewBox="0 0 14 15"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M4.211 1.53C3.309 1.53 2.578 2.262 2.578 3.164C2.578 4.066 3.309 4.797 4.211 4.797H6.667V3.961L5.997 3.291C5.359 2.653 4.711 1.53 4.211 1.53ZM9.123 1.53C8.623 1.53 7.974 2.653 7.337 3.291L6.667 3.961V4.797H9.123C10.025 4.797 10.756 4.066 10.756 3.164C10.756 2.262 10.025 1.53 9.123 1.53ZM2.578 5.614V7.248H6.258V5.614H2.578ZM7.076 5.614V7.248H10.756V5.614H7.076ZM2.578 8.065V12.155C2.578 12.606 2.944 12.972 3.395 12.972H5.849V8.065H2.578ZM6.667 8.065V12.972H9.94C10.391 12.972 10.756 12.606 10.756 12.155V8.065H6.667Z"
+        fill="#FFE23D"
+      />
+    </svg>
+  )
+}
+
 function getDisplayTitle(title: string): string {
   return title
     .replace(/\s*\((Semipresencial|Presencial|EAD)\)\s*$/i, '')
     .replace(/\s+(Semipresencial|Presencial|EAD)\s*$/i, '')
     .trim()
+}
+
+function getSemesterLabel(semesterCount: number) {
+  if (!semesterCount) return ''
+  return `${semesterCount} ${semesterCount === 1 ? 'semestre' : 'semestres'}`
 }
 
 export function AllGraduationsCarouselSection({ courses }: Props) {
@@ -224,13 +247,26 @@ export function AllGraduationsCarouselSection({ courses }: Props) {
                     decoding="async"
                     style={course.imagePosition ? { objectPosition: course.imagePosition } : undefined}
                   />
+                  <div className="lp-all-grad-card__promo" aria-hidden="true">
+                    <BonusPostIcon />
+                    <span>GANHE +3 PÓS!</span>
+                  </div>
                 </div>
 
                 <h3>{getDisplayTitle(course.title)}</h3>
 
                 <div className="lp-all-grad-card__badges">
-                  <span className="lp-all-grad-card__mec">RECONHECIDO MEC</span>
-                  <span className="lp-all-grad-card__mode">{course.modalityLabel}</span>
+                  <div className="lp-all-grad-card__badge-row">
+                    <span className="lp-all-grad-card__mode">{course.modalityLabel}</span>
+                  </div>
+                  <div className="lp-all-grad-card__badge-row">
+                    <span className="lp-all-grad-card__mec">RECONHECIDO MEC</span>
+                    {course.semesterCount > 0 ? (
+                      <span className="lp-all-grad-card__semester">
+                        {getSemesterLabel(course.semesterCount)}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
 
                 <div className="lp-all-grad-card__prices">

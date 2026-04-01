@@ -1,4 +1,4 @@
-type PartnerMarqueeRowProps = {
+﻿type PartnerMarqueeRowProps = {
   decorative?: boolean
 }
 
@@ -122,16 +122,6 @@ export function FutureSection() {
               src="/landing/future/reclame-face-figma.webp"
               alt=""
               aria-hidden="true"
-              className="lp-future__reclame-face lp-future__reclame-face--top-center"
-              width="82"
-              height="82"
-              loading="lazy"
-              decoding="async"
-            />
-            <img
-              src="/landing/future/reclame-face-figma.webp"
-              alt=""
-              aria-hidden="true"
               className="lp-future__reclame-face lp-future__reclame-face--top-right"
               width="68"
               height="68"
@@ -151,21 +141,11 @@ export function FutureSection() {
 
             <div className="lp-future__reclame-head">
               <img
-                src="/landing/future/reclame-face-figma.webp"
-                alt=""
-                aria-hidden="true"
-                className="lp-future__reclame-face lp-future__reclame-face--main"
-                width="82"
-                height="82"
-                loading="lazy"
-                decoding="async"
-              />
-              <img
                 src="/landing/future/reclame-aqui-logo-figma.webp"
                 alt="Reclame AQUI"
                 className="lp-future__reclame-logo"
                 width="313"
-                height="54"
+                height="149"
                 loading="lazy"
                 decoding="async"
               />
@@ -183,6 +163,26 @@ export function FutureSection() {
                 <span>UNIVERSIDADES E FACULDADES</span>
               </div>
             </div>
+
+            <span className="lp-future__reclame-cta">
+              CLIQUE AQUI
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M3.33301 8H12.6663M12.6663 8L8.66634 4M12.6663 8L8.66634 12"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
           </a>
         </div>
 

@@ -50,6 +50,7 @@ export interface CoursePageViewModel {
     courseType: CourseType
     oldInstallmentPrice: string
     currentInstallmentPriceMonthly: string
+    modalityBadge: string
   }>
   whatsappHref: string
   curriculumTotalHours: number
@@ -89,18 +90,35 @@ function buildBreadcrumbCurrentLabel(
   return formatGraduationCourseHeading(title, courseValue, currentPath)
 }
 
-function mapRelatedCourses(pool: CoursePageSummaryEntry[], currentPath: string | undefined) {
-  return pool
-    .filter((entry) => entry.path !== currentPath)
-    .slice(0, 4)
+function mapRelatedCourses(
+  pool: CoursePageSummaryEntry[],
+  courseType: CourseType,
+  currentPath: string | undefined,
+  currentAreaSlug?: string,
+) {
+  const filteredPool =
+    courseType === 'pos' && currentAreaSlug
+      ? pool.filter((entry) => entry.path !== currentPath && entry.areaSlug === currentAreaSlug)
+      : pool.filter((entry) => entry.path !== currentPath)
+
+  const source =
+    courseType === 'pos' && currentAreaSlug && filteredPool.length === 0
+      ? pool.filter((entry) => entry.path !== currentPath)
+      : filteredPool
+
+  return source
     .map((entry) => ({
       path: entry.path,
-      title: entry.title,
+      title:
+        courseType === 'graduacao'
+          ? formatGraduationCourseHeading(entry.rawLabel, entry.value, entry.path)
+          : entry.title,
       description: '',
       image: entry.image,
       courseType: entry.courseType,
       oldInstallmentPrice: entry.oldInstallmentPrice,
       currentInstallmentPriceMonthly: entry.currentInstallmentPriceMonthly,
+      modalityBadge: entry.modalityBadge,
     }))
 }
 
@@ -164,7 +182,12 @@ export async function getCoursePageViewModel({
   const relatedPool =
     courseType === 'pos' ? await getPostCoursePageSummaries() : await getGraduationCoursePageSummaries()
 
-  const relatedCourses = mapRelatedCourses(relatedPool, currentPath)
+  const relatedCourses = mapRelatedCourses(
+    relatedPool,
+    courseType,
+    currentPath,
+    courseType === 'pos' ? courseData?.areaSlug : undefined,
+  )
   const whatsappHref = ''
 
   const curriculumVariants =

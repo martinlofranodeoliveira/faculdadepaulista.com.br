@@ -3243,6 +3243,7 @@ section[id] {
 .lp-footer__logo {
   display: block;
   flex: 0 0 auto;
+  height: auto;
   max-width: 184px;
   object-fit: contain;
   width: auto;
@@ -3262,7 +3263,7 @@ section[id] {
   flex: 0 0 auto;
   height: auto;
   max-width: 174px;
-  width: 100%;
+  width: auto;
 }
 
 .lp-footer__brand p {
@@ -3439,6 +3440,7 @@ section[id] {
 
 .lp-footer__faith {
   display: block;
+  width: auto;
   height: auto;
   margin: 0 auto;
 }

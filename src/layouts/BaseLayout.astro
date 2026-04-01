@@ -1,5 +1,6 @@
 ---
 import '../index.css'
+import FloatingWhatsAppButton from '@/shared/FloatingWhatsAppButton.astro'
 
 type StructuredData = Record<string, unknown> | Array<Record<string, unknown>>
 
@@ -38,6 +39,16 @@ const robotsContent = noindex || sitewideNoindex
 const serializedStructuredData = structuredData
   ? JSON.stringify(structuredData, null, 2)
   : null
+const pathname = Astro.url.pathname
+const shouldShowFloatingWhatsApp =
+  pathname === '/' ||
+  pathname === '/graduacao' ||
+  pathname === '/pos-graduacao' ||
+  (/^\/graduacao\/[^/]+\/?$/.test(pathname) &&
+    pathname !== '/graduacao/vestibular' &&
+    pathname !== '/graduacao/inscricao-finalizada') ||
+  (/^\/pos-graduacao\/[^/]+\/?$/.test(pathname) &&
+    pathname !== '/pos-graduacao/inscricao-finalizada')
 ---
 
 <!doctype html>
@@ -93,5 +104,6 @@ const serializedStructuredData = structuredData
   </head>
   <body>
     <slot />
+    {shouldShowFloatingWhatsApp ? <FloatingWhatsAppButton /> : null}
   </body>
 </html>

@@ -673,7 +673,7 @@ export function CourseLeadForm({
 
   const visibleCurrentInstallmentText =
     selectedPaymentPlanGroup?.currentInstallmentText || pricing.currentInstallmentText
-  const punctualityDiscountLabel = courseType === 'pos' ? '73%' : '73,8%'
+  const punctualityDiscountLabel = '73%'
 
   const selectedGraduationPole = useMemo(() => {
     const normalizedPoleId = Number.parseInt(graduationPoleId, 10)

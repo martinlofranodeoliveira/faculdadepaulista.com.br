@@ -84,6 +84,9 @@ export type CatalogCourse = {
   salarySenior: number | null
   salaryWithoutPos: number | null
   salaryWithPos: number | null
+  regulatoryBodyId: number | null
+  regulatoryBodyName: string
+  regulatoryBodyComplement: string
 }
 
 export type CatalogCourseSummary = Pick<
@@ -305,6 +308,13 @@ type ApiCurriculumVariant = {
   workload_variant_name?: string | null
   variant_total_hours?: number | null
   disciplines?: ApiCurriculumDiscipline[] | null
+}
+
+type ApiCurriculumPayload = {
+  variants?: ApiCurriculumVariant[] | null
+  regulatory_body_id?: number | null
+  regulatory_body_name?: string | null
+  regulatory_body_complement?: string | null
 }
 
 type ApiCurriculumDiscipline = {
@@ -1145,6 +1155,9 @@ async function getCourseBundle(
   pricingItems: ApiPricingItem[]
   curriculumVariants: ApiCurriculumVariant[]
   texts: ApiCourseTexts | null
+  regulatoryBodyId: number | null
+  regulatoryBodyName: string
+  regulatoryBodyComplement: string
 }> {
   return withCache(`course-bundle:${institution.id}:${courseId}`, async () => {
     const [detailEnvelope, mediaEnvelope, pricingEnvelope, curriculumEnvelope, textsEnvelope] = await Promise.all([
@@ -1157,7 +1170,7 @@ async function getCourseBundle(
         `/api/v1/public/courses/${courseId}/pricing-by-workload`,
         institution,
       ),
-      optionalApiFetch<{ variants?: ApiCurriculumVariant[] | null }>(
+      optionalApiFetch<ApiCurriculumPayload>(
         `/api/v1/public/courses/${courseId}/curriculum`,
         institution,
       ),
@@ -1173,6 +1186,9 @@ async function getCourseBundle(
       pricingItems: pricingEnvelope?.data?.items ?? [],
       curriculumVariants: curriculumEnvelope?.data?.variants ?? [],
       texts: textsEnvelope?.data?.texts ?? null,
+      regulatoryBodyId: Number(curriculumEnvelope?.data?.regulatory_body_id ?? 0) || null,
+      regulatoryBodyName: normalizeText(curriculumEnvelope?.data?.regulatory_body_name),
+      regulatoryBodyComplement: normalizeText(curriculumEnvelope?.data?.regulatory_body_complement),
     }
   }, force)
 }
@@ -1373,6 +1389,9 @@ function mapCatalogCourse(
     pricingItems: ApiPricingItem[]
     curriculumVariants: ApiCurriculumVariant[]
     texts: ApiCourseTexts | null
+    regulatoryBodyId: number | null
+    regulatoryBodyName: string
+    regulatoryBodyComplement: string
   } | null,
   courseType: CourseType,
 ): CatalogCourse {
@@ -1542,6 +1561,9 @@ function mapCatalogCourse(
     salarySenior,
     salaryWithoutPos,
     salaryWithPos,
+    regulatoryBodyId: bundle?.regulatoryBodyId ?? null,
+    regulatoryBodyName: bundle?.regulatoryBodyName ?? '',
+    regulatoryBodyComplement: bundle?.regulatoryBodyComplement ?? '',
   } satisfies CatalogCourse
 }
 

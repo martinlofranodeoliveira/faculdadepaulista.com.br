@@ -705,7 +705,7 @@ export function getCoursePagePresentation({ course, courseType, title, area }: I
       paymentPlanGroups[0]?.paymentPlanOptions ??
       (isPost ? ['Consulte as condições vigentes'] : ['Mensalidade promocional']),
     workloadOptions,
-    showInternshipInfoLink: isPost && course?.modality === 'presencial',
+    showInternshipInfoLink: isPost && course?.regulatoryBodyName.toUpperCase() === 'COREN',
   }
 }
 

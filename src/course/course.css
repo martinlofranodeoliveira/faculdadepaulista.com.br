@@ -297,6 +297,23 @@
   width: 100%;
 }
 
+.course-page__post-coren-badge {
+  background: #fe0000;
+  border-radius: 7px;
+  display: inline-flex;
+  left: 18px;
+  margin-bottom: 18px;
+  padding: 5px 13px;
+  width: auto;
+}
+
+.course-page__post-coren-badge span {
+  color: #fff;
+  display: block;
+  font: 800 16px/23.054px 'Kumbh Sans', sans-serif;
+  text-transform: uppercase;
+}
+
 .course-page__fact-row {
   display: grid;
   gap: 16px;
@@ -2979,11 +2996,16 @@
 
 .course-lead-form__info-link {
   align-items: center;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
   display: inline-flex;
   font-family: 'Montserrat', Arial, sans-serif;
   font-size: 12px;
   gap: 7px;
   line-height: 1.4;
+  padding: 0;
+  text-align: left;
   text-decoration: underline;
 }
 
@@ -2992,7 +3014,7 @@
 }
 
 .course-lead-form__info-link svg {
-  color: #0d0d0d;
+  color: #066aff;
   flex: 0 0 auto;
 }
 
@@ -3629,6 +3651,16 @@
   .course-page__video-frame {
     aspect-ratio: 391 / 220;
     border-radius: 15px;
+  }
+
+  .course-page__post-coren-badge {
+    max-width: 100%;
+    padding: 5px 10px;
+  }
+
+  .course-page__post-coren-badge span {
+    font-size: 12px;
+    line-height: 1.2;
   }
 
   .course-page__video-frame::after {

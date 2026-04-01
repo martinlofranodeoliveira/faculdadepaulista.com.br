@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
+﻿import { useEffect, useMemo, useRef, useState, type SubmitEvent } from 'react'
 import { AlertCircle, ChevronDown, ChevronLeft, LoaderCircle } from 'lucide-react'
 
 import {
@@ -636,6 +636,7 @@ export function CourseLeadForm({
   const [voucherCode, setVoucherCode] = useState('')
   const [voucherOpen, setVoucherOpen] = useState(false)
   const [isContractModalOpen, setIsContractModalOpen] = useState(false)
+  const [isInternshipModalOpen, setIsInternshipModalOpen] = useState(false)
   const [contractLoading, setContractLoading] = useState(false)
   const [contractError, setContractError] = useState('')
   const [contractContent, setContractContent] = useState<InstitutionContractPayload | null>(null)
@@ -1887,6 +1888,70 @@ export function CourseLeadForm({
       </a>
     </span>
   )
+  const internshipWorkloadLabel =
+    workload?.trim() || selectedPaymentPlanGroup?.workload || 'a carga horária escolhida'
+  const internshipInfoLink = showInternshipInfoLink ? (
+    <button
+      type="button"
+      className="course-lead-form__info-link"
+      onClick={() => setIsInternshipModalOpen(true)}
+    >
+      <AlertCircle size={21} strokeWidth={1.8} />
+      <span>{'Saiba mais sobre o Estágio e a Prática Obrigatória'}</span>
+    </button>
+  ) : null
+  const internshipModal = isInternshipModalOpen ? (
+    <div
+      className="course-lead-form__contract-modal-backdrop"
+      role="presentation"
+      onClick={() => setIsInternshipModalOpen(false)}
+    >
+      <div
+        className="course-lead-form__contract-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="course-internship-title"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="course-lead-form__contract-modal-header">
+          <h3 id="course-internship-title">Estágio e Prática Obrigatória</h3>
+          <button
+            type="button"
+            className="course-lead-form__contract-modal-close"
+            aria-label="Fechar aviso sobre estágio e prática obrigatória"
+            onClick={() => setIsInternshipModalOpen(false)}
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="course-lead-form__contract-modal-body">
+          <div className="course-lead-form__contract-modal-content is-text">
+            <p>
+              Alguns cursos podem exigir estágio e prática obrigatória conforme a carga horária, a
+              matriz curricular e as exigências do conselho de classe.
+            </p>
+            <p>{`Carga horária em exibição: ${internshipWorkloadLabel}.`}</p>
+            <p>
+              Quando aplicáveis, essas atividades fazem parte da formação e devem ser cumpridas
+              conforme as orientações acadêmicas e a regulamentação profissional vigente para a
+              conclusão do curso.
+            </p>
+          </div>
+        </div>
+
+        <div className="course-lead-form__contract-modal-footer">
+          <button
+            type="button"
+            className="course-lead-form__contract-modal-confirm"
+            onClick={() => setIsInternshipModalOpen(false)}
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null
   const contractModal = isContractModalOpen ? (
     <div
       className="course-lead-form__contract-modal-backdrop"
@@ -2150,6 +2215,8 @@ export function CourseLeadForm({
                   menuLabel="Selecione a carga horária"
                   onChange={setWorkload}
                 />
+                {internshipInfoLink}
+
 
                 <div className="course-lead-form__voucher-toggle">
                   <button type="button" onClick={() => setVoucherOpen((current) => !current)}>
@@ -2176,17 +2243,6 @@ export function CourseLeadForm({
                   </label>
                 ) : null}
 
-                {showInternshipInfoLink ? (
-                  <a
-                    className="course-lead-form__info-link course-lead-form__info-link--step1"
-                    href="/politica-de-privacidade"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <AlertCircle size={18} strokeWidth={2} />
-                    <span>{'Saiba mais sobre o Est\u00e1gio e a Pr\u00e1tica Obrigat\u00f3ria'}</span>
-                  </a>
-                ) : null}
               </>
             ) : null}
 
@@ -2255,17 +2311,6 @@ export function CourseLeadForm({
                   </label>
                 ) : null}
 
-                {showInternshipInfoLink ? (
-                  <a
-                    className="course-lead-form__info-link"
-                    href="/politica-de-privacidade"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <AlertCircle size={18} strokeWidth={2} />
-                    <span>{'Saiba mais sobre o Est\u00e1gio e a Pr\u00e1tica Obrigat\u00f3ria'}</span>
-                  </a>
-                ) : null}
               </>
             ) : (
               <>
@@ -2438,6 +2483,7 @@ export function CourseLeadForm({
 
         <input type="hidden" value={courseTitle} readOnly />
       </form>
+      {internshipModal}
       {contractModal}
     </>
   )

@@ -14,6 +14,8 @@ import './course.css'
 
 const props = Astro.props as CoursePageProps
 const viewModel = await getCoursePageViewModel(props)
+
+const corenBadgeLabel = 'CURSO COM CHANCELA DO CONSELHO DE CLASSE DO COREN'
 ---
 
 <Header client:load />
@@ -27,6 +29,14 @@ const viewModel = await getCoursePageViewModel(props)
     description={props.description}
     variant="post"
   />
+
+  {viewModel.presentation.showInternshipInfoLink ? (
+    <div class="course-page__shell">
+      <div class="course-page__post-coren-badge">
+        <span>{corenBadgeLabel}</span>
+      </div>
+    </div>
+  ) : null}
 
   <PostCourseHeroSection
     courseType="pos"

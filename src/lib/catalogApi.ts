@@ -85,6 +85,9 @@ export type CatalogCourse = {
   salarySenior: number | null
   salaryWithoutPos: number | null
   salaryWithPos: number | null
+  institutionMecOrdinance: string
+  institutionMecOrdinanceQrCodeImageUrl: string
+  institutionMecOrdinanceQrCodeHref: string
   regulatoryBodyId: number | null
   regulatoryBodyName: string
   regulatoryBodyComplement: string
@@ -293,6 +296,12 @@ type ApiCourseTexts = {
   ictSalaryWithoutPos?: number | string | null
   salary_with_pos?: number | string | null
   ictSalaryWithPos?: number | string | null
+  institution_mec_ordinance?: string | null
+  institution_mec_ordinance_qrcode_path?: string | null
+  institution_mec_ordinance_qrcode_url?: string | null
+  institution_mec_ordinance_qrcode_mime_type?: string | null
+  institution_mec_ordinance_qrcode_size_bytes?: number | string | null
+  institution_mec_ordinance_qrcode_updated_at?: string | null
 }
 
 type ApiPricingItem = {
@@ -1508,6 +1517,13 @@ function mapCatalogCourse(
     texts?.salary_without_pos ?? texts?.ictSalaryWithoutPos,
   )
   const salaryWithPos = parseSalaryValue(texts?.salary_with_pos ?? texts?.ictSalaryWithPos)
+  const institutionMecOrdinance = normalizeRichText(texts?.institution_mec_ordinance)
+  const institutionMecOrdinanceQrCodeImageUrl = toAbsoluteMediaUrl(
+    texts?.institution_mec_ordinance_qrcode_path,
+  )
+  const institutionMecOrdinanceQrCodeHref = toAbsoluteMediaUrl(
+    texts?.institution_mec_ordinance_qrcode_url,
+  )
 
   return {
     institutionId: institution.id,
@@ -1574,6 +1590,9 @@ function mapCatalogCourse(
     salarySenior,
     salaryWithoutPos,
     salaryWithPos,
+    institutionMecOrdinance,
+    institutionMecOrdinanceQrCodeImageUrl,
+    institutionMecOrdinanceQrCodeHref,
     regulatoryBodyId: bundle?.regulatoryBodyId ?? null,
     regulatoryBodyName: bundle?.regulatoryBodyName ?? '',
     regulatoryBodyComplement: bundle?.regulatoryBodyComplement ?? '',

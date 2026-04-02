@@ -84,6 +84,11 @@ export type CoursePresentation = {
     currentInstallmentText: string
     pixText: string
   }
+  institutionRegulation: {
+    copy: string
+    qrCodeImageUrl: string
+    qrCodeHref: string
+  } | null
   paymentPlanGroups: Array<{
     workload: string
     workloadVariantId: number | null
@@ -213,6 +218,32 @@ function buildGeneratedDescription(courseType: CourseType, title: string): strin
   }
 
   return `Conheça a Graduação em ${title} da Faculdade Paulista e continue sua inscrição.`
+}
+
+function buildInstitutionRegulation(
+  course: CatalogCourse | undefined,
+): CoursePresentation['institutionRegulation'] {
+  const rawCopy = course?.institutionMecOrdinance || ''
+  const hasTemplatePlaceholder = /\{\{[^}]+\}\}/u.test(rawCopy)
+  const copy = rawCopy
+    .replace(/\bofertado pela UNICESP\b/giu, 'ofertado pela Faculdade UNICESP')
+    .replace(/\bofertado pela FASUL\b/giu, 'ofertado pela Faculdade FASUL')
+  const qrCodeImageUrl = course?.institutionMecOrdinanceQrCodeImageUrl || ''
+  const qrCodeHref = course?.institutionMecOrdinanceQrCodeHref || ''
+
+  if (hasTemplatePlaceholder) {
+    return null
+  }
+
+  if (!copy && !qrCodeImageUrl) {
+    return null
+  }
+
+  return {
+    copy,
+    qrCodeImageUrl,
+    qrCodeHref,
+  }
 }
 
 function buildPostInfoCards(course: CatalogCourse | undefined, title: string) {
@@ -700,6 +731,7 @@ export function getCoursePagePresentation({ course, courseType, title, area }: I
       currentInstallmentText: currentPrice,
       pixText: course?.pixText || '',
     },
+    institutionRegulation: buildInstitutionRegulation(course),
     paymentPlanGroups,
     paymentPlanOptions:
       paymentPlanGroups[0]?.paymentPlanOptions ??

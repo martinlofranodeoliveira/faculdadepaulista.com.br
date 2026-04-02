@@ -1,7 +1,7 @@
 ---
 import type { CoursePresentation } from '../coursePageData'
 import { CourseLeadForm } from '../CourseLeadForm'
-import GraduationRegulationFlag from './GraduationRegulationFlag.astro'
+import InstitutionRegulationNote from './InstitutionRegulationNote.astro'
 
 interface Props {
   title: string
@@ -67,8 +67,15 @@ const {
         ))}
       </div>
 
-      {presentation.modality !== 'presencial' ? (
-        <GraduationRegulationFlag modalityLabel={presentation.modalityLabel} />
+      {presentation.institutionRegulation ? (
+        <InstitutionRegulationNote
+          variant="graduation"
+          copy={presentation.institutionRegulation.copy}
+          qrCodeImageUrl={presentation.institutionRegulation.qrCodeImageUrl}
+          qrCodeHref={presentation.institutionRegulation.qrCodeHref}
+          qrCodeWidth={317}
+          qrCodeHeight={101}
+        />
       ) : null}
 
       {presentation.graduationPortarias.length ? (

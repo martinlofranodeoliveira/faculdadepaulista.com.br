@@ -1,0 +1,62 @@
+---
+interface Props {
+  copy: string
+  qrCodeImageUrl: string
+  qrCodeHref?: string
+  variant: 'graduation' | 'post'
+  qrCodeAlt?: string
+  qrCodeWidth?: number
+  qrCodeHeight?: number
+}
+
+const {
+  copy,
+  qrCodeImageUrl,
+  qrCodeHref = '',
+  variant,
+  qrCodeAlt = 'Consulte aqui o cadastro da instituição no Sistema e-MEC',
+  qrCodeWidth = 317,
+  qrCodeHeight = 101,
+} = Astro.props as Props
+
+const paragraphs = copy
+  .split(/\n{2,}/u)
+  .map((item) => item.trim())
+  .filter(Boolean)
+---
+
+<section class:list={['course-page__regulation-note', variant === 'post' ? 'course-page__regulation-note--post' : 'course-page__regulation-note--graduation']}>
+  <div class:list={['course-page__regulation-copy', variant === 'graduation' ? 'course-page__regulation-copy--graduation' : undefined]}>
+    {paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+  </div>
+
+  {qrCodeHref ? (
+    <a
+      href={qrCodeHref}
+      target="_blank"
+      rel="noreferrer noopener"
+      class="course-page__regulation-mec-link"
+      aria-label="Consultar cadastro da instituição no sistema e-MEC"
+    >
+      <img
+        src={qrCodeImageUrl}
+        alt={qrCodeAlt}
+        class="course-page__regulation-mec-card"
+        width={qrCodeWidth}
+        height={qrCodeHeight}
+        loading="lazy"
+        decoding="async"
+      />
+    </a>
+  ) : (
+    <img
+      src={qrCodeImageUrl}
+      alt={qrCodeAlt}
+      class="course-page__regulation-mec-card"
+      width={qrCodeWidth}
+      height={qrCodeHeight}
+      loading="lazy"
+      decoding="async"
+    />
+  )}
+</section>

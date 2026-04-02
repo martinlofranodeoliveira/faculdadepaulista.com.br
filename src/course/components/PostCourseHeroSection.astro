@@ -1,6 +1,7 @@
 ---
 import type { CoursePresentation } from '../coursePageData'
 import { CourseLeadForm } from '../CourseLeadForm'
+import InstitutionRegulationNote from './InstitutionRegulationNote.astro'
 
 interface Props {
   courseType: 'graduacao' | 'pos'
@@ -200,43 +201,15 @@ const {
           ))}
         </div>
 
-        {courseType === 'pos' ? (
-          <div class="course-page__regulation-note course-page__regulation-note--post">
-            <div class="course-page__regulation-copy">
-              <p>
-                O curso de Pós-Graduação ofertado pela Faculdade Fasul Educacional,
-                inscrita no CNPJ sob n° 21.558.886/0001-63, Instituição de Ensino Superior
-                devidamente credenciada pelo Ministério da Educação (MEC) para a oferta de
-                cursos na modalidade a distância (EAD), conforme Portaria n° 499, de
-                08/07/2021, DOU de 09/07/2021.
-              </p>
-              <p>
-                A Faculdade Paulista atua exclusivamente na divulgação e gestão comercial e
-                educacional dos Cursos.
-              </p>
-              <p>
-                O Certificado de conclusão será emitido pela Faculdade Fasul Educacional,
-                nos termos da Legislação vigente.
-              </p>
-            </div>
-            <a
-              href="https://emec.mec.gov.br/emec/consulta-cadastro/detalhamento/d96957f455f6405d14c6542552b0f6eb/MjE3NTc="
-              target="_blank"
-              rel="noreferrer noopener"
-              class="course-page__regulation-mec-link"
-              aria-label="Consultar cadastro da instituição no sistema e-MEC"
-            >
-              <img
-                src="/course/consulte-mec-qr.webp"
-                alt="Consulte aqui o cadastro da Instituição no Sistema e-MEC"
-                class="course-page__regulation-mec-card"
-                width="283"
-                height="101"
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-          </div>
+        {courseType === 'pos' && presentation.institutionRegulation ? (
+          <InstitutionRegulationNote
+            variant="post"
+            copy={presentation.institutionRegulation.copy}
+            qrCodeImageUrl={presentation.institutionRegulation.qrCodeImageUrl}
+            qrCodeHref={presentation.institutionRegulation.qrCodeHref}
+            qrCodeWidth={317}
+            qrCodeHeight={101}
+          />
         ) : null}
       </article>
 
